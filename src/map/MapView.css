@@ -1,0 +1,10 @@
+
+.MapViewContainer {
+    background-color: aqua;
+}
+
+.stepsContainer {
+    position: fixed;
+    /* top: 0; */
+    left: 0;
+}
