@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
+import { ListItemText } from '@material-ui/core';
 
 export default class ScenarioStep extends Component {
     render() {
         return (
-            <span onClick={this.onClick.bind(this)}>
-                <small>{this.props.index} - </small>
-                <label>{`${this.props.top.x}, ${this.props.top.y}`}</label>
-                <span> | </span>
-                <label>{`${this.props.end.x}, ${this.props.end.y}`}</label>
-            </span>
+            <ListItemText onClick={this.onClick.bind(this)}
+                primary={`(${this.props.top.x}, ${this.props.top.y}) > (${this.props.end.x}, ${this.props.end.y})`}>
+            </ListItemText>
         );
     }
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ScenarioStep from './scenario-step/ScenarioStep';
-import { Button } from '@material-ui/core';
+import { Button, List, ListItem } from '@material-ui/core';
 
 import './Scenario.css';
 
@@ -14,20 +14,22 @@ class Scenario extends Component {
     render() {
         let stepsList = this.getStepsList(this.props.steps);
         return (<div>
-            <ul>
+            <List>
                 {stepsList}
-            </ul>
+            </List>
             <div className="footerButtons">
-                <Button onClick={this.props.onNewStep}>Add</Button>
+                <Button onClick={this.props.onNewStep}
+                    variant="contained"
+                    color="primary">Add</Button>
             </div>
         </div>);
     }
 
     getStepsList(steps) {
         return steps.map((step, index) => (
-            <li key={step.id} style={{ backgroundColor: 'blue' }}>
+            <ListItem button key={step.id}>
                 <ScenarioStep {...step} index={index} onClick={this.onStepClick.bind(this)}></ScenarioStep>
-            </li>
+            </ListItem>
         ))
     }
 
