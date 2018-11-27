@@ -34,7 +34,6 @@ class App extends Component {
   }
 
   handleEditorSave = (updatedStepId, changes) => {
-    debugger;
     let steps = this.state.steps;
     let oldStep = steps.find((step) => {
       return step.id === updatedStepId;

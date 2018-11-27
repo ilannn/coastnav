@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
-import { withFormik } from 'formik';
+import { Field, withFormik } from 'formik';
 import { isEqual } from 'lodash';
+import Button from '@material-ui/core/Button';
+
+import './EditorForm.css';
+import { Input } from '@material-ui/core';
 
 const formikEnhancer = withFormik({
     mapPropsToValues: props => ({ top: props.top, end: props.end }),
@@ -26,54 +30,74 @@ class MyForm extends Component {
     render() {
         return (
             <form onSubmit={this.props.handleSubmit}>
-                <label htmlFor="top">Top</label>
-                <input
-                    id="top.x"
-                    value={this.props.values.top.x}
-                    onChange={this.props.handleChange}
-                    onBlur={this.props.handleBlur}
-                    placeholder="x1"
-                />
-                <input
-                    id="top.y"
-                    value={this.props.values.top.y}
-                    onChange={this.props.handleChange}
-                    onBlur={this.props.handleBlur}
-                    placeholder="y1"
-                />
-                <br />
-                <label htmlFor="end">End</label>
-                <input
-                    id="end.x"
-                    value={this.props.values.end.y}
-                    onChange={this.props.handleChange}
-                    onBlur={this.props.handleBlur}
-                    placeholder="x2"
-                />
-                <input
-                    id="end.y"
-                    value={this.props.values.end.y}
-                    onChange={this.props.handleChange}
-                    onBlur={this.props.handleBlur}
-                    placeholder="y2"
-                />
+                <div className="coordinatesBundle">
+                    <label>Top</label>
 
-                <button
-                    type="button"
-                    className="outline"
-                    onClick={this.props.handleReset}
-                    disabled={
-                        !this.props.dirty || this.props.isSubmitting
-                    }
-                >
-                    Reset
-          </button>
-                <button
-                    type="submit"
-                    disabled={this.props.isSubmitting}
-                >
-                    Submit
-          </button>
+                    <Field
+                        render={() => (
+                            <Input type="number"
+                                name="top.x"
+                                placeholder="x1"
+                                maxLength="9"
+                                value={this.props.values.top.x}
+                                onChange={this.props.handleChange}></Input>
+                        )}
+                    />
+                    <Field
+                        render={() => (
+                            <Input type="number"
+                                name="top.y"
+                                placeholder="y1"
+                                maxLength="9"
+                                value={this.props.values.top.y}
+                                onChange={this.props.handleChange}></Input>
+                        )}
+                    />
+                </div>
+                <div className="coordinatesBundle">
+                    <label>End</label>
+
+                    <Field
+                        render={() => (
+                            <Input type="number"
+                                name="end.x"
+                                placeholder="x2"
+                                value={this.props.values.end.x}
+                                onChange={this.props.handleChange}></Input>
+                        )}
+                    />
+                    <Field
+                        render={() => (
+                            <Input type="number"
+                                name="end.y"
+                                placeholder="y1"
+                                value={this.props.values.end.y}
+                                onChange={this.props.handleChange}></Input>
+                        )}
+                    />
+                </div>
+
+                <div className="footerButtons">
+                    <Field
+                        name="i"
+                        render={({ field /* _form */ }) => (
+                            <Button
+                                type="button"
+                                onClick={this.props.handleReset}
+                                disabled={
+                                    !this.props.dirty || this.props.isSubmitting
+                                }
+                                variant="contained"
+                                color="secondary">Reset</Button>
+                        )}
+                    />
+                    <Field
+                        name="i"
+                        render={({ field /* _form */ }) => (
+                            <Button type="submit" variant="contained" color="primary">Save</Button>
+                        )}
+                    />
+                </div>
             </form>
         );
     }
