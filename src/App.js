@@ -2,17 +2,13 @@ import React, { Component } from 'react';
 import './App.css';
 import MapView from './map/MapView';
 import SideView from './side/SideView';
+import StepService from './services/StepService';
 
-const getSteps = (limit) => {
-  return [
-    { id: 1, type: 1, top: { x: 0, y: 0 }, end: { x: 200, y: 200 }, length: 10 },
-    { id: 2, type: 2, top: { x: 110, y: 100 }, end: { x: 200, y: 200 }, length: 10 }
-  ]
-}
+const stepService = new StepService();
 
 class App extends Component {
   state = {
-    steps: getSteps(),
+    steps: stepService.getSteps(),
     selectedStep: undefined
   }
   render() {
@@ -26,7 +22,8 @@ class App extends Component {
           selectedStep={this.state.selectedStep}
           editorOnSave={this.handleEditorSave.bind(this)}
           onSelectStep={this.selectStep.bind(this)}
-          onUnselectStep={this.unSelectStep.bind(this)}></SideView>
+          onUnselectStep={this.unSelectStep.bind(this)}
+          onNewStep={this.handleNewStep.bind(this)}></SideView>
       </div>
     );
   }
@@ -48,6 +45,14 @@ class App extends Component {
         return step.id === stepId;
       })
     );
+  }
+
+  handleNewStep() {
+    let newStep = stepService.getNewStep();
+    this.setState({
+      steps: [...this.state.steps, newStep],
+      selectedStep: newStep
+    })
   }
 
   handleEditorSave = (updatedStepId, changes) => {

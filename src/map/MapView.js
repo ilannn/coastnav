@@ -7,7 +7,7 @@ class MapView extends Component {
     render() {
         return <section className="MapViewContainer">
             <MapWindow>
-                <svg height="210" width="500">
+                <svg height="auto" width="auto">
                     {this.createSteps()}
                 </svg>
             </MapWindow>

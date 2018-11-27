@@ -23,7 +23,8 @@ class SideView extends Component {
                         onClick: this.props.onUnselectStep,
                         content: (<Scenario
                             steps={this.props.steps}
-                            onStepClick={this.props.onSelectStep}></Scenario>)
+                            onStepClick={this.props.onSelectStep}
+                            onNewStep={this.props.onNewStep}></Scenario>)
                     }
                 ]}>
             </Nav>

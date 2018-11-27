@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import ScenarioStep from './scenario-step/ScenarioStep';
+import { Button } from '@material-ui/core';
+
+import './Scenario.css';
 
 class Scenario extends Component {
 
@@ -10,9 +13,14 @@ class Scenario extends Component {
 
     render() {
         let stepsList = this.getStepsList(this.props.steps);
-        return (<ul>
-            {stepsList}
-        </ul>);
+        return (<div>
+            <ul>
+                {stepsList}
+            </ul>
+            <div className="footerButtons">
+                <Button onClick={this.props.onNewStep}>Add</Button>
+            </div>
+        </div>);
     }
 
     getStepsList(steps) {

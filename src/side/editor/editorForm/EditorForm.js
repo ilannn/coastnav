@@ -87,8 +87,7 @@ class MyForm extends Component {
                                 disabled={
                                     !this.props.dirty || this.props.isSubmitting
                                 }
-                                variant="contained"
-                                color="secondary">Reset</Button>
+                                variant="contained">Reset</Button>
                         )}
                     />
                     <Field
