@@ -10,7 +10,6 @@ class Editor extends Component {
             editorContent = (
                 <MyEnhancedForm {...this.props.step} updateStep={this.onSave}></MyEnhancedForm>
             );
-            console.log(this.props.step);
         }
         return (
             <section className="EditorContainer">

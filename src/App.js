@@ -18,19 +18,36 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <MapView steps={this.state.steps} handleStepClick={this.handleStepClick.bind(this)}></MapView>
-        <SideView selectedStep={this.state.selectedStep}
-          editorOnSave={this.handleEditorSave.bind(this)}></SideView>
+        <MapView
+          steps={this.state.steps}
+          handleStepClick={this.handleStepClick.bind(this)}></MapView>
+        <SideView
+          steps={this.state.steps}
+          selectedStep={this.state.selectedStep}
+          editorOnSave={this.handleEditorSave.bind(this)}
+          onSelectStep={this.selectStep.bind(this)}
+          onUnselectStep={this.unSelectStep.bind(this)}></SideView>
       </div>
     );
   }
 
-  handleStepClick = (stepId) => {
+  selectStep(step) {
     this.setState({
-      selectedStep: this.state.steps.find((step) => {
+      selectedStep: step
+    });
+  }
+  unSelectStep() {
+    this.setState({
+      selectedStep: undefined
+    });
+  }
+
+  handleStepClick = (stepId) => {
+    this.selectStep(this.state.steps.find(
+      (step) => {
         return step.id === stepId;
       })
-    });
+    );
   }
 
   handleEditorSave = (updatedStepId, changes) => {

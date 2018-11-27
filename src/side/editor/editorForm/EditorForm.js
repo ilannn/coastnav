@@ -13,7 +13,7 @@ const formikEnhancer = withFormik({
         setTimeout(function () {
             // alert(JSON.stringify(payload, null, 2));
             bag.setSubmitting(false);
-            delete payload['values'];
+            if (payload.values) delete payload['values'];
             bag.props.updateStep(payload);
         }, 1000);
     },
