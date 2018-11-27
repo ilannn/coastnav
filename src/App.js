@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
 import MapView from './map/MapView';
 import SideView from './side/SideView';
 import StepService from './services/StepService';
+
+import './App.css';
 
 const stepService = new StepService();
 

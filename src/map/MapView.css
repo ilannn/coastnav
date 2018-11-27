@@ -1,6 +1,7 @@
 
 .MapViewContainer {
-    background-color: aqua;
+    background-image: url("https://developers.google.com/maps/documentation/urls/images/map-no-params.png");
+    min-height: 600px;
 }
 
 .stepsContainer {
