@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AppBar from '@material-ui/core/AppBar';
+import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
@@ -23,12 +23,12 @@ class Nav extends Component {
 
     render() {
         return <div>
-            <AppBar position="static">
-                <Tabs value={+this.props.isEdit} onChange={this.handleChange}>
-                    <Tab value={1} label={this.props.tabs[0].label} />
+            <Paper square>
+                <Tabs value={+this.props.isEdit} onChange={this.handleChange} centered>
+                    <Tab value={1} label={this.props.tabs[0].label} disabled={!this.props.isEdit}/>
                     <Tab value={0} label={this.props.tabs[1].label} onClick={this.props.tabs[1].onClick} />
                 </Tabs>
-            </AppBar>
+            </Paper>
             {this.props.isEdit && <TabContainer>
                 {this.props.tabs[0].content}
             </TabContainer>}

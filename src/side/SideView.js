@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import './SideView.css';
 import Nav from './nav/Nav';
-
 import Editor from './editor/Editor';
+import Scenario from './scenario/Scenario';
+
+import './SideView.css';
 
 class SideView extends Component {
 
@@ -20,7 +21,9 @@ class SideView extends Component {
                     {
                         label: "Scenario",
                         onClick: this.props.onUnselectStep,
-                        content: (<h2>Hi</h2>)
+                        content: (<Scenario
+                            steps={this.props.steps}
+                            onStepClick={this.props.onSelectStep}></Scenario>)
                     }
                 ]}>
             </Nav>
