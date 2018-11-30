@@ -28,7 +28,9 @@ class Scenario extends Component {
     getStepsList(steps) {
         return steps.map((step, index) => (
             <ListItem button key={step.id}>
-                <ScenarioStep {...step} index={index} onClick={this.onStepClick.bind(this)}></ScenarioStep>
+                <ScenarioStep {...step} index={index} 
+                    onClick={this.onStepClick.bind(this)}
+                    onRemove={this.onStepRemove.bind(this)}></ScenarioStep>
             </ListItem>
         ))
     }
@@ -40,6 +42,16 @@ class Scenario extends Component {
         if (step) {
             this.props.onStepClick(step);
         }
+    }
+    
+    onStepRemove(stepId) {
+        let step = this.props.steps.find((step) => {
+            return step.id === stepId
+        });
+        if (step) {
+            this.props.onRemoveStep(step.id);
+        }
+
     }
 }
 
