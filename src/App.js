@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MapView from './map/MapView';
 import SideView from './side/SideView';
 import StepService from './services/StepService';
+import _ from 'lodash';
 
 import './App.css';
 
@@ -24,7 +25,8 @@ class App extends Component {
           editorOnSave={this.handleEditorSave.bind(this)}
           onSelectStep={this.selectStep.bind(this)}
           onUnselectStep={this.unSelectStep.bind(this)}
-          onNewStep={this.handleNewStep.bind(this)}></SideView>
+          onNewStep={this.handleNewStep.bind(this)}
+          onRemoveStep={this.handleRemoveStep.bind(this)}></SideView>
       </div>
     );
   }
@@ -54,6 +56,16 @@ class App extends Component {
       steps: [...this.state.steps, newStep],
       selectedStep: newStep
     })
+  }
+
+  handleRemoveStep(stepId) {
+    let updatedSteps = _.filter(this.state.steps, (step) => {
+      return step.id !== stepId;
+    });
+    this.setState({
+      /* Update selected view */
+      steps: updatedSteps
+    });
   }
 
   handleEditorSave = (updatedStepId, changes) => {

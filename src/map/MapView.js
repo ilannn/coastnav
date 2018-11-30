@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
-import './MapView.css';
 import MapWindow from './mapWindow/MapWindow';
 import SimpleStep from './steps/simpleStep/SimpleStep';
+import MouseInfo from './mouse/MouseInfo';
+import ReactCursorPosition from 'react-cursor-position';
+
+import './MapView.css';
 
 class MapView extends Component {
     render() {
         return <section className="MapViewContainer">
-            <MapWindow>
-                <svg height="800px" width="800px">
-                    {this.createSteps()}
-                </svg>
-            </MapWindow>
+            <ReactCursorPosition>
+                <MapWindow>
+                    <svg height="800px" width="800px">
+                        {this.createSteps()}
+                    </svg>
+                </MapWindow>
+                <MouseInfo></MouseInfo>
+            </ReactCursorPosition>
         </section>
     }
 
