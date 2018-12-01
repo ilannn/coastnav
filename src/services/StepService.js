@@ -13,4 +13,8 @@ export default class StepService {
     getNewStep = () => {
         return { id: this.id++, type: 1, top: { x: 0, y: 0 }, end: { x: 0, y: 0 }, length: 0 }
     }
+
+    getNewStepAt = (x, y) => {
+        return { id: this.id++, type: 0, top: { x: x, y: y }, end: { x: x, y: y }, length: 0 }
+    }
 }

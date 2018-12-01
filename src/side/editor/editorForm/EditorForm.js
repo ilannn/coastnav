@@ -15,14 +15,14 @@ const formikEnhancer = withFormik({
             bag.setSubmitting(false);
             if (payload.values) delete payload['values'];
             bag.props.updateStep(payload);
-        }, 1000);
+        }, 0);
     },
     displayName: 'MyForm',
 });
 
 class MyForm extends Component {
     componentWillUpdate(nextProps) {
-        if (!isEqual(nextProps.top, this.props.top)) {
+        if (!isEqual(nextProps.top, this.props.top) || !isEqual(nextProps.end, this.props.end)) {
             this.props.resetForm(nextProps);
         }
     }

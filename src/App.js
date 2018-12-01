@@ -11,14 +11,20 @@ const stepService = new StepService();
 class App extends Component {
   state = {
     steps: stepService.getSteps(),
-    selectedStep: undefined
+    selectedStep: undefined,
+    newStep: {
+      isDrawing: false
+    }
   }
   render() {
     return (
       <div className="App">
         <MapView
           steps={this.state.steps}
-          handleStepClick={this.handleStepClick.bind(this)}></MapView>
+          handleStepClick={this.handleStepClick.bind(this)}
+          newStep={this.state.newStep}
+          onDrawingClick={this.onDrawingClick.bind(this)}
+          onDrawingMove={this.onDrawingMove.bind(this)}></MapView>
         <SideView
           steps={this.state.steps}
           selectedStep={this.state.selectedStep}
@@ -40,6 +46,53 @@ class App extends Component {
     this.setState({
       selectedStep: undefined
     });
+  }
+
+  onDrawingMove(event) {
+    if (this.state.newStep.isDrawing) {
+      // Update current selected step
+      let updatedSteps = this.state.steps;
+      let updatedSelectedStep = updatedSteps.find(step => {
+        return step.id === this.state.selectedStep.id;
+      });
+      updatedSelectedStep.end = { x: event.pageX, y: event.pageY };
+
+      this.setState({
+        steps: updatedSteps,
+        selectedStep: updatedSelectedStep
+      });
+    }
+  }
+
+  onDrawingClick(event) {
+    if (!this.state.newStep.isDrawing) {
+      // Create a new step, stating at page X & Y
+      let newStep = stepService.getNewStepAt(event.pageX, event.pageY);
+      let updatedSteps = [...this.state.steps, newStep];
+
+      // Mark the new step as the selected step
+      this.setState({
+        newStep: { isDrawing: true },
+        steps: updatedSteps,
+        selectedStep: updatedSteps.find(step => {
+          return step.id === newStep.id;
+        }),
+      });
+    }
+    else {
+      // Update current selected step
+      let updatedSteps = this.state.steps;
+      let updatedSelectedStep = updatedSteps.find(step => {
+        return step.id === this.state.selectedStep.id;
+      });
+      updatedSelectedStep.type = 1;
+
+      this.setState({
+        newStep: { isDrawing: false },
+        steps: updatedSteps,
+        selectedStep: updatedSelectedStep
+      });
+    }
   }
 
   handleStepClick = (stepId) => {

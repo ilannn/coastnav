@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import MapWindow from './mapWindow/MapWindow';
 import SimpleStep from './steps/simpleStep/SimpleStep';
 import MouseInfo from './mouse/MouseInfo';
 import ReactCursorPosition from 'react-cursor-position';
@@ -10,11 +9,11 @@ class MapView extends Component {
     render() {
         return <section className="MapViewContainer">
             <ReactCursorPosition>
-                <MapWindow>
-                    <svg height="800px" width="800px">
-                        {this.createSteps()}
-                    </svg>
-                </MapWindow>
+                <svg height="800px" width="800px" 
+                    onClick={this.onDrawingClick.bind(this)}
+                    onMouseMove={this.onDrawingMove.bind(this)}>
+                    {this.createSteps()}
+                </svg>
                 <MouseInfo></MouseInfo>
             </ReactCursorPosition>
         </section>
@@ -29,6 +28,17 @@ class MapView extends Component {
         }
 
         return steps;
+    }
+
+    onDrawingClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.props.onDrawingClick(event);
+    }
+    onDrawingMove(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.props.onDrawingMove(event);
     }
 }
 
