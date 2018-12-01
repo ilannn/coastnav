@@ -14,7 +14,10 @@ const formikEnhancer = withFormik({
             // alert(JSON.stringify(payload, null, 2));
             bag.setSubmitting(false);
             if (payload.values) delete payload['values'];
-            bag.props.updateStep(payload);
+            bag.props.updateStep({
+                top: payload.top,
+                end: payload.end
+            });
         }, 0);
     },
     displayName: 'MyForm',
