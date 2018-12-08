@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 class NavStep extends Component {
 
     render() {
-        let poliline = <Polyline {...this.props}></Polyline>;
+        let poliline = <Polyline onClick={this.onClick.bind(this)} {...this.props}></Polyline>;
         if (this.props.marker) {
             let marker = <Marker {...this.props.marker}></Marker>;
             return (<> {poliline} {marker} </>);
@@ -15,10 +15,10 @@ class NavStep extends Component {
     onClick = (event) => {
         // if not is edit mode
         if (this.props.type !== 0) {
-            event.stopPropagation();
+            event.originalEvent.stopPropagation();
         }
-        event.preventDefault();
-        this.props.onClick(this.props.id);
+        event.originalEvent.preventDefault();
+        this.props.handleClick(this.props.id);
     }
 }
 

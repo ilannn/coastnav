@@ -45,7 +45,6 @@ class MapView extends Component {
     }
 
     componentDidUpdate() {
-        console.log("componentDidUpdate");
         this.leafletMap.invalidateSize();
     }
 
@@ -54,7 +53,7 @@ class MapView extends Component {
         if (this.props.steps) {
             this.props.steps.forEach(navStep => {
                 steps.push(<NavStep {...navStep} key={navStep.id}
-                    onClick={this.props.handleStepClick}></NavStep>);
+                    handleClick={this.props.handleStepClick}></NavStep>);
             });
         }
         return steps;

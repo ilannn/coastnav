@@ -44,7 +44,7 @@ class App extends Component {
     );
   }
 
-  selectStep(step) {
+  selectStep(step) {    
     this.setState({
       selectedStep: step
     });
@@ -63,11 +63,16 @@ class App extends Component {
         return step.id === this.state.selectedStep.id;
       });
 
-      updatedSelectedStep.positions[1] = [
-        Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-        Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
-      ];
-
+      updatedSelectedStep = Object.assign(updatedSelectedStep, {
+        positions: [
+          updatedSelectedStep.positions[0],
+          [
+            Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+            Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+          ]
+        ]
+      });
+      
       this.setState({
         steps: updatedSteps,
         selectedStep: updatedSelectedStep,
@@ -88,7 +93,7 @@ class App extends Component {
       );
       let updatedSteps = [...this.state.steps, newStep];
 
-      // Mark the new step as the selected step
+      // Mark the new step as the selected step      
       this.setState({
         newStep: { isDrawing: true },
         steps: updatedSteps,
@@ -96,10 +101,10 @@ class App extends Component {
       });
     }
     else {
-      // Update current selected step
-      let updatedSteps = this.state.steps;
+      // Finished drawing -> Update current selected step
+      let updatedSteps = this.state.steps;      
       let updatedSelectedStep = updatedSteps.find(step => {
-        return step.id === this.state.selectedStep.id;
+        return this.state.selectedStep && step.id === this.state.selectedStep.id;
       });
       updatedSelectedStep.type = 1;
 
@@ -145,6 +150,7 @@ class App extends Component {
     if (oldStep) {
       Object.assign(oldStep, changes);
     }
+
     this.setState({
       /* Update selected view */
       selectedStep: this.state.steps.find((step) => {
