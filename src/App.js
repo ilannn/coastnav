@@ -8,12 +8,18 @@ import './App.css';
 
 const stepService = new StepService();
 
+const COOREDINATES_DEPTH = 7;
+
 class App extends Component {
   state = {
     steps: stepService.getSteps(),
     selectedStep: undefined,
     newStep: {
       isDrawing: false
+    },
+    mouseInfo: {
+      lan: undefined,
+      lat: undefined,
     }
   }
   render() {
@@ -21,6 +27,7 @@ class App extends Component {
       <div className="App">
         <MapView
           steps={this.state.steps}
+          mouseInfo={this.state.mouseInfo}
           handleStepClick={this.handleStepClick.bind(this)}
           newStep={this.state.newStep}
           onDrawingClick={this.onDrawingClick.bind(this)}
@@ -55,28 +62,37 @@ class App extends Component {
       let updatedSelectedStep = updatedSteps.find(step => {
         return step.id === this.state.selectedStep.id;
       });
-      updatedSelectedStep.positions[1] = [event.latlng.lat, event.latlng.lng];
+
+      updatedSelectedStep.positions[1] = [
+        Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+        Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+      ];
 
       this.setState({
         steps: updatedSteps,
-        selectedStep: updatedSelectedStep
+        selectedStep: updatedSelectedStep,
+        mouseInfo: { ...event.latlng }
       });
+    }
+    else {
+      this.setState({ mouseInfo: { ...event.latlng } });
     }
   }
 
   onDrawingClick(event) {
     if (!this.state.newStep.isDrawing) {
-      // Create a new step, stating at page X & Y
-      let newStep = stepService.getNewStep(event.latlng.lat, event.latlng.lng);
+      // Create a new step, stating at click position
+      let newStep = stepService.getNewStep(
+        Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+        Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+      );
       let updatedSteps = [...this.state.steps, newStep];
 
       // Mark the new step as the selected step
       this.setState({
         newStep: { isDrawing: true },
         steps: updatedSteps,
-        selectedStep: updatedSteps.find(step => {
-          return step.id === newStep.id;
-        }),
+        selectedStep: newStep
       });
     }
     else {

@@ -15,9 +15,9 @@ const formikEnhancer = withFormik({
         setTimeout(function () {
             // alert(JSON.stringify(updatedStep, null, 2));
             bag.setSubmitting(false);
-            if (updatedStep.values) delete updatedStep['values'];
-
-            bag.props.updateStep(updatedStep);
+            bag.props.updateStep({
+                positions: updatedStep.positions
+            });
         }, 0);
     },
     displayName: 'MyForm',
@@ -41,7 +41,7 @@ class MyForm extends Component {
                                 <Input type="number"
                                     name="positions[0][0]"
                                     placeholder="Lat"
-                                    maxLength="9"
+                                    maxLength="10"
                                     value={this.props.values.positions[0][0]}
                                     onChange={this.props.handleChange}></Input>
                             )}
@@ -51,7 +51,7 @@ class MyForm extends Component {
                                 <Input type="number"
                                     name="positions[0][1]"
                                     placeholder="Lng"
-                                    maxLength="9"
+                                    maxLength="10"
                                     value={this.props.values.positions[0][1]}
                                     onChange={this.props.handleChange}></Input>
                             )}
@@ -66,6 +66,7 @@ class MyForm extends Component {
                                 <Input type="number"
                                     name="positions[1][0]"
                                     placeholder="Lat"
+                                    maxLength="10"
                                     value={this.props.values.positions[1][0]}
                                     onChange={this.props.handleChange}></Input>
                             )}
@@ -75,6 +76,7 @@ class MyForm extends Component {
                                 <Input type="number"
                                     name="positions[1][1]"
                                     placeholder="Lng"
+                                    maxLength="10"
                                     value={this.props.values.positions[1][1]}
                                     onChange={this.props.handleChange}></Input>
                             )}

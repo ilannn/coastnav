@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 /* import SimpleStep from './steps/simpleStep/SimpleStep';
-import MouseInfo from './mouse/MouseInfo';
 import ReactCursorPosition from 'react-cursor-position'; */
 import { Map, TileLayer } from 'react-leaflet';
 import NavStep from './steps/navStep/NavStep';
+import MouseInfo from './mouse/MouseInfo';
 
 import './MapView.css';
 
@@ -27,7 +27,6 @@ class MapView extends Component {
                         onMouseMove={this.onDrawingMove.bind(this)}>
                         {this.createSteps()}
                     </svg>
-                    <MouseInfo></MouseInfo>
                 </ReactCursorPosition> */}
             <Map id="map" key="mymap"
                 ref={this.setLeafletMapRef}
@@ -41,7 +40,13 @@ class MapView extends Component {
                 />
                 {this.getNavSteps()}
             </Map>
+            {/* <MouseInfo {...this.props.mouseInfo}></MouseInfo> */}
         </section>)
+    }
+
+    componentDidUpdate() {
+        console.log("componentDidUpdate");
+        this.leafletMap.invalidateSize();
     }
 
     getNavSteps = () => {
