@@ -10,7 +10,7 @@ export default class ScenarioStep extends Component {
         return (
             <ListItem>
                 <ListItemText onClick={this.onClick.bind(this)}
-                    primary={`(${this.props.top.x}, ${this.props.top.y}) > (${this.props.end.x}, ${this.props.end.y})`}>
+                    primary={`(${[...this.props.positions[0]]}) > (${[...this.props.positions[1]]})`}>
                 </ListItemText>
                 <ListItemSecondaryAction>
                     <IconButton aria-label="Delete" onClick={this.onDelete.bind(this)}>

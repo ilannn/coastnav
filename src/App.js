@@ -67,7 +67,7 @@ class App extends Component {
   onDrawingClick(event) {
     if (!this.state.newStep.isDrawing) {
       // Create a new step, stating at page X & Y
-      let newStep = stepService.getNewStepAt(event.pageX, event.pageY);
+      let newStep = stepService.getNewStep(event.pageX, event.pageY);
       let updatedSteps = [...this.state.steps, newStep];
 
       // Mark the new step as the selected step

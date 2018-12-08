@@ -1,10 +1,5 @@
-.MapViewContainer {
-    background-image: url("https://snazzy-maps-cdn.azureedge.net/assets/127403-no-label-bright-colors.png");
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    min-height: 600px;
+#map {
+    height: 600px;
 }
 
 .stepsContainer {
