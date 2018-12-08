@@ -8,7 +8,7 @@ class NavStep extends Component {
         let poliline = <Polyline {...this.props}></Polyline>;
         if (this.props.marker) {
             let marker = <Marker {...this.props.marker}></Marker>;
-            return (<> {poliline} {marker} </>);
+            return (<div> {poliline} {marker} </div>);
         } else { return (poliline); }
     }
 

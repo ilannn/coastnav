@@ -7,20 +7,17 @@ import './EditorForm.css';
 import { Input } from '@material-ui/core';
 
 const formikEnhancer = withFormik({
-    mapPropsToValues: props => { 
-        return { start: props.positions[0], end: props.positions[1] }
+    mapPropsToValues: props => {
+        return { positions: [...props.positions] }
     },
     //mapValuesToPayload: x => x,
-    handleSubmit: (payload, bag) => {
+    handleSubmit: (updatedStep, bag) => {
         setTimeout(function () {
-            // alert(JSON.stringify(payload, null, 2));
+            // alert(JSON.stringify(updatedStep, null, 2));
             bag.setSubmitting(false);
-            if (payload.values) delete payload['values'];
-            console.log(payload, " was submitted");
-            
-            bag.props.updateStep({
-                positions: [payload.start, payload.end]
-            });
+            if (updatedStep.values) delete updatedStep['values'];
+
+            bag.props.updateStep(updatedStep);
         }, 0);
     },
     displayName: 'MyForm',
@@ -34,54 +31,55 @@ class MyForm extends Component {
     }
 
     render() {
-        debugger;
         return (
             <form onSubmit={this.props.handleSubmit}>
                 <div className="coordinatesBundle">
                     <label>From</label>
-
-                    <Field
-                        render={() => (
-                            <Input type="number"
-                                name="start[0]"
-                                placeholder="Lat"
-                                maxLength="9"
-                                value={this.props.values.start[0]}
-                                onChange={this.props.handleChange}></Input>
-                        )}
-                    />
-                    <Field
-                        render={() => (
-                            <Input type="number"
-                                name="start[1]"
-                                placeholder="Lng"
-                                maxLength="9"
-                                value={this.props.values.start[1]}
-                                onChange={this.props.handleChange}></Input>
-                        )}
-                    />
+                    <div>
+                        <Field
+                            render={() => (
+                                <Input type="number"
+                                    name="positions[0][0]"
+                                    placeholder="Lat"
+                                    maxLength="9"
+                                    value={this.props.values.positions[0][0]}
+                                    onChange={this.props.handleChange}></Input>
+                            )}
+                        />
+                        <Field
+                            render={() => (
+                                <Input type="number"
+                                    name="positions[0][1]"
+                                    placeholder="Lng"
+                                    maxLength="9"
+                                    value={this.props.values.positions[0][1]}
+                                    onChange={this.props.handleChange}></Input>
+                            )}
+                        />
+                    </div>
                 </div>
                 <div className="coordinatesBundle">
                     <label>To</label>
-
-                    <Field
-                        render={() => (
-                            <Input type="number"
-                                name="end[0]"
-                                placeholder="Lat"
-                                value={this.props.values.end[0]}
-                                onChange={this.props.handleChange}></Input>
-                        )}
-                    />
-                    <Field
-                        render={() => (
-                            <Input type="number"
-                                name="end[1]"
-                                placeholder="Lng"
-                                value={this.props.values.end[1]}
-                                onChange={this.props.handleChange}></Input>
-                        )}
-                    />
+                    <div>
+                        <Field
+                            render={() => (
+                                <Input type="number"
+                                    name="positions[1][0]"
+                                    placeholder="Lat"
+                                    value={this.props.values.positions[1][0]}
+                                    onChange={this.props.handleChange}></Input>
+                            )}
+                        />
+                        <Field
+                            render={() => (
+                                <Input type="number"
+                                    name="positions[1][1]"
+                                    placeholder="Lng"
+                                    value={this.props.values.positions[1][1]}
+                                    onChange={this.props.handleChange}></Input>
+                            )}
+                        />
+                    </div>
                 </div>
 
                 <div className="footerButtons">
@@ -94,7 +92,7 @@ class MyForm extends Component {
                                 disabled={
                                     !this.props.dirty || this.props.isSubmitting
                                 }
-                                >Reset</Button>
+                            >Reset</Button>
                         )}
                     />
                     <Field

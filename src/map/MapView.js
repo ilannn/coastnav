@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
-import SimpleStep from './steps/simpleStep/SimpleStep';
+/* import SimpleStep from './steps/simpleStep/SimpleStep';
 import MouseInfo from './mouse/MouseInfo';
-import ReactCursorPosition from 'react-cursor-position';
-import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
+import ReactCursorPosition from 'react-cursor-position'; */
+import { Map, TileLayer } from 'react-leaflet';
+import NavStep from './steps/navStep/NavStep';
 
 import './MapView.css';
-import NavStep from './steps/navStep/NavStep';
+
 const center = [51.505, -0.09]
+
 class MapView extends Component {
-    state = {
-        lat: 51.505,
-        lng: -0.09,
-        zoom: 13,
+
+    leafletMap = null;
+
+    componentDidMount() {
+        console.debug(this.leafletMap);
     }
+
+    setLeafletMapRef = map => (this.leafletMap = map && map.leafletElement);
+
     render() {
-        const position = [this.state.lat, this.state.lng]
         return (<section className="MapViewContainer">
             {/* <ReactCursorPosition>
                     <svg height="800px" width="800px"
@@ -24,8 +29,11 @@ class MapView extends Component {
                     </svg>
                     <MouseInfo></MouseInfo>
                 </ReactCursorPosition> */}
-            <Map id="map" key="maymap"
-                ref="map" center={center} zoom={13} onClick={this.onDrawingClick.bind(this)}>
+            <Map id="map" key="mymap"
+                ref={this.setLeafletMapRef}
+                center={center} zoom={13}
+                onClick={this.onDrawingClick.bind(this)}
+                onMouseMove={this.onDrawingMove.bind(this)}>
 
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -40,20 +48,21 @@ class MapView extends Component {
         let steps = [];
         if (this.props.steps) {
             this.props.steps.forEach(navStep => {
-                steps.push(<NavStep {...navStep} key={navStep.id} onClick={this.props.handleStepClick}></NavStep>);
+                steps.push(<NavStep {...navStep} key={navStep.id}
+                    onClick={this.props.handleStepClick}></NavStep>);
             });
         }
         return steps;
     }
 
     onDrawingClick(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        event.originalEvent.preventDefault();
+        event.originalEvent.stopPropagation();
         this.props.onDrawingClick(event);
     }
     onDrawingMove(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        event.originalEvent.preventDefault();
+        event.originalEvent.stopPropagation();
         this.props.onDrawingMove(event);
     }
 }

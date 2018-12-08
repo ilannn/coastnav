@@ -55,7 +55,7 @@ class App extends Component {
       let updatedSelectedStep = updatedSteps.find(step => {
         return step.id === this.state.selectedStep.id;
       });
-      updatedSelectedStep.end = { x: event.pageX, y: event.pageY };
+      updatedSelectedStep.positions[1] = [event.latlng.lat, event.latlng.lng];
 
       this.setState({
         steps: updatedSteps,
@@ -67,7 +67,7 @@ class App extends Component {
   onDrawingClick(event) {
     if (!this.state.newStep.isDrawing) {
       // Create a new step, stating at page X & Y
-      let newStep = stepService.getNewStep(event.pageX, event.pageY);
+      let newStep = stepService.getNewStep(event.latlng.lat, event.latlng.lng);
       let updatedSteps = [...this.state.steps, newStep];
 
       // Mark the new step as the selected step
