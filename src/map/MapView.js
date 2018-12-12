@@ -11,23 +11,27 @@ const center = [51.505, -0.09]
 
 class MapView extends Component {
 
-    leafletMap = null;
-
-    componentDidMount() {
-        console.debug(this.leafletMap);
+    constructor(props) {
+        super(props);
+        this.escFunction = this.escFunction.bind(this);
     }
+
+    leafletMap = null;
 
     setLeafletMapRef = map => (this.leafletMap = map && map.leafletElement);
 
+    componentDidMount() {
+        document.addEventListener("keydown", this.escFunction, false);
+    }
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.escFunction, false);
+    }
+    componentDidUpdate() {
+        this.leafletMap.invalidateSize();
+    }
+
     render() {
         return (<section className="MapViewContainer">
-            {/* <ReactCursorPosition>
-                    <svg height="800px" width="800px"
-                        onClick={this.onDrawingClick.bind(this)}
-                        onMouseMove={this.onDrawingMove.bind(this)}>
-                        {this.createSteps()}
-                    </svg>
-                </ReactCursorPosition> */}
             <Map id="map" key="mymap"
                 ref={this.setLeafletMapRef}
                 center={center} zoom={13}
@@ -44,11 +48,7 @@ class MapView extends Component {
         </section>)
     }
 
-    componentDidUpdate() {
-        this.leafletMap.invalidateSize();
-    }
-
-    getNavSteps = () => {
+    getNavSteps() {
         let steps = [];
         if (this.props.steps) {
             this.props.steps.forEach(navStep => {
@@ -57,6 +57,12 @@ class MapView extends Component {
             });
         }
         return steps;
+    }
+
+    escFunction(event) {
+        if (event.keyCode === 27) {
+            this.props.handleEscPress();
+        }
     }
 
     onDrawingClick(event) {

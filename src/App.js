@@ -29,6 +29,7 @@ class App extends Component {
           steps={this.state.steps}
           mouseInfo={this.state.mouseInfo}
           handleStepClick={this.handleStepClick.bind(this)}
+          handleEscPress={this.handleEscPress.bind(this)}
           newStep={this.state.newStep}
           onDrawingClick={this.onDrawingClick.bind(this)}
           onDrawingMove={this.onDrawingMove.bind(this)}></MapView>
@@ -49,10 +50,27 @@ class App extends Component {
       selectedStep: step
     });
   }
+
   unSelectStep() {
     this.setState({
       selectedStep: undefined
     });
+  }
+
+  handleEscPress() {
+    if (this.state.newStep.isDrawing) {
+      let selectedStep = this.state.selectedStep;
+      let steps = [...this.state.steps];
+      _.remove(steps, step => step.id === selectedStep.id);
+      
+      this.setState({
+        selectedStep: undefined,
+        steps: steps,
+        newStep: {
+          isDrawing: false
+        }
+      });
+    }
   }
 
   onDrawingMove(event) {
