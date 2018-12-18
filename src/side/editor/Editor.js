@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import './Editor.css';
 import MyEnhancedForm from './editorForm/EditorForm';
+
+import './Editor.css';
 
 class Editor extends Component {
 
@@ -17,8 +18,8 @@ class Editor extends Component {
             </section>
         )
     }
+    
     onSave = (changes) => {
-        console.log("OnSave Editor");
         this.props.onSave(this.props.step.id, changes);
     }
 }

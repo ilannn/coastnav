@@ -36,7 +36,6 @@ class MapView extends Component {
         this.escFunction = this.escFunction.bind(this);
     }
 
-
     componentDidMount() {
         document.addEventListener("keydown", this.escFunction, false);
     }

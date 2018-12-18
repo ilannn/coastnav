@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Field, withFormik } from 'formik';
 import { isEqual } from 'lodash';
 import Button from '@material-ui/core/Button';
+import { Input } from '@material-ui/core';
 
 import './EditorForm.css';
-import { Input } from '@material-ui/core';
 
 const formikEnhancer = withFormik({
     mapPropsToValues: props => {
@@ -24,6 +24,7 @@ const formikEnhancer = withFormik({
 });
 
 class MyForm extends Component {
+    
     componentWillUpdate(nextProps) {
         if (!isEqual(nextProps.positions, this.props.positions)) {
             this.props.resetForm(nextProps);
