@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-/* import SimpleStep from './steps/simpleStep/SimpleStep';
-import ReactCursorPosition from 'react-cursor-position'; */
+import StepService from '../services/StepService';
 import { Map, TileLayer } from 'react-leaflet';
 import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
 import Editor from '../side/editor/Editor';
 import NavStep from './steps/navStep/NavStep';
-import MouseInfo from './mouse/MouseInfo';
+
+import _ from 'lodash';
 
 import './MapView.css';
 
+const stepService = new StepService();
+const COOREDINATES_DEPTH = 7;
 const center = [32.374, 35.116]
 
 class MapView extends Component {
@@ -16,16 +18,24 @@ class MapView extends Component {
     leafletMap = null;
 
     state = {
-        collapsed: !this.props.selectedStep,
+        steps: stepService.getSteps(),
+        selectedStep: undefined,
+        newStep: {
+            isDrawing: false,
+        },
+        mouseInfo: {
+            lan: undefined,
+            lat: undefined,
+        },
+        collapsed: true,
         selected: 'home',
-    };
+    }
 
     constructor(props) {
         super(props);
         this.escFunction = this.escFunction.bind(this);
     }
 
-    setLeafletMapRef = map => (this.leafletMap = map && map.leafletElement);
 
     componentDidMount() {
         document.addEventListener("keydown", this.escFunction, false);
@@ -33,11 +43,12 @@ class MapView extends Component {
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
     }
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         this.leafletMap.invalidateSize();
-        if (this.props.selectedStep !== prevProps.selectedStep) {
+        // Update collapse flag if selected step changed
+        if (this.state.selectedStep !== prevState.selectedStep) {
             this.setState({
-                collapsed: !this.props.selectedStep 
+                collapsed: !this.state.selectedStep,
             });
         }
     }
@@ -46,11 +57,11 @@ class MapView extends Component {
         return (<section className="MapViewContainer">
             <Sidebar id="sidebar"
                 collapsed={this.state.collapsed} selected={this.state.selected}
-                onOpen={this.onOpen.bind(this)} onClose={this.onClose.bind(this)}>
+                onOpen={this.onSideBarOpen.bind(this)} onClose={this.onSideBarClose.bind(this)}>
                 <Tab id="home" header="Home" icon="fa fa-home">
-                    <Editor step={this.props.selectedStep}
-                        onStepChange={this.props.editorOnChange}
-                        onSave={this.props.editorOnSave}></Editor>
+                    <Editor step={this.state.selectedStep}
+                        onStepChange={this.state.editorOnChange}
+                        onSave={this.state.editorOnSave}></Editor>
                 </Tab>
                 <Tab id="settings" header="Settings" icon="fa fa-cog" anchor="bottom">
                     <p>Settings dialogue.</p>
@@ -68,47 +79,182 @@ class MapView extends Component {
                 />
                 {this.getNavSteps()}
             </Map>
-            {/* <MouseInfo {...this.props.mouseInfo}></MouseInfo> */}
         </section>)
     }
 
+    setLeafletMapRef = map => (this.leafletMap = map && map.leafletElement);
 
-    onClose() {
+    /* Sidebar */
+    onSideBarClose() {
         this.setState({ collapsed: true });
     }
-    onOpen(id) {
+
+    onSideBarOpen(id) {
         this.setState({
             collapsed: false,
             selected: id,
         });
     }
 
+    /* Steps */
     getNavSteps() {
         let steps = [];
-        if (this.props.steps) {
-            this.props.steps.forEach(navStep => {
+        if (this.state.steps) {
+            this.state.steps.forEach(navStep => {
                 steps.push(<NavStep {...navStep} key={navStep.id}
-                    handleClick={this.props.handleStepClick}></NavStep>);
+                    handleClick={this.handleStepClick.bind(this)}></NavStep>);
             });
         }
         return steps;
     }
 
+    selectStep(step) {
+        this.setState({
+            selectedStep: step,
+        });
+    }
+
+    unSelectStep() {
+        this.setState({
+            selectedStep: undefined,
+        });
+    }
+
+    handleStepClick(stepId) {
+        this.selectStep(this.state.steps.find(
+            (step) => {
+                return step.id === stepId;
+            })
+        );
+    }
+
     escFunction(event) {
         if (event.keyCode === 27) {
-            this.props.handleEscPress();
+            this.state.handleEscPress();
+        }
+    }
+
+    /**
+     * Cancel drawing & unselect step when ESC pressed.
+     */
+    handleEscPress() {
+        if (this.state.newStep.isDrawing) {
+            let selectedStep = this.state.selectedStep;
+            let steps = [...this.state.steps];
+            _.remove(steps, step => step.id === selectedStep.id);
+
+            this.setState({
+                selectedStep: undefined,
+                steps: steps,
+                newStep: {
+                    isDrawing: false,
+                },
+            });
+        }
+    }
+
+    onDrawingMove(event) {
+        event.originalEvent.preventDefault();
+        event.originalEvent.stopPropagation();
+        if (this.state.newStep.isDrawing) {
+            // Update current selected step
+            let updatedSteps = this.state.steps;
+            let updatedSelectedStep = updatedSteps.find(step => {
+                return step.id === this.state.selectedStep.id;
+            });
+
+            updatedSelectedStep = Object.assign(updatedSelectedStep, {
+                positions: [
+                    updatedSelectedStep.positions[0],
+                    [
+                        Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                        Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+                    ]
+                ]
+            });
+
+            this.setState({
+                steps: updatedSteps,
+                selectedStep: updatedSelectedStep,
+                mouseInfo: { ...event.latlng },
+            });
+        }
+        else {
+            this.setState({ mouseInfo: { ...event.latlng } });
         }
     }
 
     onDrawingClick(event) {
+        // Isolate this event
         event.originalEvent.preventDefault();
         event.originalEvent.stopPropagation();
-        this.props.onDrawingClick(event);
+
+        if (!this.state.newStep.isDrawing) {
+            // Create a new step, stating at click position
+            let newStep = stepService.getNewStep(
+                Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+            );
+            let updatedSteps = [...this.state.steps, newStep];
+
+            // Mark the new step as the selected step      
+            this.setState({
+                newStep: { isDrawing: true },
+                steps: updatedSteps,
+                selectedStep: newStep,
+            });
+        }
+        else {
+            // Finished drawing -> Update current selected step
+            let updatedSteps = this.state.steps;
+            let updatedSelectedStep = updatedSteps.find(step => {
+                return this.state.selectedStep && step.id === this.state.selectedStep.id;
+            });
+            updatedSelectedStep.type = 1;
+
+            this.setState({
+                newStep: { isDrawing: false },
+                steps: updatedSteps,
+                selectedStep: updatedSelectedStep,
+            });
+        }
     }
-    onDrawingMove(event) {
-        event.originalEvent.preventDefault();
-        event.originalEvent.stopPropagation();
-        this.props.onDrawingMove(event);
+
+
+    handleNewStep() {
+        let newStep = stepService.getNewStep();
+        this.setState({
+            steps: [...this.state.steps, newStep],
+            selectedStep: newStep,
+        });
+    }
+
+    handleRemoveStep(stepId) {
+        let updatedSteps = _.filter(this.state.steps, (step) => {
+            return step.id !== stepId;
+        });
+        this.setState({
+            /* Update selected view */
+            steps: updatedSteps,
+        });
+    }
+
+    handleEditorSave(updatedStepId, changes) {
+        let steps = this.state.steps;
+        let oldStep = steps.find((step) => {
+            return step.id === updatedStepId;
+        });
+        if (oldStep) {
+            Object.assign(oldStep, changes);
+        }
+
+        /* Update selected view & global steps list */
+        this.setState({
+            selectedStep: this.state.steps.find((step) => {
+                return step.id === updatedStepId;
+            }),
+            steps: steps,
+        });
     }
 }
 
