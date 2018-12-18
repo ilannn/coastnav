@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 /* import SimpleStep from './steps/simpleStep/SimpleStep';
 import ReactCursorPosition from 'react-cursor-position'; */
 import { Map, TileLayer } from 'react-leaflet';
+import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
+import Editor from '../side/editor/Editor';
 import NavStep from './steps/navStep/NavStep';
 import MouseInfo from './mouse/MouseInfo';
 
@@ -11,12 +13,17 @@ const center = [51.505, -0.09]
 
 class MapView extends Component {
 
+    leafletMap = null;
+
+    state = {
+        collapsed: !this.props.selectedStep,
+        selected: 'home',
+    };
+
     constructor(props) {
         super(props);
         this.escFunction = this.escFunction.bind(this);
     }
-
-    leafletMap = null;
 
     setLeafletMapRef = map => (this.leafletMap = map && map.leafletElement);
 
@@ -26,12 +33,29 @@ class MapView extends Component {
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
     }
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
         this.leafletMap.invalidateSize();
+        if (this.props.selectedStep !== prevProps.selectedStep) {
+            this.setState({
+                collapsed: !this.props.selectedStep 
+            });
+        }
     }
 
     render() {
         return (<section className="MapViewContainer">
+            <Sidebar id="sidebar"
+                collapsed={this.state.collapsed} selected={this.state.selected}
+                onOpen={this.onOpen.bind(this)} onClose={this.onClose.bind(this)}>
+                <Tab id="home" header="Home" icon="fa fa-home">
+                    <Editor step={this.props.selectedStep}
+                        onStepChange={this.props.editorOnChange}
+                        onSave={this.props.editorOnSave}></Editor>
+                </Tab>
+                <Tab id="settings" header="Settings" icon="fa fa-cog" anchor="bottom">
+                    <p>Settings dialogue.</p>
+                </Tab>
+            </Sidebar>
             <Map id="map" key="mymap"
                 ref={this.setLeafletMapRef}
                 center={center} zoom={13}
@@ -46,6 +70,17 @@ class MapView extends Component {
             </Map>
             {/* <MouseInfo {...this.props.mouseInfo}></MouseInfo> */}
         </section>)
+    }
+
+
+    onClose() {
+        this.setState({ collapsed: true });
+    }
+    onOpen(id) {
+        this.setState({
+            collapsed: false,
+            selected: id,
+        });
     }
 
     getNavSteps() {

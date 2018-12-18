@@ -1,6 +1,6 @@
 .App {
   display: grid;
-  grid-template-columns: 7fr 3fr;
+  grid-template-columns: 1fr;
 }
 
 MapView {

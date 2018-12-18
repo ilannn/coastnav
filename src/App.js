@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import MapView from './map/MapView';
-import SideView from './side/SideView';
 import StepService from './services/StepService';
 import _ from 'lodash';
 
@@ -27,20 +26,15 @@ class App extends Component {
       <div className="App">
         <MapView
           steps={this.state.steps}
+          selectedStep={this.state.selectedStep}
           mouseInfo={this.state.mouseInfo}
           handleStepClick={this.handleStepClick.bind(this)}
           handleEscPress={this.handleEscPress.bind(this)}
           newStep={this.state.newStep}
+          editorOnSave={this.handleEditorSave.bind(this)}
+          unSelectStep={this.unSelectStep.bind(this)}
           onDrawingClick={this.onDrawingClick.bind(this)}
           onDrawingMove={this.onDrawingMove.bind(this)}></MapView>
-        <SideView
-          steps={this.state.steps}
-          selectedStep={this.state.selectedStep}
-          editorOnSave={this.handleEditorSave.bind(this)}
-          onSelectStep={this.selectStep.bind(this)}
-          onUnselectStep={this.unSelectStep.bind(this)}
-          onNewStep={this.handleNewStep.bind(this)}
-          onRemoveStep={this.handleRemoveStep.bind(this)}></SideView>
       </div>
     );
   }
