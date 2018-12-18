@@ -9,7 +9,7 @@ import MouseInfo from './mouse/MouseInfo';
 
 import './MapView.css';
 
-const center = [51.505, -0.09]
+const center = [32.374, 35.116]
 
 class MapView extends Component {
 
@@ -58,7 +58,7 @@ class MapView extends Component {
             </Sidebar>
             <Map id="map" key="mymap"
                 ref={this.setLeafletMapRef}
-                center={center} zoom={13}
+                center={center} zoom={10}
                 onClick={this.onDrawingClick.bind(this)}
                 onMouseMove={this.onDrawingMove.bind(this)}>
 
