@@ -64,6 +64,10 @@ class MapView extends Component {
                 center={center} zoom={10}
                 onClick={this.onMapClick.bind(this)}
                 onMouseMove={this.onDrawingMove.bind(this)}>
+                <TileLayer
+                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
 
                 <Control position="topright">
                     <Drawkit onSelectTool={this.onSelectTool.bind(this)}>
@@ -86,10 +90,6 @@ class MapView extends Component {
                     </Tab>
                 </Sidebar>
 
-                <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
                 {this.setNavSteps()}
             </Map>
         </section>)
