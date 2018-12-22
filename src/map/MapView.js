@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import './MapView.css';
-import StepService from '../services/StepService';
+import _ from 'lodash';
 import { Map, TileLayer } from 'react-leaflet';
 import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
+import Control from 'react-leaflet-control';
+import L from 'leaflet';
+
+import StepService from '../services/StepService';
 import Editor from '../side/editor/Editor';
 import Drawkit from './drawkit/Drawkit';
 import NavStep from './steps/navStep/NavStep';
-import Control from 'react-leaflet-control';
-
-import _ from 'lodash';
-
 import GuidelineStep from './steps/navStep/GuidelineStep';
 import TBStep from './steps/navStep/TBStep';
 
@@ -43,6 +43,7 @@ class MapView extends Component {
 
     componentDidMount() {
         document.addEventListener("keydown", this.escFunction, false);
+        this.setNavSteps();
     }
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
@@ -64,6 +65,7 @@ class MapView extends Component {
                 center={center} zoom={10}
                 onClick={this.onMapClick.bind(this)}
                 onMouseMove={this.onDrawingMove.bind(this)}>
+                
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -90,7 +92,6 @@ class MapView extends Component {
                     </Tab>
                 </Sidebar>
 
-                {this.setNavSteps()}
             </Map>
         </section>)
     }
@@ -123,14 +124,18 @@ class MapView extends Component {
 
     /* Steps */
     setNavSteps() {
-        let steps = [];
-        if (this.state.steps) {
-            this.state.steps.forEach(navStep => {
-                steps.push(<TBStep {...navStep} key={navStep.id}
-                    handleClick={this.handleStepClick.bind(this)}></TBStep>);
-            });
+        if (!this.leafletMap) {
+            console.error("Couldn't add lines to map.");
         }
-        return steps;
+        else {
+            if (this.state.steps) {
+                this.state.steps.forEach(navStep => {
+                    TBStep.addTo(this.leafletMap, navStep);
+                    // this.leafletMap.add.push(<TBStep {...navStep} key={navStep.id}
+                    //     handleClick={this.handleStepClick.bind(this)}></TBStep>);
+                });
+            }
+        }
     }
 
     selectStep(step) {

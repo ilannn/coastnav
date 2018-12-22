@@ -11,7 +11,6 @@ export default class StepService {
                 color: "black",
                 stroke: 20,
                 marker: {
-                    position: [32.37415, 35.11615]
                 }
             },
             {
@@ -20,7 +19,6 @@ export default class StepService {
                 color: "black",
                 stroke: 20,
                 marker: {
-                    position: [32.31, 35.11]
                 }
             }
         ]
