@@ -4,7 +4,7 @@ import { Map, TileLayer } from 'react-leaflet';
 import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
 import Editor from '../side/editor/Editor';
 import NavStep from './steps/navStep/NavStep';
-import { MapContext } from './map-context';
+import Control from 'react-leaflet-control';
 
 import _ from 'lodash';
 
@@ -60,11 +60,25 @@ class MapView extends Component {
                 center={center} zoom={10}
                 onClick={this.onMapClick.bind(this)}
                 onMouseMove={this.onDrawingMove.bind(this)}>
-                
+
+                <Control position="topright">
+                    <div className="toolbar">
+                        <div>
+                            Line 1
+                        </div>
+                        <div>
+                            Line 1
+                        </div>
+                        <div>
+                            Line 1
+                        </div>
+                    </div>
+                </Control>
+
                 <Sidebar id="sidebar"
-                    collapsed={this.state.collapsed} 
+                    collapsed={this.state.collapsed}
                     selected={this.state.selected}
-                    onOpen={this.onSideBarOpen.bind(this)} 
+                    onOpen={this.onSideBarOpen.bind(this)}
                     onClose={this.onSideBarClose.bind(this)}
                     onClick={this.onSideBarClick.bind(this)}>
                     <Tab id="home" header="Home" icon="fa fa-home">
