@@ -3,6 +3,7 @@ import StepService from '../services/StepService';
 import { Map, TileLayer } from 'react-leaflet';
 import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
 import Editor from '../side/editor/Editor';
+import Drawkit from './drawkit/Drawkit';
 import NavStep from './steps/navStep/NavStep';
 import Control from 'react-leaflet-control';
 
@@ -21,9 +22,9 @@ class MapView extends Component {
     state = {
         steps: stepService.getSteps(),
         selectedStep: undefined,
+        selectedTool: null,
         draw: {
             isDrawing: false,
-            selectedTool: null,
         },
         mouseInfo: {
             lan: undefined,
@@ -63,17 +64,8 @@ class MapView extends Component {
                 onMouseMove={this.onDrawingMove.bind(this)}>
 
                 <Control position="topright">
-                    <div className="toolbar">
-                        <div>
-                            Line 1
-                        </div>
-                        <div>
-                            Line 1
-                        </div>
-                        <div>
-                            Line 1
-                        </div>
-                    </div>
+                    <Drawkit onSelectTool={this.onSelectTool.bind(this)}>
+                    </Drawkit>
                 </Control>
 
                 <Sidebar id="sidebar"
@@ -116,9 +108,15 @@ class MapView extends Component {
     }
 
     onSideBarClick(event) {
-        console.debug(event);
         event.originalEvent.preventDefault();
         event.originalEvent.view.L.DomEvent.stopPropagation(event);
+    }
+
+    /* Drawkit */
+    onSelectTool(tool) {
+        this.setState({
+            selectedTool: tool,
+        })
     }
 
     /* Steps */
@@ -213,13 +211,19 @@ class MapView extends Component {
         // Isolate this event
         event.originalEvent.preventDefault();
         event.originalEvent.view.L.DomEvent.stopPropagation(event);
-
+        if (!this.state.selectedTool) {
+            return;
+        }
         if (!this.state.draw.isDrawing) {
             // Create a new step, stating at click position
             let newStep = stepService.getNewStep(
                 Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
                 Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
             );
+            
+            // assing the new line the current tool's options
+            Object.assign(newStep, this.state.selectedTool.options);
+            
             let updatedSteps = [...this.state.steps, newStep];
 
             // Mark the new step as the selected step      
@@ -244,7 +248,6 @@ class MapView extends Component {
             });
         }
     }
-
 
     handleNewStep() {
         let newStep = stepService.getNewStep();
