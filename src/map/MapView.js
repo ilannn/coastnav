@@ -21,8 +21,9 @@ class MapView extends Component {
     state = {
         steps: stepService.getSteps(),
         selectedStep: undefined,
-        newStep: {
+        draw: {
             isDrawing: false,
+            selectedTool: null,
         },
         mouseInfo: {
             lan: undefined,
@@ -162,7 +163,7 @@ class MapView extends Component {
      * Cancel drawing & unselect step when ESC pressed.
      */
     handleEscPress() {
-        if (this.state.newStep.isDrawing) {
+        if (this.state.draw.isDrawing) {
             let selectedStep = this.state.selectedStep;
             let steps = [...this.state.steps];
             _.remove(steps, step => step.id === selectedStep.id);
@@ -170,7 +171,7 @@ class MapView extends Component {
             this.setState({
                 selectedStep: undefined,
                 steps: steps,
-                newStep: {
+                draw: {
                     isDrawing: false,
                 },
             });
@@ -180,7 +181,7 @@ class MapView extends Component {
     onDrawingMove(event) {
         event.originalEvent.preventDefault();
         event.originalEvent.stopPropagation();
-        if (this.state.newStep.isDrawing) {
+        if (this.state.draw.isDrawing) {
             // Update current selected step
             let updatedSteps = this.state.steps;
             let updatedSelectedStep = updatedSteps.find(step => {
@@ -213,7 +214,7 @@ class MapView extends Component {
         event.originalEvent.preventDefault();
         event.originalEvent.view.L.DomEvent.stopPropagation(event);
 
-        if (!this.state.newStep.isDrawing) {
+        if (!this.state.draw.isDrawing) {
             // Create a new step, stating at click position
             let newStep = stepService.getNewStep(
                 Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
@@ -223,7 +224,7 @@ class MapView extends Component {
 
             // Mark the new step as the selected step      
             this.setState({
-                newStep: { isDrawing: true },
+                draw: { isDrawing: true },
                 steps: updatedSteps,
                 selectedStep: newStep,
             });
@@ -237,7 +238,7 @@ class MapView extends Component {
             updatedSelectedStep.type = 1;
 
             this.setState({
-                newStep: { isDrawing: false },
+                draw: { isDrawing: false },
                 steps: updatedSteps,
                 selectedStep: updatedSelectedStep,
             });
