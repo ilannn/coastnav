@@ -4,6 +4,7 @@ import { Map, TileLayer } from 'react-leaflet';
 import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
 import Editor from '../side/editor/Editor';
 import NavStep from './steps/navStep/NavStep';
+import { MapContext } from './map-context';
 
 import _ from 'lodash';
 
@@ -54,23 +55,27 @@ class MapView extends Component {
 
     render() {
         return (<section className="MapViewContainer">
-            <Sidebar id="sidebar"
-                collapsed={this.state.collapsed} selected={this.state.selected}
-                onOpen={this.onSideBarOpen.bind(this)} onClose={this.onSideBarClose.bind(this)}>
-                <Tab id="home" header="Home" icon="fa fa-home">
-                    <Editor step={this.state.selectedStep}
-                        onStepChange={this.state.editorOnChange}
-                        onSave={this.state.editorOnSave}></Editor>
-                </Tab>
-                <Tab id="settings" header="Settings" icon="fa fa-cog" anchor="bottom">
-                    <p>Settings dialogue.</p>
-                </Tab>
-            </Sidebar>
             <Map id="map" key="mymap"
                 ref={this.setLeafletMapRef}
                 center={center} zoom={10}
-                onClick={this.onDrawingClick.bind(this)}
+                onClick={this.onMapClick.bind(this)}
                 onMouseMove={this.onDrawingMove.bind(this)}>
+                
+                <Sidebar id="sidebar"
+                    collapsed={this.state.collapsed} 
+                    selected={this.state.selected}
+                    onOpen={this.onSideBarOpen.bind(this)} 
+                    onClose={this.onSideBarClose.bind(this)}
+                    onClick={this.onSideBarClick.bind(this)}>
+                    <Tab id="home" header="Home" icon="fa fa-home">
+                        <Editor step={this.state.selectedStep}
+                            onStepChange={this.state.editorOnChange}
+                            onSave={this.state.editorOnSave}></Editor>
+                    </Tab>
+                    <Tab id="settings" header="Settings" icon="fa fa-cog" anchor="bottom">
+                        <p>Settings dialogue.</p>
+                    </Tab>
+                </Sidebar>
 
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -93,6 +98,12 @@ class MapView extends Component {
             collapsed: false,
             selected: id,
         });
+    }
+
+    onSideBarClick(event) {
+        console.debug(event);
+        event.originalEvent.preventDefault();
+        event.originalEvent.view.L.DomEvent.stopPropagation(event);
     }
 
     /* Steps */
@@ -129,7 +140,7 @@ class MapView extends Component {
 
     escFunction(event) {
         if (event.keyCode === 27) {
-            this.state.handleEscPress();
+            this.handleEscPress();
         }
     }
 
@@ -183,10 +194,10 @@ class MapView extends Component {
         }
     }
 
-    onDrawingClick(event) {
+    onMapClick(event) {
         // Isolate this event
         event.originalEvent.preventDefault();
-        event.originalEvent.stopPropagation();
+        event.originalEvent.view.L.DomEvent.stopPropagation(event);
 
         if (!this.state.newStep.isDrawing) {
             // Create a new step, stating at click position

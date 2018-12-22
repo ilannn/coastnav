@@ -31,6 +31,7 @@ export default class StepService {
             id: this.id++, type: 2,
             positions: [[lat, lng], [lat, lng]],
             color: "black",
+            type: 0,
             stroke: 20,
             marker: undefined
         }

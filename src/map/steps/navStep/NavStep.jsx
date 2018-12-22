@@ -15,9 +15,9 @@ class NavStep extends Component {
     onClick = (event) => {
         // if not is edit mode
         if (this.props.type !== 0) {
-            event.originalEvent.stopPropagation();
+            event.originalEvent.view.L.DomEvent.stopPropagation(event);
         }
-        event.originalEvent.preventDefault();
+        // event.originalEvent.preventDefault();
         this.props.handleClick(this.props.id);
     }
 }
