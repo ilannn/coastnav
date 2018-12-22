@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 class NavStep extends Component {
 
     render() {
-        let poliline = <Polyline onClick={this.onClick.bind(this)} {...this.props}></Polyline>;
-        if (this.props.marker) {
-            let marker = <Marker {...this.props.marker}></Marker>;
-            return (<> {poliline} {marker} </>);
-        } else { return (poliline); }
+        return (<span>
+            <Polyline onClick={this.onClick.bind(this)} {...this.props}></Polyline>
+            {this.props.children}
+        </span>
+        );
     }
 
     onClick = (event) => {

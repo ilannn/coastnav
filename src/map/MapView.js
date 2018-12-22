@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './MapView.css';
 import StepService from '../services/StepService';
 import { Map, TileLayer } from 'react-leaflet';
 import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
@@ -9,7 +10,8 @@ import Control from 'react-leaflet-control';
 
 import _ from 'lodash';
 
-import './MapView.css';
+import GuidelineStep from './steps/navStep/GuidelineStep';
+import TBStep from './steps/navStep/TBStep';
 
 const stepService = new StepService();
 const COOREDINATES_DEPTH = 7;
@@ -88,7 +90,7 @@ class MapView extends Component {
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {this.getNavSteps()}
+                {this.setNavSteps()}
             </Map>
         </section>)
     }
@@ -120,12 +122,12 @@ class MapView extends Component {
     }
 
     /* Steps */
-    getNavSteps() {
+    setNavSteps() {
         let steps = [];
         if (this.state.steps) {
             this.state.steps.forEach(navStep => {
-                steps.push(<NavStep {...navStep} key={navStep.id}
-                    handleClick={this.handleStepClick.bind(this)}></NavStep>);
+                steps.push(<TBStep {...navStep} key={navStep.id}
+                    handleClick={this.handleStepClick.bind(this)}></TBStep>);
             });
         }
         return steps;
