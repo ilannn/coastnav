@@ -2,11 +2,10 @@ import L from 'leaflet';
 
 const tbStepProps = {
     color: 'black',
-    dashArray: '4',
     width: 8,
 }
 const tbMarkerProps = {
-
+    // Put marker's const props here..
 }
 
 export default class TBStep {
