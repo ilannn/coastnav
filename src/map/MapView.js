@@ -12,6 +12,7 @@ import Drawkit from './drawkit/Drawkit';
 import NavStep from './steps/navStep/NavStep';
 import GuidelineStep from './steps/navStep/GuidelineStep';
 import TBStep from './steps/navStep/TBStep';
+import CogStep from './steps/navStep/CogStep';
 
 const stepService = new StepService();
 const COOREDINATES_DEPTH = 7;
@@ -130,7 +131,7 @@ class MapView extends Component {
         else {
             if (this.state.steps) {
                 this.state.steps.forEach(navStep => {
-                    TBStep.addTo(this.leafletMap, navStep);
+                    GuidelineStep.addTo(this.leafletMap, navStep);
                     // this.leafletMap.add.push(<TBStep {...navStep} key={navStep.id}
                     //     handleClick={this.handleStepClick.bind(this)}></TBStep>);
                 });
