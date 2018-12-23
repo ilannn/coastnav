@@ -41,9 +41,7 @@ export default class StepService {
         return this.getNewStep([...latlng]);
     }
 
-    static calcAngle = function (points, direction) {
-        let p1 = points[0];
-        let p2 = points[1];
+    static calcAngle = function (p1, p2, direction) {
         var lat1 = p1.lat / 180 * Math.PI;
         var lat2 = p2.lat / 180 * Math.PI;
         var lng1 = p1.lng / 180 * Math.PI;
@@ -58,9 +56,9 @@ export default class StepService {
         return (brng % 360);
     }
 
-    static calcDistance = function (points) {
+    static calcDistance = function (p1, p2) {
         let unit = "M";
-        let dist = points[0].distanceTo(points[1]);
+        let dist = p1.distanceTo(p2);
         if (dist >= 1609344) {
             dist = (dist/1609.344).toFixed(0);
         } else if (dist >= 160934.4) {
