@@ -10,10 +10,9 @@ const formikEnhancer = withFormik({
     mapPropsToValues: props => {
         return { positions: [...props.positions] }
     },
-    //mapValuesToPayload: x => x,
     handleSubmit: (updatedStep, bag) => {
+        debugger;
         setTimeout(function () {
-            // alert(JSON.stringify(updatedStep, null, 2));
             bag.setSubmitting(false);
             bag.props.updateStep({
                 positions: updatedStep.positions

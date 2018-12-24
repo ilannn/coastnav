@@ -46,6 +46,7 @@ class MapView extends Component {
     }
 
     componentDidMount() {
+        this.leafletMap.on('click', this.onMapClick.bind(this));
         document.addEventListener("keydown", this.escFunction, false);
         this.setMousePosition();
     }
@@ -70,7 +71,6 @@ class MapView extends Component {
             <Map id="map" key="mymap"
                 ref={this.setLeafletMapRef}
                 center={center} zoom={10}
-                onClick={this.onMapClick.bind(this)}
                 onMouseMove={this.onDrawingMove.bind(this)}>
                 
                 <TileLayer
@@ -163,6 +163,10 @@ class MapView extends Component {
                     }
                     // Create new steps
                     this.leafletSteps[navStep.id] = this._getNewStep(navStep);
+                    // Register event listeners
+                    this.leafletSteps[navStep.id].map(
+                        this.stepOnClickListener.bind(this)
+                    );
                 });
             }
         }
@@ -177,6 +181,32 @@ class MapView extends Component {
             case StepType.GUIDELINE: 
             default:
                 return GuidelineStep.addTo(this.leafletMap, navStep);
+        }
+    }
+
+    stepOnClickListener(stepLayer) {
+        stepLayer.on('click', this.stepOnClick.bind(this));
+    }
+
+    stepOnClick(event) {
+        if (this.state.draw.isDrawing) {
+            return;
+        }
+        // Isolate event
+        event.originalEvent.view.L.DomEvent.stopPropagation(event);
+        // Find selected step
+        let clickedStepId = +_.findKey(this.leafletSteps, (stepLayers) => {
+            return stepLayers.indexOf(event.target) >= 0;
+        });
+        if (!clickedStepId) return;
+        // Select / Unselect
+        if (!this.state.selectedStep || clickedStepId !== this.state.selectedStep.id) {
+            this.selectStep(_.find(this.state.steps, {
+                id: clickedStepId
+            }));
+        }
+        else {
+            this.unSelectStep();
         }
     }
 
@@ -257,9 +287,10 @@ class MapView extends Component {
     }
 
     onMapClick(event) {
-        // Isolate this event
-        //event.originalEvent.preventDefault();
-        //event.originalEvent.view.L.DomEvent.stopPropagation(event);
+        event.originalEvent.preventDefault();
+        event.originalEvent.view.L.DomEvent.stopPropagation(event);
+        
+        // If no tool selected - do nothing
         if (!this.state.selectedTool) {
             return;
         }
@@ -284,16 +315,8 @@ class MapView extends Component {
             });
         }
         else {
-            // Finished drawing -> Update current selected step
-            let updatedSteps = this.state.steps;
-            let updatedSelectedStep = updatedSteps.find(step => {
-                return this.state.selectedStep && step.id === this.state.selectedStep.id;
-            });
-
             this.setState({
                 draw: { isDrawing: false },
-                steps: updatedSteps,
-                selectedStep: updatedSelectedStep,
             });
         }
     }
@@ -317,6 +340,7 @@ class MapView extends Component {
     }
 
     handleEditorSave(updatedStepId, changes) {
+        debugger;
         let steps = this.state.steps;
         let oldStep = steps.find((step) => {
             return step.id === updatedStepId;
