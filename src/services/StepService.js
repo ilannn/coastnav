@@ -1,3 +1,5 @@
+import { StepType } from '../models/steps';
+
 export default class StepService {
     constructor() {
         this.id = 1;
@@ -6,39 +8,35 @@ export default class StepService {
     getSteps = (limit) => {
         return [
             {
-                id: this.id++, type: 1,
+                id: this.id++, type: StepType.GUIDELINE,
                 positions: [[32.374, 35.116], [32.4, 35.2]],
                 color: "black",
-                stroke: 20,
                 marker: {
                 }
             },
             {
-                id: this.id++, type: 2,
+                id: this.id++, type: StepType.TB,
                 positions: [[32.4, 35.3], [32.2, 35.2]],
                 color: "black",
-                stroke: 20,
                 marker: {
                 }
             }
         ]
     }
 
-    getNewStep = (lat = 0, lng = 0) => {
+    createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE) => {
         return {
-            id: this.id++, type: 2,
+            id: this.id++, type: stepType,
             positions: [[lat, lng], [lat, lng]],
-            color: "black",
-            type: 0,
-            stroke: 20,
-            marker: undefined
+            marker: {
+            }
         }
     }
 
     getNewStepAt = (x, y) => {
         let latlng = [0,0];
         // calc latlng by projection
-        return this.getNewStep([...latlng]);
+        return this.createNewStep([...latlng]);
     }
 
     static calcAngle = function (p1, p2, direction) {

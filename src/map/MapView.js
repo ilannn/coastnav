@@ -5,14 +5,15 @@ import { Map, TileLayer } from 'react-leaflet';
 import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
 import Control from 'react-leaflet-control';
 import L from 'leaflet';
+import 'leaflet-mouse-position';
 
 import StepService from '../services/StepService';
 import Editor from '../side/editor/Editor';
 import Drawkit from './drawkit/Drawkit';
-import NavStep from './steps/navStep/NavStep';
 import GuidelineStep from './steps/navStep/GuidelineStep';
 import TBStep from './steps/navStep/TBStep';
 import CogStep from './steps/navStep/CogStep';
+import { StepType } from '../models/steps';
 
 const stepService = new StepService();
 const COOREDINATES_DEPTH = 7;
@@ -21,6 +22,7 @@ const center = [32.374, 35.116]
 class MapView extends Component {
 
     leafletMap = null;
+    leafletSteps = {};
 
     state = {
         steps: stepService.getSteps(),
@@ -40,17 +42,21 @@ class MapView extends Component {
     constructor(props) {
         super(props);
         this.escFunction = this.escFunction.bind(this);
+        this.setMousePosition = this.setMousePosition.bind(this);
     }
 
     componentDidMount() {
         document.addEventListener("keydown", this.escFunction, false);
-        this.setNavSteps();
+        this.setMousePosition();
     }
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
     }
     componentDidUpdate(prevProps, prevState) {
+        
         this.leafletMap.invalidateSize();
+        this.setNavSteps();
+        
         // Update collapse flag if selected step changed
         if (this.state.selectedStep !== prevState.selectedStep) {
             this.setState({
@@ -86,7 +92,7 @@ class MapView extends Component {
                     <Tab id="home" header="Home" icon="fa fa-home">
                         <Editor step={this.state.selectedStep}
                             onStepChange={this.state.editorOnChange}
-                            onSave={this.state.editorOnSave}></Editor>
+                            onSave={this.handleEditorSave}></Editor>
                     </Tab>
                     <Tab id="settings" header="Settings" icon="fa fa-cog" anchor="bottom">
                         <p>Settings dialogue.</p>
@@ -123,19 +129,49 @@ class MapView extends Component {
         })
     }
 
+    /* Mouse */
+    setMousePosition() {
+        if (!this.leafletMap) {
+            console.error("Couldn't add lines to map. Missing map ref");
+        }
+        else {
+            L.control.mousePosition({
+                position: 'bottomright',
+            }).addTo(this.leafletMap);
+        }
+    }
+
     /* Steps */
     setNavSteps() {
         if (!this.leafletMap) {
-            console.error("Couldn't add lines to map.");
+            console.error("Couldn't add lines to map. Missing map ref");
         }
         else {
+            // TODO: Check the diff between state and saved steps.
             if (this.state.steps) {
                 this.state.steps.forEach(navStep => {
-                    GuidelineStep.addTo(this.leafletMap, navStep);
-                    // this.leafletMap.add.push(<TBStep {...navStep} key={navStep.id}
-                    //     handleClick={this.handleStepClick.bind(this)}></TBStep>);
+                    // Remove existing steps
+                    if (this.leafletSteps[navStep.id]) {
+                        this.leafletSteps[navStep.id].map(layer => {
+                            this.leafletMap.removeLayer(layer);
+                        })
+                    }
+                    // Create new steps
+                    this.leafletSteps[navStep.id] = this._getNewStep(navStep);
                 });
             }
+        }
+    }
+
+    _getNewStep(navStep) {
+        switch(navStep.type) {
+            case StepType.TB:
+                return TBStep.addTo(this.leafletMap, navStep);
+            case StepType.COG:
+                return CogStep.addTo(this.leafletMap, navStep);
+            case StepType.GUIDELINE: 
+            default:
+                return GuidelineStep.addTo(this.leafletMap, navStep);
         }
     }
 
@@ -217,16 +253,17 @@ class MapView extends Component {
 
     onMapClick(event) {
         // Isolate this event
-        event.originalEvent.preventDefault();
-        event.originalEvent.view.L.DomEvent.stopPropagation(event);
+        //event.originalEvent.preventDefault();
+        //event.originalEvent.view.L.DomEvent.stopPropagation(event);
         if (!this.state.selectedTool) {
             return;
         }
         if (!this.state.draw.isDrawing) {
             // Create a new step, stating at click position
-            let newStep = stepService.getNewStep(
+            let newStep = stepService.createNewStep(
                 Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-                Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+                Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
+                this.state.selectedTool.type
             );
             
             // assing the new line the current tool's options
@@ -247,7 +284,6 @@ class MapView extends Component {
             let updatedSelectedStep = updatedSteps.find(step => {
                 return this.state.selectedStep && step.id === this.state.selectedStep.id;
             });
-            updatedSelectedStep.type = 1;
 
             this.setState({
                 draw: { isDrawing: false },
@@ -258,7 +294,7 @@ class MapView extends Component {
     }
 
     handleNewStep() {
-        let newStep = stepService.getNewStep();
+        let newStep = stepService.createNewStep();
         this.setState({
             steps: [...this.state.steps, newStep],
             selectedStep: newStep,

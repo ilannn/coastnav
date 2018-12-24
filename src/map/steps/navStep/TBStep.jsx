@@ -13,6 +13,7 @@ export default class TBStep {
         let step = L.polyline(options.positions, { ...tbStepProps }).addTo(map);
         let position = options.marker && options.marker.position
             ? options.marker.position : step.getCenter();
-        L.marker(position, tbMarkerProps).addTo(map);
+        let marker = L.marker(position, tbMarkerProps).addTo(map);
+        return [step, marker];
     }
 }

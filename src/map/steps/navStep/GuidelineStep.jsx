@@ -20,5 +20,6 @@ export default class GuidelineStep {
         step.bindTooltip(`${angle}° / ${dist} ${unit}`, {
             permanent: true,
         });
+        return [step];
     }
 }

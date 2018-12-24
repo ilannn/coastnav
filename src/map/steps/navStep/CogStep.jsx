@@ -14,10 +14,11 @@ export default class CogStep {
         let position = options.marker && options.marker.position
             ? options.marker.position : step.getCenter();
         let positions = [
-            { lat: position.lat - 0.0001, lng: position.lng - 0.0001},
-            { lat: position.lat + 0.001, lng: position.lng + 0.001},
+            { lat: position.lat - 0.0001, lng: position.lng - 0.0001 },
+            { lat: position.lat + 0.001, lng: position.lng + 0.001 },
         ];
-        L.marker(positions[0], cogMarkerProps).addTo(map);
-        L.marker(positions[1], cogMarkerProps).addTo(map);
+        let marker1 = L.marker(positions[0], cogMarkerProps).addTo(map);
+        let marker2 = L.marker(positions[1], cogMarkerProps).addTo(map);
+        return [step, marker1, marker2];
     }
 }

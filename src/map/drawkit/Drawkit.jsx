@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import "./Drawkit.css";
 import { Toolbar } from '@material-ui/core';
+import { StepType } from '../../models/steps';
 
 const drawkitTools = [
     {
-        name: "Guide Line",
+        type: StepType.GUIDELINE,
         acronyms: "GL",
         matIcon: "face",
         options: {
@@ -13,14 +14,14 @@ const drawkitTools = [
         },
     },
     {
-        name: "TB",
+        type: StepType.TB,
         acronyms: "TB",
         matIcon: "face",
         options: {
         },
     },
     {
-        name: "Cog",
+        type: StepType.COG,
         acronyms: "COG",
         matIcon: "face",
         options: {
@@ -28,7 +29,7 @@ const drawkitTools = [
         },
     },
     {
-        name: "Current",
+        type: "Current",
         acronyms: "CRNT",
         matIcon: "face",
         options: {
@@ -52,11 +53,11 @@ class Drawkit extends Component {
         return drawkitTools.map(tool => {
             return (
                 <a
-                    className={`drawkitTool draw-${tool.name.toLocaleLowerCase()}`}
+                    className={`drawkitTool draw-${tool.acronyms.toLocaleLowerCase()}`}
                     href="#"
-                    title={`Draw a ${tool.name}`}
+                    title={`Draw a ${tool.acronyms}`}
                     onClick={() => { this.onSelectTool(tool) }}>
-                    {tool.name}
+                    {tool.acronyms}
                 </a>
             )
         });
