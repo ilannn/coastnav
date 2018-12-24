@@ -51,9 +51,13 @@ class Drawkit extends Component {
 
     getDrawkitTools() {
         return drawkitTools.map(tool => {
+            let selectedClass = 
+                this.props.selectedTool && 
+                this.props.selectedTool.type === tool.type 
+                ? 'selected' : '';
             return (
                 <a
-                    className={`drawkitTool draw-${tool.acronyms.toLocaleLowerCase()}`}
+                    className={`drawkitTool draw-${tool.acronyms.toLocaleLowerCase()} ${selectedClass}`}
                     href="#"
                     title={`Draw a ${tool.acronyms}`}
                     onClick={() => { this.onSelectTool(tool) }}>

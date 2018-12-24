@@ -79,7 +79,9 @@ class MapView extends Component {
                 />
 
                 <Control position="topright">
-                    <Drawkit onSelectTool={this.onSelectTool.bind(this)}>
+                    <Drawkit 
+                        selectedTool={this.state.selectedTool}
+                        onSelectTool={this.onSelectTool.bind(this)}>
                     </Drawkit>
                 </Control>
 
@@ -124,9 +126,12 @@ class MapView extends Component {
 
     /* Drawkit */
     onSelectTool(tool) {
-        this.setState({
-            selectedTool: tool,
-        })
+        if (!this.state.selectedTool || this.state.selectedTool.type !== tool.type) {
+            this.setState({ selectedTool: tool });
+        }
+        else {
+            this.setState({ selectedTool: null });
+        }
     }
 
     /* Mouse */

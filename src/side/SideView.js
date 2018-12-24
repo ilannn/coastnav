@@ -15,7 +15,6 @@ class SideView extends Component {
                         label: "Editor",
                         onClick: this.props.onSelectStep,
                         content: (<Editor step={this.props.selectedStep}
-                            onStepChange={this.props.editorOnChange}
                             onSave={this.props.editorOnSave}></Editor>)
                     },
                     {
