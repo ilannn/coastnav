@@ -9,7 +9,12 @@ class Editor extends Component {
         let editorContent;
         if (this.props.step) {
             editorContent = (
-                <MyEnhancedForm {...this.props.step} updateStep={this.onSave}></MyEnhancedForm>
+                <MyEnhancedForm 
+                    {...this.props.step} 
+                    updateStep={this.onSave.bind(this)}
+                    onDelete={this.onDelete.bind(this)}
+                >
+                </MyEnhancedForm>
             );
         }
         return (
@@ -19,8 +24,12 @@ class Editor extends Component {
         )
     }
     
-    onSave = (changes) => {
+    onSave(changes) {
         this.props.onSave(this.props.step.id, changes);
+    }
+
+    onDelete() {
+        this.props.onDelete(this.props.step.id);
     }
 }
 

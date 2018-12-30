@@ -47,7 +47,7 @@ class MapView extends Component {
         document.addEventListener("keydown", this.escFunction, false);
         this.leafletMap.on('click', this.onMapClick.bind(this));
         this.setMousePosition();
-        this.setNavSteps();
+        this.drawStateSteps();
     }
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
@@ -55,7 +55,8 @@ class MapView extends Component {
     componentDidUpdate(prevProps, prevState) {
 
         this.leafletMap.invalidateSize();
-        this.setNavSteps();
+        this.eraseSteps(prevState.steps);
+        this.drawStateSteps();
 
         // Update collapse flag if selected step changed
         if (this.state.selectedStep !== prevState.selectedStep) {
@@ -88,7 +89,10 @@ class MapView extends Component {
                 <Control position="topleft">
                     <Editor step={this.state.selectedStep}
                         onStepChange={this.state.editorOnChange}
-                        onSave={this.handleEditorSave.bind(this)}></Editor>
+                        onSave={this.handleEditorSave.bind(this)}
+                        onDelete={this.handleEditorDelete.bind(this)}
+                    >
+                    </Editor>
                 </Control>
 
             </Map>
@@ -120,36 +124,50 @@ class MapView extends Component {
     }
 
     /* Steps */
-    setNavSteps() {
+    drawStateSteps() {
+        if (!this.state.steps) return;
         if (!this.leafletMap) {
             console.error("Couldn't add lines to map. Missing map ref");
+            return;
         }
-        else {
-            this.drawStateSteps();
+        this.drawSteps(this.state.steps);
+    }
+
+    eraseSteps(steps) {
+        if (!steps) return;
+        if (!this.leafletMap) {
+            console.error("Couldn't add lines to map. Missing map ref");
+            return;
         }
+        steps.forEach(navStep => {
+            // Remove all steps layers from map
+            if (this.leafletSteps[navStep.id]) {
+                this.leafletSteps[navStep.id].map(layer => {
+                    this.leafletMap.removeLayer(layer);
+                });
+            }
+        });
     }
 
     /**
      * Draw each nav step in state's steps list.
      * If step already exists, remove it, create a new one, and add it.
      */
-    drawStateSteps() {
-        if (this.state.steps) {
-            this.state.steps.forEach(navStep => {
-                // Remove all existing steps layers
-                if (this.leafletSteps[navStep.id]) {
-                    this.leafletSteps[navStep.id].map(layer => {
-                        this.leafletMap.removeLayer(layer);
-                    });
-                }
-                // Create new steps
-                this.leafletSteps[navStep.id] = this._createNewStep(navStep);
-                // Register event listeners
-                this.leafletSteps[navStep.id].map(
-                    this.stepOnClickListener.bind(this)
-                );
-            });
-        }
+    drawSteps(steps) {
+        steps.forEach(navStep => {
+            // Remove existing step's layers
+            if (this.leafletSteps[navStep.id]) {
+                this.leafletSteps[navStep.id].map(layer => {
+                    this.leafletMap.removeLayer(layer);
+                });
+            }
+            // Create new steps
+            this.leafletSteps[navStep.id] = this._createNewStep(navStep);
+            // Register event listeners
+            this.leafletSteps[navStep.id].map(
+                this.stepOnClickListener.bind(this)
+            );
+        });
     }
 
     _createNewStep(navStep) {
@@ -224,7 +242,7 @@ class MapView extends Component {
         let steps;
         if (this.state.draw.isDrawing) {
             let selectedStep = this.state.selectedStep;
-            let steps = [...this.state.steps];
+            steps = [...this.state.steps];
             _.remove(steps, step => step.id === selectedStep.id);
         }
         else {
@@ -305,26 +323,24 @@ class MapView extends Component {
         }
     }
 
-    handleNewStep() {
-        let newStep = stepService.createNewStep();
-        this.setState({
-            steps: [...this.state.steps, newStep],
-            selectedStep: newStep,
-        });
-    }
-
     handleRemoveStep(stepId) {
+        // remove deleted step from steps list
         let updatedSteps = _.filter(this.state.steps, (step) => {
             return step.id !== stepId;
         });
+        // unselect deleted step
+        let selectedStep = this.state.selectedStep.id !== stepId
+            ? this.state.selectedStep : null;
+
         this.setState({
             /* Update selected view */
             steps: updatedSteps,
+            selectedStep: selectedStep,
         });
     }
 
+    /* Editor */
     handleEditorSave(updatedStepId, changes) {
-        debugger;
         let steps = this.state.steps;
         let oldStep = steps.find((step) => {
             return step.id === updatedStepId;
@@ -340,6 +356,11 @@ class MapView extends Component {
             }),
             steps: steps,
         });
+    }
+
+    handleEditorDelete(deletedStepId) {
+        // Insert pop up alert here..
+        this.handleRemoveStep(deletedStepId);
     }
 }
 

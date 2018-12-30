@@ -11,8 +11,7 @@ const formikEnhancer = withFormik({
         return { positions: [...props.positions] }
     },
     handleSubmit: (updatedStep, bag) => {
-        debugger;
-        setTimeout(function () {
+        setTimeout(function () { // Mock BE API call
             bag.setSubmitting(false);
             bag.props.updateStep({
                 positions: updatedStep.positions
@@ -95,6 +94,15 @@ class MyForm extends Component {
                                     !this.props.dirty || this.props.isSubmitting
                                 }
                             >Reset</Button>
+                        )}
+                    />
+                    <Field
+                        name="i"
+                        render={({ field /* _form */ }) => (
+                            <Button
+                                type="button"
+                                onClick={this.props.onDelete}
+                            >Delete</Button>
                         )}
                     />
                     <Field
