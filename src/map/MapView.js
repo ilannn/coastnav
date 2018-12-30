@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './MapView.css';
 import _ from 'lodash';
 import { Map, TileLayer } from 'react-leaflet';
-import { Sidebar, Tab } from 'react-leaflet-sidebarv2';
 import Control from 'react-leaflet-control';
 import L from 'leaflet';
 import 'leaflet-mouse-position';
@@ -35,8 +34,7 @@ class MapView extends Component {
             lan: undefined,
             lat: undefined,
         },
-        collapsed: true,
-        selected: 'home',
+        collapsed: true, // for future sidebar use
     }
 
     constructor(props) {
@@ -46,18 +44,19 @@ class MapView extends Component {
     }
 
     componentDidMount() {
-        this.leafletMap.on('click', this.onMapClick.bind(this));
         document.addEventListener("keydown", this.escFunction, false);
+        this.leafletMap.on('click', this.onMapClick.bind(this));
         this.setMousePosition();
+        this.setNavSteps();
     }
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
     }
     componentDidUpdate(prevProps, prevState) {
-        
+
         this.leafletMap.invalidateSize();
         this.setNavSteps();
-        
+
         // Update collapse flag if selected step changed
         if (this.state.selectedStep !== prevState.selectedStep) {
             this.setState({
@@ -71,58 +70,32 @@ class MapView extends Component {
             <Map id="map" key="mymap"
                 ref={this.setLeafletMapRef}
                 center={center} zoom={10}
+                zoomControl={false}
                 onMouseMove={this.onDrawingMove.bind(this)}>
-                
+
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
                 <Control position="topright">
-                    <Drawkit 
+                    <Drawkit
                         selectedTool={this.state.selectedTool}
                         onSelectTool={this.onSelectTool.bind(this)}>
                     </Drawkit>
                 </Control>
 
-                <Sidebar id="sidebar"
-                    collapsed={this.state.collapsed}
-                    selected={this.state.selected}
-                    onOpen={this.onSideBarOpen.bind(this)}
-                    onClose={this.onSideBarClose.bind(this)}
-                    onClick={this.onSideBarClick.bind(this)}>
-                    <Tab id="home" header="Home" icon="fa fa-home">
-                        <Editor step={this.state.selectedStep}
-                            onStepChange={this.state.editorOnChange}
-                            onSave={this.handleEditorSave}></Editor>
-                    </Tab>
-                    <Tab id="settings" header="Settings" icon="fa fa-cog" anchor="bottom">
-                        <p>Settings dialogue.</p>
-                    </Tab>
-                </Sidebar>
+                <Control position="topleft">
+                    <Editor step={this.state.selectedStep}
+                        onStepChange={this.state.editorOnChange}
+                        onSave={this.handleEditorSave.bind(this)}></Editor>
+                </Control>
 
             </Map>
         </section>)
     }
 
     setLeafletMapRef = map => (this.leafletMap = map && map.leafletElement);
-
-    /* Sidebar */
-    onSideBarClose() {
-        this.setState({ collapsed: true });
-    }
-
-    onSideBarOpen(id) {
-        this.setState({
-            collapsed: false,
-            selected: id,
-        });
-    }
-
-    onSideBarClick(event) {
-        event.originalEvent.preventDefault();
-        event.originalEvent.view.L.DomEvent.stopPropagation(event);
-    }
 
     /* Drawkit */
     onSelectTool(tool) {
@@ -152,33 +125,40 @@ class MapView extends Component {
             console.error("Couldn't add lines to map. Missing map ref");
         }
         else {
-            // TODO: Check the diff between state and saved steps.
-            if (this.state.steps) {
-                this.state.steps.forEach(navStep => {
-                    // Remove existing steps
-                    if (this.leafletSteps[navStep.id]) {
-                        this.leafletSteps[navStep.id].map(layer => {
-                            this.leafletMap.removeLayer(layer);
-                        })
-                    }
-                    // Create new steps
-                    this.leafletSteps[navStep.id] = this._getNewStep(navStep);
-                    // Register event listeners
-                    this.leafletSteps[navStep.id].map(
-                        this.stepOnClickListener.bind(this)
-                    );
-                });
-            }
+            this.drawStateSteps();
         }
     }
 
-    _getNewStep(navStep) {
-        switch(navStep.type) {
+    /**
+     * Draw each nav step in state's steps list.
+     * If step already exists, remove it, create a new one, and add it.
+     */
+    drawStateSteps() {
+        if (this.state.steps) {
+            this.state.steps.forEach(navStep => {
+                // Remove all existing steps layers
+                if (this.leafletSteps[navStep.id]) {
+                    this.leafletSteps[navStep.id].map(layer => {
+                        this.leafletMap.removeLayer(layer);
+                    });
+                }
+                // Create new steps
+                this.leafletSteps[navStep.id] = this._createNewStep(navStep);
+                // Register event listeners
+                this.leafletSteps[navStep.id].map(
+                    this.stepOnClickListener.bind(this)
+                );
+            });
+        }
+    }
+
+    _createNewStep(navStep) {
+        switch (navStep.type) {
             case StepType.TB:
                 return TBStep.addTo(this.leafletMap, navStep);
             case StepType.COG:
                 return CogStep.addTo(this.leafletMap, navStep);
-            case StepType.GUIDELINE: 
+            case StepType.GUIDELINE:
             default:
                 return GuidelineStep.addTo(this.leafletMap, navStep);
         }
@@ -192,8 +172,9 @@ class MapView extends Component {
         if (this.state.draw.isDrawing) {
             return;
         }
-        // Isolate event
+        // Isolate click
         event.originalEvent.view.L.DomEvent.stopPropagation(event);
+
         // Find selected step
         let clickedStepId = +_.findKey(this.leafletSteps, (stepLayers) => {
             return stepLayers.indexOf(event.target) >= 0;
@@ -240,19 +221,22 @@ class MapView extends Component {
      * Cancel drawing & unselect step when ESC pressed.
      */
     handleEscPress() {
+        let steps;
         if (this.state.draw.isDrawing) {
             let selectedStep = this.state.selectedStep;
             let steps = [...this.state.steps];
             _.remove(steps, step => step.id === selectedStep.id);
-
-            this.setState({
-                selectedStep: undefined,
-                steps: steps,
-                draw: {
-                    isDrawing: false,
-                },
-            });
         }
+        else {
+            steps = this.state.steps;
+        }
+        this.setState({
+            selectedStep: undefined,
+            steps: steps,
+            draw: {
+                isDrawing: false,
+            },
+        });
     }
 
     onDrawingMove(event) {
@@ -288,8 +272,8 @@ class MapView extends Component {
 
     onMapClick(event) {
         event.originalEvent.preventDefault();
-        event.originalEvent.view.L.DomEvent.stopPropagation(event);
-        
+        //event.originalEvent.view.L.DomEvent.stopPropagation(event);
+
         // If no tool selected - do nothing
         if (!this.state.selectedTool) {
             return;
@@ -301,10 +285,10 @@ class MapView extends Component {
                 Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
                 this.state.selectedTool.type
             );
-            
+
             // assing the new line the current tool's options
             Object.assign(newStep, this.state.selectedTool.options);
-            
+
             let updatedSteps = [...this.state.steps, newStep];
 
             // Mark the new step as the selected step      

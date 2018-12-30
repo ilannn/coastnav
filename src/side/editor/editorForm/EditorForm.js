@@ -35,7 +35,7 @@ class MyForm extends Component {
             <form onSubmit={this.props.handleSubmit}>
                 <div className="coordinatesBundle">
                     <label>From</label>
-                    <div>
+                    <div className="coordinatesInputs">
                         <Field
                             render={() => (
                                 <Input type="number"
@@ -60,7 +60,7 @@ class MyForm extends Component {
                 </div>
                 <div className="coordinatesBundle">
                     <label>To</label>
-                    <div>
+                    <div className="coordinatesInputs">
                         <Field
                             render={() => (
                                 <Input type="number"
