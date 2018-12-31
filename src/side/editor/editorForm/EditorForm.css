@@ -8,3 +8,7 @@
     display: grid;
     grid-template-columns: auto;
 }
+
+.footerButtons {
+    padding-top: 10px;
+}

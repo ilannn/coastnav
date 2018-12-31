@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MyEnhancedForm from './editorForm/EditorForm';
 
 import './Editor.css';
+import { Card } from '@material-ui/core';
 
 class Editor extends Component {
 
@@ -9,12 +10,14 @@ class Editor extends Component {
         let editorContent;
         if (this.props.step) {
             editorContent = (
-                <MyEnhancedForm 
-                    {...this.props.step} 
-                    updateStep={this.onSave.bind(this)}
-                    onDelete={this.onDelete.bind(this)}
-                >
-                </MyEnhancedForm>
+                <Card className="EditorCard">
+                    <MyEnhancedForm 
+                        {...this.props.step} 
+                        updateStep={this.onSave.bind(this)}
+                        onDelete={this.onDelete.bind(this)}
+                    >
+                    </MyEnhancedForm>
+                </Card>
             );
         }
         return (

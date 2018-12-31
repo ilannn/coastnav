@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import "./Drawkit.css";
-import { Toolbar } from '@material-ui/core';
+import { Toolbar, Card, Divider } from '@material-ui/core';
 import { StepType } from '../../models/steps';
 
 const drawkitTools = [
@@ -42,28 +42,32 @@ class Drawkit extends Component {
     render() {
         let drawkitTools = this.getDrawkitTools();
         return (<section>
-            <div className="drawkitToolList">
+            <Card className="drawkitToolList">
                 {drawkitTools}
-            </div>
+            </Card>
             {this.props.children}
         </section>)
     }
 
     getDrawkitTools() {
-        return drawkitTools.map(tool => {
-            let selectedClass = 
-                this.props.selectedTool && 
-                this.props.selectedTool.type === tool.type 
-                ? 'selected' : '';
+        return drawkitTools.map((tool, index) => {
+            let selectedClass =
+                this.props.selectedTool &&
+                    this.props.selectedTool.type === tool.type
+                    ? 'selected' : '';
+            let divider = index !== drawkitTools.length - 1 ? <Divider /> : null;
             return (
-                <a
-                    key={tool.acronyms}
-                    className={`drawkitTool draw-${tool.acronyms.toLocaleLowerCase()} ${selectedClass}`}
-                    href="#"
-                    title={`Draw a ${tool.acronyms}`}
-                    onClick={() => { this.onSelectTool(tool) }}>
-                    {tool.acronyms}
-                </a>
+                <span>
+                    <a
+                        key={tool.acronyms}
+                        className={`drawkitTool draw-${tool.acronyms.toLocaleLowerCase()} ${selectedClass}`}
+                        href="#"
+                        title={`Draw a ${tool.acronyms}`}
+                        onClick={() => { this.onSelectTool(tool) }}>
+                        {tool.acronyms}
+                    </a>
+                    {divider}
+                </span>
             )
         });
     }

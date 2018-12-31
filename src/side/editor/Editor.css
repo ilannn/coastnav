@@ -3,6 +3,10 @@
     
 }
 
+.EditorCard {
+    padding: 10px;
+}
+
 .EditorContent {
     display: flex;
     flex-direction: column;
