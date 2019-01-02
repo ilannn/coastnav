@@ -57,9 +57,8 @@ class Drawkit extends Component {
                     ? 'selected' : '';
             let divider = index !== drawkitTools.length - 1 ? <Divider /> : null;
             return (
-                <span>
+                <span key={index}>
                     <a
-                        key={tool.acronyms}
                         className={`drawkitTool draw-${tool.acronyms.toLocaleLowerCase()} ${selectedClass}`}
                         href="#"
                         title={`Draw a ${tool.acronyms}`}

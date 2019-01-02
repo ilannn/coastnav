@@ -23,7 +23,7 @@ class NavStep extends Component {
 }
 
 NavStep.propTypes = {
-    positions: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    positions: PropTypes.arrayOf(PropTypes.object),
     color: PropTypes.string,
     stroke: PropTypes.number,
     marker: PropTypes.object,

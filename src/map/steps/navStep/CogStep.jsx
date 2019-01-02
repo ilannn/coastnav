@@ -11,14 +11,14 @@ const cogMarkerProps = {
 export default class CogStep {
     static addTo(map, options) {
         let step = L.polyline(options.positions, { ...cogStepProps }).addTo(map);
-        let position = options.marker && options.marker.position
+        let markerPosition = options.marker && options.marker.position
             ? options.marker.position : step.getCenter();
-        let positions = [
-            { lat: position.lat - 0.0001, lng: position.lng - 0.0001 },
-            { lat: position.lat + 0.001, lng: position.lng + 0.001 },
+        let markersPositions = [
+            { lat: markerPosition.lat - 0.0001, lng: markerPosition.lng - 0.0001 },
+            { lat: markerPosition.lat + 0.001, lng: markerPosition.lng + 0.001 },
         ];
-        let marker1 = L.marker(positions[0], cogMarkerProps).addTo(map);
-        let marker2 = L.marker(positions[1], cogMarkerProps).addTo(map);
+        let marker1 = L.marker(markersPositions[0], cogMarkerProps).addTo(map);
+        let marker2 = L.marker(markersPositions[1], cogMarkerProps).addTo(map);
         return [step, marker1, marker2];
     }
 }

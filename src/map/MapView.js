@@ -270,10 +270,10 @@ class MapView extends Component {
             updatedSelectedStep = Object.assign(updatedSelectedStep, {
                 positions: [
                     updatedSelectedStep.positions[0],
-                    [
-                        Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-                        Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
-                    ]
+                    {
+                        lat: Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                        lng: Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+                    }
                 ]
             });
 

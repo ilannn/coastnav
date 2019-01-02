@@ -5,10 +5,15 @@ import Button from '@material-ui/core/Button';
 import { Input } from '@material-ui/core';
 
 import './EditorForm.css';
+import StepService from '../../../services/StepService';
 
 const formikEnhancer = withFormik({
     mapPropsToValues: props => {
-        return { positions: [...props.positions] }
+        let values = {
+            positions: [...props.positions],
+            angle: StepService.calcAngle(...props.positions),
+        };
+        return values;
     },
     handleSubmit: (updatedStep, bag) => {
         setTimeout(function () { // Mock BE API call
@@ -22,7 +27,7 @@ const formikEnhancer = withFormik({
 });
 
 class MyForm extends Component {
-    
+
     componentWillUpdate(nextProps) {
         if (!isEqual(nextProps.positions, this.props.positions)) {
             this.props.resetForm(nextProps);
@@ -38,20 +43,20 @@ class MyForm extends Component {
                         <Field
                             render={() => (
                                 <Input type="number"
-                                    name="positions[0][0]"
+                                    name="positions[0].lat"
                                     placeholder="Lat"
                                     maxLength="10"
-                                    value={this.props.values.positions[0][0]}
+                                    value={this.props.values.positions[0].lat}
                                     onChange={this.props.handleChange}></Input>
                             )}
                         />
                         <Field
                             render={() => (
                                 <Input type="number"
-                                    name="positions[0][1]"
+                                    name="positions[0].lng"
                                     placeholder="Lng"
                                     maxLength="10"
-                                    value={this.props.values.positions[0][1]}
+                                    value={this.props.values.positions[0].lng}
                                     onChange={this.props.handleChange}></Input>
                             )}
                         />
@@ -63,25 +68,38 @@ class MyForm extends Component {
                         <Field
                             render={() => (
                                 <Input type="number"
-                                    name="positions[1][0]"
+                                    name="positions[1].lat"
                                     placeholder="Lat"
                                     maxLength="10"
-                                    value={this.props.values.positions[1][0]}
+                                    value={this.props.values.positions[1].lat}
                                     onChange={this.props.handleChange}></Input>
                             )}
                         />
                         <Field
                             render={() => (
                                 <Input type="number"
-                                    name="positions[1][1]"
+                                    name="positions[1].lng"
                                     placeholder="Lng"
                                     maxLength="10"
-                                    value={this.props.values.positions[1][1]}
+                                    value={this.props.values.positions[1].lng}
                                     onChange={this.props.handleChange}></Input>
                             )}
                         />
                     </div>
                 </div>
+                {/* <div>
+                    <label>Angle</label>
+                    <Field
+                        render={() => (
+                            <Input type="number"
+                                name="angle"
+                                placeholder="°"
+                                maxLength="5"
+                                value={this.props.values.angle}
+                                onChange={this.props.handleChange}></Input>
+                        )}
+                    />
+                </div> */}
 
                 <div className="footerButtons">
                     <Field
