@@ -19,7 +19,8 @@ const formikEnhancer = withFormik({
         setTimeout(function () { // Mock BE API call
             bag.setSubmitting(false);
             bag.props.updateStep({
-                positions: updatedStep.positions
+                positions: updatedStep.positions,
+                angle: updatedStep.angle
             });
         }, 0);
     },
@@ -87,7 +88,7 @@ class MyForm extends Component {
                         />
                     </div>
                 </div>
-                {/* <div>
+                <div>
                     <label>Angle</label>
                     <Field
                         render={() => (
@@ -99,7 +100,7 @@ class MyForm extends Component {
                                 onChange={this.props.handleChange}></Input>
                         )}
                     />
-                </div> */}
+                </div>
 
                 <div className="footerButtons">
                     <Field

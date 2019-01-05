@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import "./Drawkit.css";
-import { Toolbar, Card, Divider } from '@material-ui/core';
+import { Card, Divider } from '@material-ui/core';
 import { StepType } from '../../models/steps';
 
 const drawkitTools = [

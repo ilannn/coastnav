@@ -1,4 +1,7 @@
 import { StepType } from '../models/steps';
+import geolib from 'geolib';
+import { LatLng } from 'leaflet';
+import _ from 'lodash';
 
 export default class StepService {
     constructor() {
@@ -34,16 +37,17 @@ export default class StepService {
     }
 
     static calcAngle = function (p1, p2, direction) {
-        var lat1 = p1.lat / 180 * Math.PI;
-        var lat2 = p2.lat / 180 * Math.PI;
-        var lng1 = p1.lng / 180 * Math.PI;
-        var lng2 = p2.lng / 180 * Math.PI;
-        var y = Math.sin(lng2 - lng1) * Math.cos(lat2);
-        var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
+        let lat1 = p1.lat / 180 * Math.PI;
+        let lat2 = p2.lat / 180 * Math.PI;
+        let lng1 = p1.lng / 180 * Math.PI;
+        let lng2 = p2.lng / 180 * Math.PI;
+        let y = Math.sin(lng2 - lng1) * Math.cos(lat2);
+        let x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
+        let brng;
         if (direction === "inbound") {
-            var brng = (Math.atan2(y, x) * 180 / Math.PI + 180).toFixed(0);
+            brng = (Math.atan2(y, x) * 180 / Math.PI + 180).toFixed(0);
         } else {
-            var brng = (Math.atan2(y, x) * 180 / Math.PI + 360).toFixed(0);
+            brng = (Math.atan2(y, x) * 180 / Math.PI + 360).toFixed(0);
         }
         return (brng % 360);
     }
@@ -63,5 +67,48 @@ export default class StepService {
             unit = "F";
         }
         return { dist, unit };
+    }
+
+    /**
+     * Finding diff between one old step and new one, 
+     * and calc step's updates props.
+     * @param {NavStep} oldStep 
+     * @param {L.Polyline} oldStepPolyline 
+     * @param {NavStep} newStep 
+     */
+    static getUpdatedStepWithChanges(oldStep, oldStepPolyline, newStep) {
+        // Check diff
+        let differences = Object.keys(newStep).filter(k => {
+            if (typeof newStep[k] === 'object') {
+                return !_.isEqual(newStep[k], oldStep[k]);
+            }
+            return newStep[k] !== oldStep[k];
+        });
+
+        if (!differences.length) return oldStep;
+
+        let updatedStep = Object.assign({}, oldStep);
+
+        if (differences.includes("angle")) {
+            Object.assign(updatedStep, {
+                positions: [
+                    oldStep.positions[0],
+                    StepService.calcNewEndingByAngle(oldStepPolyline, newStep.angle)
+                ]
+            });
+        }
+        else if (differences.includes("positions")) {
+            Object.assign(updatedStep, {
+                positions: newStep.positions
+            });
+        }
+        return updatedStep;
+    }
+
+    static calcNewEndingByAngle(polyline, newAngle) {
+        let positions = polyline.getLatLngs();
+        let distance = geolib.getDistanceSimple(positions[0], positions[1]);
+        let p2 = geolib.computeDestinationPoint(positions[0], distance, newAngle);
+        return new LatLng(p2.latitude.toFixed(5), p2.longitude.toFixed(5));
     }
 }

@@ -290,7 +290,6 @@ class MapView extends Component {
 
     onMapClick(event) {
         event.originalEvent.preventDefault();
-        //event.originalEvent.view.L.DomEvent.stopPropagation(event);
 
         // If no tool selected - do nothing
         if (!this.state.selectedTool) {
@@ -340,13 +339,24 @@ class MapView extends Component {
     }
 
     /* Editor */
+
+    /**
+     * Update the given step with given changes, taking
+     * into consideration changes that effect other props.
+     * Exp: angle -> end-position.
+     * @param {number} updatedStepId 
+     * @param {NavStepProps} changes 
+     */
     handleEditorSave(updatedStepId, changes) {
         let steps = this.state.steps;
         let oldStep = steps.find((step) => {
             return step.id === updatedStepId;
         });
         if (oldStep) {
-            Object.assign(oldStep, changes);
+            // Get the actual polyline object (without markers) 
+            let oldStepPolyline = this.leafletSteps[oldStep.id][0]; 
+            Object.assign(oldStep,
+                StepService.getUpdatedStepWithChanges(oldStep, oldStepPolyline, changes));
         }
 
         /* Update selected view & global steps list */
