@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import "./Drawkit.css";
-import { Card, Divider } from '@material-ui/core';
+import { Card, Divider, Button } from '@material-ui/core';
 import { StepType } from '../../models/steps';
 
 const drawkitTools = [
@@ -58,13 +58,14 @@ class Drawkit extends Component {
             let divider = index !== drawkitTools.length - 1 ? <Divider /> : null;
             return (
                 <span key={index}>
-                    <a
+                    <Button
                         className={`drawkitTool draw-${tool.acronyms.toLocaleLowerCase()} ${selectedClass}`}
-                        href="#"
                         title={`Draw a ${tool.acronyms}`}
+                        variant={this.props.selectedTool && this.props.selectedTool.type === tool.type ? 'contained' : ''}
                         onClick={() => { this.onSelectTool(tool) }}>
                         {tool.acronyms}
-                    </a>
+                        
+                    </Button>
                     {divider}
                 </span>
             )

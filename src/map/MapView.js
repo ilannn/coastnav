@@ -53,7 +53,6 @@ class MapView extends Component {
         document.removeEventListener("keydown", this.escFunction, false);
     }
     componentDidUpdate(prevProps, prevState) {
-
         this.leafletMap.invalidateSize();
         this.eraseSteps(prevState.steps);
         this.drawStateSteps();
@@ -142,7 +141,7 @@ class MapView extends Component {
         steps.forEach(navStep => {
             // Remove all steps layers from map
             if (this.leafletSteps[navStep.id]) {
-                this.leafletSteps[navStep.id].map(layer => {
+                this.leafletSteps[navStep.id].forEach(layer => {
                     this.leafletMap.removeLayer(layer);
                 });
             }
@@ -157,7 +156,7 @@ class MapView extends Component {
         steps.forEach(navStep => {
             // Remove existing step's layers
             if (this.leafletSteps[navStep.id]) {
-                this.leafletSteps[navStep.id].map(layer => {
+                this.leafletSteps[navStep.id].forEach(layer => {
                     this.leafletMap.removeLayer(layer);
                 });
             }
