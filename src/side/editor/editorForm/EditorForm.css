@@ -1,4 +1,4 @@
-.coordinatesBundle {
+.editorBundle {
     display: grid;
     grid-template-columns: auto 1fr;
     grid-gap: 1rem;

@@ -53,8 +53,8 @@ export default class StepService {
     }
 
     static calcDistance = function (p1, p2) {
-        let unit = "M";
-        let dist = p1.distanceTo(p2);
+        let unit = "mi";
+        let dist = geolib.getDistanceSimple(p1, p2);
         if (dist >= 1609344) {
             dist = (dist / 1609.344).toFixed(0);
         } else if (dist >= 160934.4) {

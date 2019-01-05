@@ -12,15 +12,17 @@ const formikEnhancer = withFormik({
         let values = {
             positions: [...props.positions],
             angle: StepService.calcAngle(...props.positions),
+            length: StepService.calcDistance(...props.positions).dist,
         };
         return values;
     },
-    handleSubmit: (updatedStep, bag) => {
-        setTimeout(function () { // Mock BE API call
+    handleSubmit: (values, bag) => {
+        setTimeout(function () { // Mock async BE API call
             bag.setSubmitting(false);
             bag.props.updateStep({
-                positions: updatedStep.positions,
-                angle: updatedStep.angle
+                positions: values.positions,
+                angle: values.angle,
+                length: values.length
             });
         }, 0);
     },
@@ -38,7 +40,7 @@ class MyForm extends Component {
     render() {
         return (
             <form onSubmit={this.props.handleSubmit}>
-                <div className="coordinatesBundle">
+                <div className="editorBundle">
                     <label>From</label>
                     <div className="coordinatesInputs">
                         <Field
@@ -62,8 +64,6 @@ class MyForm extends Component {
                             )}
                         />
                     </div>
-                </div>
-                <div className="coordinatesBundle">
                     <label>To</label>
                     <div className="coordinatesInputs">
                         <Field
@@ -87,18 +87,29 @@ class MyForm extends Component {
                             )}
                         />
                     </div>
-                </div>
-                <div>
                     <label>Angle</label>
                     <Field
-                        render={() => (
-                            <Input type="number"
+                        render={() => {
+                            console.log("render", `${this.props.values && this.props.values.angle} || ${this.props.values.values && this.props.values.values.angle}`);
+                            return (<Input type="number"
                                 name="angle"
                                 placeholder="°"
                                 maxLength="5"
-                                value={this.props.values.angle}
-                                onChange={this.props.handleChange}></Input>
-                        )}
+                                value={this.props.values.angle || this.props.values.values.angle}
+                                onChange={this.props.handleChange}></Input>)
+
+                        }}
+                    />
+                    <label>Length</label>
+                    <Field
+                        render={() => {
+                            return (<Input type="number"
+                                name="length"
+                                placeholder="Length"
+                                value={this.props.values.length || this.props.values.values.length}
+                                onChange={this.props.handleChange}></Input>)
+
+                        }}
                     />
                 </div>
 
