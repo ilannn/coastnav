@@ -30,17 +30,12 @@ class MapView extends Component {
         draw: {
             isDrawing: false,
         },
-        mouseInfo: {
-            lan: undefined,
-            lat: undefined,
-        },
         collapsed: true, // for future sidebar use
     }
 
     constructor(props) {
         super(props);
         this.escFunction = this.escFunction.bind(this);
-        this.setMousePosition = this.setMousePosition.bind(this);
     }
 
     componentDidMount() {
@@ -52,7 +47,7 @@ class MapView extends Component {
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
     }
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {        
         this.leafletMap.invalidateSize();
         this.eraseSteps(prevState.steps);
         this.drawStateSteps();
@@ -279,11 +274,7 @@ class MapView extends Component {
             this.setState({
                 steps: updatedSteps,
                 selectedStep: updatedSelectedStep,
-                mouseInfo: { ...event.latlng },
             });
-        }
-        else {
-            this.setState({ mouseInfo: { ...event.latlng } });
         }
     }
 

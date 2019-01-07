@@ -61,7 +61,7 @@ class Drawkit extends Component {
                     <Button
                         className={`drawkitTool draw-${tool.acronyms.toLocaleLowerCase()} ${selectedClass}`}
                         title={`Draw a ${tool.acronyms}`}
-                        variant={this.props.selectedTool && this.props.selectedTool.type === tool.type ? 'contained' : ''}
+                        variant={this.props.selectedTool && this.props.selectedTool.type === tool.type ? 'contained' : 'text'}
                         onClick={() => { this.onSelectTool(tool) }}>
                         {tool.acronyms}
                         

@@ -77,8 +77,10 @@ export default class StepService {
      * @param {NavStep} newStep 
      */
     static getUpdatedStepWithChanges(oldStep, oldStepPolyline, newStep) {
+        debugger;
         // Check diff
-        let differences = Object.keys(newStep).filter(k => {
+        let compareKeys = oldStep.marker || newStep.marker ? ["positions", "marker"] : ["positions"];
+        let differences = ["positions", "marker"].filter(k => {
             if (typeof newStep[k] === 'object') {
                 return !_.isEqual(newStep[k], oldStep[k]);
             }
@@ -89,26 +91,29 @@ export default class StepService {
 
         let updatedStep = Object.assign({}, oldStep);
 
-        if (differences.includes("angle")) {
+        if (differences.includes("positions")) {
             Object.assign(updatedStep, {
                 positions: [
                     oldStep.positions[0],
-                    StepService.calcNewEndingByAngle(oldStepPolyline, newStep.angle)
+                    StepService.calcNewEnding(oldStepPolyline, newStep)
                 ]
             });
-        }
-        else if (differences.includes("positions")) {
+        } 
+
+        if (newStep.marker) {
             Object.assign(updatedStep, {
-                positions: newStep.positions
+                marker: {
+                    ...oldStep.marker
+                }
             });
         }
+
         return updatedStep;
     }
 
-    static calcNewEndingByAngle(polyline, newAngle) {
+    static calcNewEnding(polyline, newStep) {
         let positions = polyline.getLatLngs();
-        let distance = geolib.getDistanceSimple(positions[0], positions[1]);
-        let p2 = geolib.computeDestinationPoint(positions[0], distance, newAngle);
+        let p2 = geolib.computeDestinationPoint(positions[0], newStep.length, newStep.angle);
         return new LatLng(p2.latitude.toFixed(5), p2.longitude.toFixed(5));
     }
 }

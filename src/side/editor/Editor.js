@@ -15,6 +15,8 @@ class Editor extends Component {
             editorContent = (
                 <Card className="EditorCard">
                     <EditorFormContainer
+                        onSave={this.onSave}
+                        onDelete={this.onDelete}
                         {...this.props.step}>
                     </EditorFormContainer>
                 </Card>
@@ -27,11 +29,11 @@ class Editor extends Component {
         )
     }
 
-    onSave(changes) {
+    onSave = (changes) => {
         this.props.onSave(this.props.step.id, changes);
     }
 
-    onDelete() {
+    onDelete = () => {
         this.props.onDelete(this.props.step.id);
     }
 }
