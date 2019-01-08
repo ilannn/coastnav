@@ -80,7 +80,7 @@ export default class StepService {
         debugger;
         // Check diff
         let compareKeys = oldStep.marker || newStep.marker ? ["positions", "marker"] : ["positions"];
-        let differences = ["positions", "marker"].filter(k => {
+        let differences = compareKeys.filter(k => {
             if (typeof newStep[k] === 'object') {
                 return !_.isEqual(newStep[k], oldStep[k]);
             }
@@ -98,7 +98,7 @@ export default class StepService {
                     StepService.calcNewEnding(oldStepPolyline, newStep)
                 ]
             });
-        } 
+        }
 
         if (newStep.marker) {
             Object.assign(updatedStep, {
@@ -111,9 +111,9 @@ export default class StepService {
         return updatedStep;
     }
 
-    static calcNewEnding(polyline, newStep) {
-        let positions = polyline.getLatLngs();
-        let p2 = geolib.computeDestinationPoint(positions[0], newStep.length, newStep.angle);
+    static calcNewEnding(from, length, angle) {
+        length = length * 1609.344; // convert to meters
+        let p2 = geolib.computeDestinationPoint(from, length, angle);
         return new LatLng(p2.latitude.toFixed(5), p2.longitude.toFixed(5));
     }
 }

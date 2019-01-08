@@ -1,113 +1,84 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Input, Button } from '@material-ui/core';
 import StepService from '../../services/StepService';
 import _ from 'lodash';
 
-class EditorFormContainer extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            values: {
-                positions: [
-                    {
-                        lat: 0,
-                        lng: 0
-                    },
-
-                    {
-                        lat: 0,
-                        lng: 0
-                    },
-                ],
-                type: null,
-                angle: 0,
-                length: 0,
-                marker: {
-
-                }
-            },
-        }
+class EditorFormContainer extends PureComponent {
+    state = {
+        values: {
+            positions: this.props.positions,
+            type: this.props.type,
+            angle: StepService.calcAngle.apply(null, this.props.positions),
+            length: Number(StepService.calcDistance.apply(null, this.props.positions).dist),
+            marker: {}
+        },
     }
 
 
-    static getDerivedStateFromProps = (nextProps, prevState) => {
-        let newState = { ...prevState };
-        if (nextProps.positions !== prevState.values.positions) {
-            let positions = nextProps.positions;
+    /**
+     * Restart editor's state when selected a new step
+     *  (passed threw props).
+     */
+    componentDidUpdate(prevProps) {
+        if (this.props.id !== prevProps.id) {
+            let positions = this.props.positions;
             let angle = StepService.calcAngle.apply(null, positions);
-            let length = StepService.calcDistance.apply(null, positions).dist;
-            Object.assign(newState, {
+            let length = Number(StepService.calcDistance.apply(null, positions).dist);
+            let type = this.props.type;
+            let marker = this.props.marker;
+            this.setState({
+                ...this.state,
                 values: {
-                    positions, angle, length
+                    positions, angle, length, type, marker
                 }
             });
         }
-        if (_.isEqual(nextProps.type !== prevState.type)) {
-            // Perform step type update (marker metadata)
-            let type = nextProps.type;
-            let marker = nextProps.marker;
-            Object.assign(newState, {
-                values: {
-                    type, marker
-                }
-            });
-        }
-        else if (_.isEqual(nextProps.marker !== prevState.marker)) {
-            // Perform marker update
-        }
-        return newState;
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        console.log("nextProps", nextProps);
-        console.log("this.props", this.props);
-        console.log("nextState", nextState);
-        console.log("this.state", this.state);
-        return true;
-    }
-
-    // componentDidUpdate(prevProps, prevState) {
-    //     if (prevProps.positions !== this.props.positions) {
-
-    //         let positions = this.props.positions;
-    //         let angle = StepService.calcAngle.apply(null,positions);
-    //         let length = StepService.calcDistance.apply(null, positions).dist;
-
-    //         this.setState({
-    //             values: {
-    //                 ...prevState.values,
-    //                 positions, angle, length
-    //             }
-    //         });
-    //     }
-    // }
-
-    handleCoordinatesChange(e) {
+    handleCoordinatesChange = (e) => {
         let positions =
             this.state.values.positions ? this.state.values.positions : [];
         positions[e.target.id][e.target.name] = Number(e.target.value);
+        let angle = StepService.calcAngle(...positions);
+        let length = Number(StepService.calcDistance(...positions).dist);
         this.setState({
             values: {
                 ...this.state.values,
-                positions
+                positions, angle, length
             }
         });
     }
-    handleAngleChange(e) {
+    handleAngleChange = (e) => {
         let angle = Number(e.target.value);
+        let positions = [
+            this.state.values.positions[0],
+            StepService.calcNewEnding(
+                this.state.values.positions[0],
+                this.state.values.length,
+                angle
+            )
+        ]
         this.setState({
             values: {
                 ...this.state.values,
-                angle
+                angle, positions
             }
         });
     }
-    handleLengthChange(e) {
+    handleLengthChange = (e) => {
         let length = Number(e.target.value);
+        let positions = [
+            this.state.values.positions[0],
+            StepService.calcNewEnding(
+                this.state.values.positions[0],
+                length,
+                this.state.values.angle
+            )
+        ]
         this.setState({
             values: {
                 ...this.state.values,
-                length
+                length, positions
             }
         });
     }
@@ -138,7 +109,6 @@ class EditorFormContainer extends Component {
                     value={this.state.values.length}
                     handleChange={this.handleLengthChange.bind(this)}
                 />
-                {/* <MarkerInput></MarkerInput> */}
                 <Button type="submit" variant="contained" color="primary">Save</Button>
                 <Button onClick={this.props.onDelete} variant="contained">Delete</Button>
             </form >
@@ -196,21 +166,6 @@ const AngleInput = (props) => {
 }
 
 const LengthInput = (props) => {
-    return (
-        <div className="form-group">
-            <label htmlFor={props.name} className="form-label">{props.title}</label>
-            <Input
-                className="form-input"
-                type="number"
-                value={props.value}
-                onChange={props.handleChange}
-                placeholder="length"
-            />
-        </div>
-    )
-}
-
-const MarkerInput = (props) => {
     return (
         <div className="form-group">
             <label htmlFor={props.name} className="form-label">{props.title}</label>

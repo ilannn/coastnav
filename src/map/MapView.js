@@ -343,10 +343,7 @@ class MapView extends Component {
             return step.id === updatedStepId;
         });
         if (oldStep) {
-            // Get the actual polyline object (without markers) 
-            let oldStepPolyline = this.leafletSteps[oldStep.id][0]; 
-            Object.assign(oldStep,
-                StepService.getUpdatedStepWithChanges(oldStep, oldStepPolyline, changes));
+            Object.assign(oldStep, changes);
         }
 
         /* Update selected view & global steps list */

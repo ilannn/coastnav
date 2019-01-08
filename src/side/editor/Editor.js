@@ -15,6 +15,7 @@ class Editor extends Component {
             editorContent = (
                 <Card className="EditorCard">
                     <EditorFormContainer
+                        key={this.props.id}
                         onSave={this.onSave}
                         onDelete={this.onDelete}
                         {...this.props.step}>
