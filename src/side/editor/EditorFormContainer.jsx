@@ -1,13 +1,13 @@
 import React, { PureComponent } from 'react';
-import { Input, Button } from '@material-ui/core';
+import { Input, Button, Select, FormControl, InputLabel, MenuItem } from '@material-ui/core';
 import StepService from '../../services/StepService';
-import _ from 'lodash';
+import { StepType } from '../../models/steps';
 
 class EditorFormContainer extends PureComponent {
     state = {
         values: {
             positions: this.props.positions,
-            type: this.props.type,
+            type: this.props.type.description,
             angle: StepService.calcAngle.apply(null, this.props.positions),
             length: Number(StepService.calcDistance.apply(null, this.props.positions).dist),
             marker: {}
@@ -82,6 +82,18 @@ class EditorFormContainer extends PureComponent {
             }
         });
     }
+    handleTypeChange = (e) => {
+        let type = e.target.value;
+        let marker = {
+            ...this.state.values.marker
+        }
+        this.setState({
+            values: {
+                ...this.state.values,
+                type, marker
+            }
+        });
+    }
 
     render() {
         return (
@@ -91,24 +103,28 @@ class EditorFormContainer extends PureComponent {
                     title={'From'}
                     id={'0'}
                     value={this.state.values.positions[0]}
-                    handleChange={this.handleCoordinatesChange.bind(this)}
+                    handleChange={this.handleCoordinatesChange}
                 />
                 <CoordinatesInput
                     title={'To'}
                     id={'1'}
                     value={this.state.values.positions[1]}
-                    handleChange={this.handleCoordinatesChange.bind(this)}
+                    handleChange={this.handleCoordinatesChange}
                 />
                 <AngleInput
                     title={'Angle'}
                     value={this.state.values.angle}
-                    handleChange={this.handleAngleChange.bind(this)}
+                    handleChange={this.handleAngleChange}
                 />
                 <LengthInput
                     title={'Length'}
                     value={this.state.values.length}
-                    handleChange={this.handleLengthChange.bind(this)}
+                    handleChange={this.handleLengthChange}
                 />
+                <TypeInput
+                    title={'Step Type'}
+                    value={this.state.values.type}
+                    handleChange={this.handleTypeChange} />
                 <Button type="submit" variant="contained" color="primary">Save</Button>
                 <Button onClick={this.props.onDelete} variant="contained">Delete</Button>
             </form >
@@ -117,7 +133,9 @@ class EditorFormContainer extends PureComponent {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.onSave(this.state.values);
+        let values = { ...this.state.values };
+        values.type = StepType[values.type];
+        this.props.onSave(values);
     }
 }
 
@@ -127,7 +145,7 @@ export default EditorFormContainer;
 const CoordinatesInput = (props) => {
     return (
         <div className="form-group">
-            <label htmlFor={props.name} className="form-label">{props.title}</label>
+        <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
             <Input
                 className="form-input"
                 id={props.id}
@@ -153,7 +171,7 @@ const CoordinatesInput = (props) => {
 const AngleInput = (props) => {
     return (
         <div className="form-group">
-            <label htmlFor={props.name} className="form-label">{props.title}</label>
+        <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
             <Input
                 className="form-input"
                 type="number"
@@ -168,7 +186,7 @@ const AngleInput = (props) => {
 const LengthInput = (props) => {
     return (
         <div className="form-group">
-            <label htmlFor={props.name} className="form-label">{props.title}</label>
+            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
             <Input
                 className="form-input"
                 type="number"
@@ -176,6 +194,26 @@ const LengthInput = (props) => {
                 onChange={props.handleChange}
                 placeholder="length"
             />
+        </div>
+    )
+}
+
+const TypeInput = (props) => {
+    return (
+        <div className="form-group">
+            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+            <Select
+                value={props.value}
+                onChange={props.handleChange}
+                inputProps={{
+                    name: 'type',
+                    id: 'type',
+                }}
+            >
+                <MenuItem value={"GUIDELINE"}>Guide Line</MenuItem>
+                <MenuItem value={"TB"}>TB</MenuItem>
+                <MenuItem value={"COG"}>COG</MenuItem>
+            </Select>
         </div>
     )
 }
