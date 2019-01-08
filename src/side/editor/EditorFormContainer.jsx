@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
-import { Input, Button, Select, FormControl, InputLabel, MenuItem } from '@material-ui/core';
+import './EditorFormContainer.css';
+import { Input, Button, Select, InputLabel, MenuItem } from '@material-ui/core';
 import StepService from '../../services/StepService';
 import { StepType } from '../../models/steps';
 
@@ -145,25 +146,27 @@ export default EditorFormContainer;
 const CoordinatesInput = (props) => {
     return (
         <div className="form-group">
-        <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
-            <Input
-                className="form-input"
-                id={props.id}
-                name={"lat"}
-                type="number"
-                value={props.value.lat}
-                onChange={props.handleChange}
-                placeholder="Lat"
-            />
-            <Input
-                className="form-input"
-                id={props.id}
-                name={"lng"}
-                type="number"
-                value={props.value.lng}
-                onChange={props.handleChange}
-                placeholder="Lng"
-            />
+            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+            <span>
+                <Input
+                    className="form-input"
+                    id={props.id}
+                    name={"lat"}
+                    type="number"
+                    value={props.value.lat}
+                    onChange={props.handleChange}
+                    placeholder="Lat"
+                />
+                <Input
+                    className="form-input"
+                    id={props.id}
+                    name={"lng"}
+                    type="number"
+                    value={props.value.lng}
+                    onChange={props.handleChange}
+                    placeholder="Lng"
+                />
+            </span>
         </div>
     )
 }
@@ -171,7 +174,7 @@ const CoordinatesInput = (props) => {
 const AngleInput = (props) => {
     return (
         <div className="form-group">
-        <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
             <Input
                 className="form-input"
                 type="number"
