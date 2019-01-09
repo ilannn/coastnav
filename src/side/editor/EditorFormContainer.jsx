@@ -3,6 +3,7 @@ import './EditorFormContainer.css';
 import { Input, Button, Select, InputLabel, MenuItem } from '@material-ui/core';
 import StepService from '../../services/StepService';
 import { StepType } from '../../models/steps';
+import _ from 'lodash';
 
 class EditorFormContainer extends PureComponent {
     state = {
@@ -11,22 +12,23 @@ class EditorFormContainer extends PureComponent {
             type: this.props.type.description,
             angle: StepService.calcAngle.apply(null, this.props.positions),
             length: Number(StepService.calcDistance.apply(null, this.props.positions).dist),
-            marker: {}
+            marker: this.props.marker ? this.props.marker.percentage : 50,
         },
     }
 
-
     /**
      * Restart editor's state when selected a new step
-     *  (passed threw props).
+     *  (passed threw props) OR when step changes (???)
      */
     componentDidUpdate(prevProps) {
-        if (this.props.id !== prevProps.id) {
+        if (this.props.id !== prevProps.id 
+            || !_.isEqual(this.props.marker, prevProps.marker)
+            || this.props.positions !== prevProps.positions) {
             let positions = this.props.positions;
             let angle = StepService.calcAngle.apply(null, positions);
             let length = Number(StepService.calcDistance.apply(null, positions).dist);
-            let type = this.props.type;
-            let marker = this.props.marker;
+            let type = this.props.type.description;
+            let marker = this.props.marker ? this.props.marker.percentage : null;
             this.setState({
                 ...this.state,
                 values: {
@@ -58,7 +60,7 @@ class EditorFormContainer extends PureComponent {
                 this.state.values.length,
                 angle
             )
-        ]
+        ];
         this.setState({
             values: {
                 ...this.state.values,
@@ -75,7 +77,7 @@ class EditorFormContainer extends PureComponent {
                 length,
                 this.state.values.angle
             )
-        ]
+        ];
         this.setState({
             values: {
                 ...this.state.values,
@@ -85,15 +87,49 @@ class EditorFormContainer extends PureComponent {
     }
     handleTypeChange = (e) => {
         let type = e.target.value;
-        let marker = {
-            ...this.state.values.marker
+        let marker;
+        if (type === "GUIDELINE") { marker = null }
+        else {
+            marker = this.state.values.marker 
+                ? this.state.values.marker : 50;
         }
         this.setState({
             values: {
                 ...this.state.values,
-                type, marker
+                type, marker,
             }
         });
+    }
+    handleMarkerChange = (e) => {
+        let marker = Number(e.target.value);
+        this.setState({
+            values: {
+                ...this.state.values,
+                marker
+            }
+        });
+    }
+
+    /**
+     * Get updated marker values using given position & percentage
+     * or state's values (50 as percentage fallback).
+     */
+    getUpdatedMarker = (positions, percentage) => {
+        if (!positions) {
+            positions = this.state.values.positions;
+        }
+        if (!percentage) {
+            percentage = this.state.values.marker ?
+                this.state.values.marker : 50;
+        }
+        let position = StepService.calcNewMarkerPosition(
+            positions[0],
+            positions[1],
+            percentage
+        );
+        return {
+            position, percentage
+        }
     }
 
     render() {
@@ -126,6 +162,11 @@ class EditorFormContainer extends PureComponent {
                     title={'Step Type'}
                     value={this.state.values.type}
                     handleChange={this.handleTypeChange} />
+                {this.state.values.marker &&
+                    <MarkerInput
+                        title={'Marker'}
+                        value={this.state.values.marker}
+                        handleChange={this.handleMarkerChange} />}
                 <Button type="submit" variant="contained" color="primary">Save</Button>
                 <Button onClick={this.props.onDelete} variant="contained">Delete</Button>
             </form >
@@ -136,6 +177,7 @@ class EditorFormContainer extends PureComponent {
         e.preventDefault();
         let values = { ...this.state.values };
         values.type = StepType[values.type];
+        values.marker = this.getUpdatedMarker(values.positions, values.marker);
         this.props.onSave(values);
     }
 }
@@ -217,6 +259,20 @@ const TypeInput = (props) => {
                 <MenuItem value={"TB"}>TB</MenuItem>
                 <MenuItem value={"COG"}>COG</MenuItem>
             </Select>
+        </div>
+    )
+}
+
+const MarkerInput = (props) => {
+    return (
+        <div className="form-group">
+            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+            <Input
+                className="form-input"
+                type="number"
+                value={props.value}
+                onChange={props.handleChange}
+            />
         </div>
     )
 }

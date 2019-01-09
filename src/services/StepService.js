@@ -14,26 +14,28 @@ export default class StepService {
                 id: this.id++, type: StepType.GUIDELINE,
                 positions: [{ lat: 32.374, lng: 35.116 }, { lat: 32.4, lng: 35.2 }],
                 color: "black",
-                marker: {
-                }
             },
             {
                 id: this.id++, type: StepType.TB,
                 positions: [{ lat: 32.4, lng: 35.2 }, { lat: 32.4234, lng: 35.2234 }],
                 color: "black",
                 marker: {
+                    position: null,
+                    percentage: 50, // center
                 }
             }
         ]
     }
 
     createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE) => {
-        return {
+        let newStep = {
             id: this.id++, type: stepType,
             positions: [{ lat, lng }, { lat, lng }],
-            marker: {
-            }
         }
+        if (stepType !== StepType.GUIDELINE) {
+            newStep.marker = { position: null, percentage: 50 };
+        } 
+        return newStep;
     }
 
     static calcAngle = function (p1, p2, direction) {
@@ -55,18 +57,8 @@ export default class StepService {
     static calcDistance = function (p1, p2) {
         let unit = "mi";
         let dist = geolib.getDistanceSimple(p1, p2);
-        if (dist >= 1609344) {
-            dist = (dist / 1609.344).toFixed(0);
-        } else if (dist >= 160934.4) {
-            dist = (dist / 1609.344).toFixed(1);
-            // don't use 3 decimal digits, cause especially in countries using the "." as thousands separator a number could optically be confused (e.g. "1.234mi": is it 1234mi or 1,234mi ?)
-        } else if (dist >= 1609.344) {
-            dist = (dist / 1609.344).toFixed(2);
-        } else {
-            dist = (dist / 0.3048).toFixed(0);
-            unit = "F";
-        }
-        return { dist, unit };
+        dist = geolib.convertUnit('mi', dist);
+        return { dist , unit };
     }
 
     /**
@@ -77,7 +69,6 @@ export default class StepService {
      * @param {NavStep} newStep 
      */
     static getUpdatedStepWithChanges(oldStep, oldStepPolyline, newStep) {
-        debugger;
         // Check diff
         let compareKeys = oldStep.marker || newStep.marker ? ["positions", "marker"] : ["positions"];
         let differences = compareKeys.filter(k => {
@@ -115,5 +106,13 @@ export default class StepService {
         length = length * 1609.344; // convert to meters
         let p2 = geolib.computeDestinationPoint(from, length, angle);
         return new LatLng(p2.latitude.toFixed(5), p2.longitude.toFixed(5));
+    }
+
+    static calcNewMarkerPosition(from, to, percentage) {
+        let angle = StepService.calcAngle(from, to);
+        let length = geolib.getDistanceSimple(from, to);
+        length = length * (percentage / 100);
+        let p2 = geolib.computeDestinationPoint(from, length, angle);
+        return new LatLng(p2.latitude.toFixed(8), p2.longitude.toFixed(8));
     }
 }
