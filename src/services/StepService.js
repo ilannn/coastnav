@@ -115,4 +115,9 @@ export default class StepService {
         let p2 = geolib.computeDestinationPoint(from, length, angle);
         return new LatLng(p2.latitude.toFixed(8), p2.longitude.toFixed(8));
     }
+
+    static isNorth(angle) {
+        angle = angle % 360;
+        return (angle < 90 || angle > 270);
+    }
 }

@@ -1,27 +1,27 @@
 import L from 'leaflet';
 import StepService from '../../../services/StepService';
 
-const doubleArrowIcon = L.icon({
-    iconUrl: 'double.png',
+const tripleArrowIcon = L.icon({
+    iconUrl: 'triple.png',
     iconSize: [40, 40], // size of the icon
     iconAnchor: [20, 20], // point of the icon which will correspond to marker's location
 });
-const cogStepProps = {
+const crntStepProps = {
     color: 'black',
     width: 8,
 }
-const cogMarkerProps = {
+const crntMarkerProps = {
     // Put marker's const props here..
-    icon: doubleArrowIcon,
+    icon: tripleArrowIcon,
 }
 
-export default class CogStep {
+export default class CrntStep {
     static addTo(map, options) {
-        let step = L.polyline(options.positions, { ...cogStepProps }).addTo(map);
+        let step = L.polyline(options.positions, { ...crntStepProps }).addTo(map);
         let markerPosition = options.marker && options.marker.position
             ? options.marker.position : step.getCenter();
         let marker = L.marker(markerPosition, {
-            ...cogMarkerProps,
+            ...crntMarkerProps,
             rotationAngle: StepService.calcAngle.apply(null, options.positions)
         }).addTo(map);
         let { dist, unit } = {

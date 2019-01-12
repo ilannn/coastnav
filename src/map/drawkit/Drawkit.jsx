@@ -29,7 +29,7 @@ const drawkitTools = [
         },
     },
     {
-        type: "Current",
+        type: StepType.CRNT,
         acronyms: "CRNT",
         matIcon: "face",
         options: {

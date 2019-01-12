@@ -23,8 +23,14 @@ export default class TBStep {
         let marker = L.marker(position, {
             ...tbMarkerProps,
             rotationAngle: StepService.calcAngle.apply(null, options.positions)
+        }).addTo(map);
+        let angle = StepService.calcAngle(
+            ...Object.values(step.getLatLngs())
+        );
+        marker.bindTooltip(`${angle}°`, {
+            permanent: true,
+            offset: [0, 10 * +StepService.isNorth(angle)],
         });
-        marker = marker.addTo(map);
         return [step, marker];
     }
 }

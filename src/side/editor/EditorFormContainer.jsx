@@ -259,6 +259,7 @@ const TypeInput = (props) => {
                 <MenuItem value={"GUIDELINE"}>Guide Line</MenuItem>
                 <MenuItem value={"TB"}>TB</MenuItem>
                 <MenuItem value={"COG"}>COG</MenuItem>
+                <MenuItem value={"CRNT"}>COG</MenuItem>
             </Select>
         </div>
     )
