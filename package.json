@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@date-io/moment": "^1.0.1",
     "@material-ui/core": "^3.6.0",
     "@material-ui/icons": "^3.0.1",
     "@material-ui/lab": "^3.0.0-alpha.28",
@@ -13,6 +14,8 @@
     "leaflet-mouse-position": "^1.0.4",
     "leaflet-rotatedmarker": "^0.2.0",
     "lodash": "^4.17.11",
+    "material-ui-pickers": "^2.1.1",
+    "moment": "^2.23.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
     "react-cursor-position": "^3.0.3",

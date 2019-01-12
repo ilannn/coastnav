@@ -19,6 +19,7 @@ export default class StepService {
                 id: this.id++, type: StepType.TB,
                 positions: [{ lat: 32.4, lng: 35.2 }, { lat: 32.4234, lng: 35.2234 }],
                 color: "black",
+                time: new Date(),
                 marker: {
                     position: null,
                     percentage: 50, // center
@@ -33,7 +34,11 @@ export default class StepService {
             positions: [{ lat, lng }, { lat, lng }],
         }
         if (stepType !== StepType.GUIDELINE) {
-            newStep.marker = { position: null, percentage: 50 };
+            return {
+                ...newStep,
+                time: new Date(),
+                marker: { position: null, percentage: 50 }
+            }
         } 
         return newStep;
     }

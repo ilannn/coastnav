@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import StepService from '../../../services/StepService';
 import * as navStep from './navStep';
+import * as moment from 'moment';
 
 const tbStepProps = {
     color: 'black',
@@ -23,7 +24,8 @@ export default class TBStep {
         let angle = StepService.calcAngle(
             ...Object.values(step.getLatLngs())
         );
-        marker.bindTooltip(`${angle}°`, {
+        let time = options.time ? moment(options.time).format("HH:mm") : "Error";
+        marker.bindTooltip(`${angle}° / ${time}`, {
             permanent: true,
             offset: [0, 10 * +StepService.isNorth(angle)],
         });

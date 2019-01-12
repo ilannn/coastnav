@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import './EditorFormContainer.css';
 import { Input, Button, Select, InputLabel, MenuItem } from '@material-ui/core';
+import { MuiPickersUtilsProvider, TimePicker } from 'material-ui-pickers';
+import MomentUtils from '@date-io/moment';
 import { Slider } from '@material-ui/lab';
 import StepService from '../../services/StepService';
 import { StepType } from '../../models/steps';
@@ -14,6 +16,7 @@ class EditorFormContainer extends PureComponent {
             angle: StepService.calcAngle.apply(null, this.props.positions),
             length: Number(StepService.calcDistance.apply(null, this.props.positions).dist),
             marker: this.props.marker ? this.props.marker.percentage : 50,
+            time: this.props.time,
         },
     }
 
@@ -22,7 +25,7 @@ class EditorFormContainer extends PureComponent {
      *  (passed threw props) OR when step changes (???)
      */
     componentDidUpdate(prevProps) {
-        if (this.props.id !== prevProps.id 
+        if (this.props.id !== prevProps.id
             || !_.isEqual(this.props.marker, prevProps.marker)
             || this.props.positions !== prevProps.positions) {
             let positions = this.props.positions;
@@ -30,10 +33,11 @@ class EditorFormContainer extends PureComponent {
             let length = Number(StepService.calcDistance.apply(null, positions).dist);
             let type = this.props.type.description;
             let marker = this.props.marker ? this.props.marker.percentage : null;
+            let time = this.props.time;
             this.setState({
                 ...this.state,
                 values: {
-                    positions, angle, length, type, marker
+                    positions, angle, length, type, marker, time
                 }
             });
         }
@@ -91,7 +95,7 @@ class EditorFormContainer extends PureComponent {
         let marker;
         if (type === "GUIDELINE") { marker = null }
         else {
-            marker = this.state.values.marker 
+            marker = this.state.values.marker
                 ? this.state.values.marker : 50;
         }
         this.setState({
@@ -107,6 +111,16 @@ class EditorFormContainer extends PureComponent {
             values: {
                 ...this.state.values,
                 marker
+            }
+        });
+    }
+
+    handleTimeChange = (m) => {
+        let time = m.toDate();
+        this.setState({
+            values: {
+                ...this.state.values,
+                time
             }
         });
     }
@@ -149,20 +163,25 @@ class EditorFormContainer extends PureComponent {
                     value={this.state.values.positions[1]}
                     handleChange={this.handleCoordinatesChange}
                 />
+                <TypeInput
+                    title={'Type'}
+                    value={this.state.values.type}
+                    handleChange={this.handleTypeChange} />
                 <AngleInput
-                    title={'Angle'}
+                    title={'Degree'}
                     value={this.state.values.angle}
                     handleChange={this.handleAngleChange}
                 />
                 <LengthInput
-                    title={'Length'}
+                    title={'Distance'}
                     value={this.state.values.length}
                     handleChange={this.handleLengthChange}
                 />
-                <TypeInput
-                    title={'Step Type'}
-                    value={this.state.values.type}
-                    handleChange={this.handleTypeChange} />
+                {this.state.values.time &&
+                    <TimeInput
+                        title={'Time'}
+                        value={this.state.values.time}
+                        handleChange={this.handleTimeChange} />}
                 {this.state.values.marker &&
                     <MarkerInput
                         title={'Marker'}
@@ -276,6 +295,22 @@ const MarkerInput = (props) => {
                 value={props.value}
                 onChange={props.handleChange}
             />
+        </div>
+    )
+}
+
+const TimeInput = (props) => {
+    return (
+        <div className="form-group">
+            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+                <TimePicker
+                    className="form-input"
+                    ampm={false}
+                    value={props.value}
+                    onChange={props.handleChange}
+                />
+            </MuiPickersUtilsProvider>
         </div>
     )
 }
