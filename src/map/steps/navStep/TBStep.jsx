@@ -1,8 +1,8 @@
 import L from 'leaflet';
 import StepService from '../../../services/StepService';
 
-const arrowIcon = L.icon({
-    iconUrl: 'makefg.png',
+const singleArrowIcon = L.icon({
+    iconUrl: 'single.png',
     iconSize: [40, 40], // size of the icon
     iconAnchor: [20, 20], // point of the icon which will correspond to marker's location
 });
@@ -12,7 +12,7 @@ const tbStepProps = {
 }
 const tbMarkerProps = {
     // Put marker's const props here..
-    icon: arrowIcon,
+    icon: singleArrowIcon,
 }
 
 export default class TBStep {

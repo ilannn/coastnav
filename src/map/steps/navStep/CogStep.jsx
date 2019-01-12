@@ -1,11 +1,18 @@
 import L from 'leaflet';
+import StepService from '../../../services/StepService';
 
+const doubleArrowIcon = L.icon({
+    iconUrl: 'double.png',
+    iconSize: [40, 40], // size of the icon
+    iconAnchor: [20, 20], // point of the icon which will correspond to marker's location
+});
 const cogStepProps = {
     color: 'black',
     width: 8,
 }
 const cogMarkerProps = {
     // Put marker's const props here..
+    icon: doubleArrowIcon,
 }
 
 export default class CogStep {
@@ -13,12 +20,10 @@ export default class CogStep {
         let step = L.polyline(options.positions, { ...cogStepProps }).addTo(map);
         let markerPosition = options.marker && options.marker.position
             ? options.marker.position : step.getCenter();
-        let markersPositions = [
-            { lat: markerPosition.lat - 0.0001, lng: markerPosition.lng - 0.0001 },
-            { lat: markerPosition.lat + 0.001, lng: markerPosition.lng + 0.001 },
-        ];
-        let marker1 = L.marker(markersPositions[0], cogMarkerProps).addTo(map);
-        let marker2 = L.marker(markersPositions[1], cogMarkerProps).addTo(map);
-        return [step, marker1, marker2];
+        let marker = L.marker(markerPosition, {
+            ...cogMarkerProps,
+            rotationAngle: StepService.calcAngle.apply(null, options.positions)
+        }).addTo(map);
+        return [step, marker];
     }
 }
