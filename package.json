@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^3.6.0",
     "@material-ui/icons": "^3.0.1",
+    "@material-ui/lab": "^3.0.0-alpha.28",
     "formik": "^1.3.2",
     "geolib": "^2.0.24",
     "leaflet": "^1.3.4",

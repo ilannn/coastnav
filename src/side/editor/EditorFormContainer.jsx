@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import './EditorFormContainer.css';
 import { Input, Button, Select, InputLabel, MenuItem } from '@material-ui/core';
+import { Slider } from '@material-ui/lab';
 import StepService from '../../services/StepService';
 import { StepType } from '../../models/steps';
 import _ from 'lodash';
@@ -100,8 +101,8 @@ class EditorFormContainer extends PureComponent {
             }
         });
     }
-    handleMarkerChange = (e) => {
-        let marker = Number(e.target.value);
+    handleMarkerChange = (e, value) => {
+        let marker = Number(value);
         this.setState({
             values: {
                 ...this.state.values,
@@ -267,7 +268,7 @@ const MarkerInput = (props) => {
     return (
         <div className="form-group">
             <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
-            <Input
+            <Slider
                 className="form-input"
                 type="number"
                 value={props.value}
