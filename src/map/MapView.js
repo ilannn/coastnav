@@ -5,6 +5,7 @@ import { Map, TileLayer } from 'react-leaflet';
 import Control from 'react-leaflet-control';
 import L from 'leaflet';
 import 'leaflet-mouse-position';
+import 'leaflet-rotatedmarker';
 
 import StepService from '../services/StepService';
 import Editor from '../side/editor/Editor';
