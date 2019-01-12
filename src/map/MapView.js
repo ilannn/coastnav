@@ -15,6 +15,7 @@ import TBStep from './steps/navStep/TBStep';
 import CogStep from './steps/navStep/CogStep';
 import { StepType } from '../models/steps';
 import CrntStep from './steps/navStep/CrntStep';
+import TCStep from './steps/navStep/TCStep';
 
 const stepService = new StepService();
 const COOREDINATES_DEPTH = 7;
@@ -174,6 +175,8 @@ class MapView extends Component {
                 return CogStep.addTo(this.leafletMap, navStep);
             case StepType.CRNT:
                 return CrntStep.addTo(this.leafletMap, navStep);
+            case StepType.TC:
+                return TCStep.addTo(this.leafletMap, navStep);
             case StepType.GUIDELINE:
             default:
                 return GuidelineStep.addTo(this.leafletMap, navStep);

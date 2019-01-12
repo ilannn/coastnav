@@ -1,18 +1,14 @@
 import L from 'leaflet';
 import StepService from '../../../services/StepService';
+import * as navStep from './navStep';
 
-const tripleArrowIcon = L.icon({
-    iconUrl: 'triple.png',
-    iconSize: [40, 40], // size of the icon
-    iconAnchor: [20, 20], // point of the icon which will correspond to marker's location
-});
 const crntStepProps = {
     color: 'black',
     width: 8,
 }
 const crntMarkerProps = {
     // Put marker's const props here..
-    icon: tripleArrowIcon,
+    icon: navStep.tripleArrowIcon,
 }
 
 export default class CrntStep {

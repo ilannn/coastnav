@@ -2,22 +2,22 @@ import L from 'leaflet';
 import StepService from '../../../services/StepService';
 import * as navStep from './navStep';
 
-const cogStepProps = {
+const tcStepProps = {
     color: 'black',
     width: 8,
 }
-const cogMarkerProps = {
+const tcMarkerProps = {
     // Put marker's const props here..
     icon: navStep.doubleArrowIcon,
 }
 
-export default class CogStep {
+export default class TCStep {
     static addTo(map, options) {
-        let step = L.polyline(options.positions, { ...cogStepProps }).addTo(map);
+        let step = L.polyline(options.positions, { ...tcStepProps }).addTo(map);
         let markerPosition = options.marker && options.marker.position
             ? options.marker.position : step.getCenter();
         let marker = L.marker(markerPosition, {
-            ...cogMarkerProps,
+            ...tcMarkerProps,
             rotationAngle: StepService.calcAngle.apply(null, options.positions)
         }).addTo(map);
         let { dist, unit } = {

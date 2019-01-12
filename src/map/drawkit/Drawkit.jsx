@@ -36,6 +36,14 @@ const drawkitTools = [
             color: "white",
         },
     },
+    {
+        type: StepType.TC,
+        acronyms: "TC",
+        matIcon: "face",
+        options: {
+            color: "white",
+        },
+    },
 ]
 
 class Drawkit extends Component {

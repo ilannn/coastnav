@@ -4,4 +4,5 @@ export const StepType = Object.freeze({
     TB:  Symbol("TB"),
     COG: Symbol("COG"),
     CRNT: Symbol("CRNT"),
+    TC: Symbol("TC"),
 });
