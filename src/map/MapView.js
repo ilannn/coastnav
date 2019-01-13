@@ -69,11 +69,23 @@ class MapView extends Component {
                 ref={this.setLeafletMapRef}
                 center={center} zoom={10}
                 zoomControl={false}
+                maxZoom={13}
+                minZoom={7}
                 onMouseMove={this.onDrawingMove.bind(this)}>
 
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+
+                <TileLayer
+                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="tiles/{z}/{x}/{y}.png"
+                />
+
+                <TileLayer
+                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="tiles2/{z}/{x}/{y}.png"
                 />
 
                 <Control position="topright">
