@@ -7,7 +7,6 @@ const tcStepProps = {
     width: 8,
 }
 const tcMarkerProps = {
-    // Put marker's const props here..
     icon: navStep.doubleArrowIcon,
 }
 

@@ -3,6 +3,12 @@ import L from 'leaflet';
 
 /* Markers Icons */
 
+export const emptyIcon = L.icon({
+    iconUrl: 'empty.png',
+    iconSize: [10, 10],
+    iconAnchor: [5, 5],
+});
+
 export const singleArrowIcon = L.icon({
     iconUrl: 'single.png',
     iconSize: [40, 40], // size of the icon
