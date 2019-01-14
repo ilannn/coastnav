@@ -19,7 +19,7 @@ import TCStep from './steps/navStep/TCStep';
 
 const stepService = new StepService();
 const COOREDINATES_DEPTH = 7;
-const center = [32.374, 35.116]
+const center = [32.52018, 34.66461];
 
 class MapView extends Component {
 
@@ -33,7 +33,6 @@ class MapView extends Component {
         draw: {
             isDrawing: false,
         },
-        collapsed: true, // for future sidebar use
     }
 
     constructor(props) {
@@ -51,16 +50,9 @@ class MapView extends Component {
         document.removeEventListener("keydown", this.escFunction, false);
     }
     componentDidUpdate(prevProps, prevState) {        
-        this.leafletMap.invalidateSize();
+        //this.leafletMap.invalidateSize();
         this.eraseSteps(prevState.steps);
         this.drawStateSteps();
-
-        // Update collapse flag if selected step changed
-        if (this.state.selectedStep !== prevState.selectedStep) {
-            this.setState({
-                collapsed: !this.state.selectedStep,
-            });
-        }
     }
 
     render() {
@@ -76,16 +68,22 @@ class MapView extends Component {
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    opacity={0.5}
                 />
 
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="tiles/{z}/{x}/{y}.png"
+                    url="israel/{z}/{x}/{y}.png"
                 />
 
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="tiles2/{z}/{x}/{y}.png"
+                    url="haifa/{z}/{x}/{y}.png"
+                />
+
+                <TileLayer
+                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="hadera/{z}/{x}/{y}.png"
                 />
 
                 <Control position="topright">
