@@ -1,0 +1,13 @@
+{
+  "name": "kishon",
+  "version": "1.1.0",
+  "description": "",
+  "attribution": "Rendered with <a href=\"https://www.maptiler.com/\">MapTiler Desktop</a>",
+  "type": "overlay",
+  "format": "png",
+  "minzoom": "10",
+  "maxzoom": "15",
+  "scale": "1.000000",
+  "bounds": [34.93818661, 32.80103116, 35.14109333, 32.95251540],
+  "profile": "mercator"
+}
