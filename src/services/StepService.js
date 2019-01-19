@@ -37,12 +37,10 @@ export default class StepService {
         let nearestPoint = StepService.getNearestPosition(
             { lat, lng }, options
         );
-        debugger;
         if (isNaN(nearestPoint.distance) || nearestPoint.distance > 1500 || nearestPoint.key === -1) {
             console.log("nearestPoint", nearestPoint);
             nearestPoint = { lat, lng };
         } else {
-            debugger;
             nearestPoint = options[nearestPoint.key];
         }
         let newStep = {
