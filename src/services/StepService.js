@@ -14,6 +14,10 @@ export default class StepService {
                 id: this.id++, type: StepType.GUIDELINE,
                 positions: [{ lat: 32.374, lng: 35.116 }, { lat: 32.4, lng: 35.2 }],
                 color: "black",
+                marker: {
+                    position: null,
+                    percentage: 50, // center
+                }
             },
             {
                 id: this.id++, type: StepType.TB,
@@ -28,16 +32,27 @@ export default class StepService {
         ]
     }
 
-    createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE) => {
+    createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, magnetOptions = []) => {
+        let options = _.flattenDeep(_.map(magnetOptions, option => _.flatten(option.positions)))
+        let nearestPoint = StepService.getNearestPosition(
+            { lat, lng }, options
+        );
+        if (isNaN(nearestPoint.distance) || nearestPoint.distance > 1500 || nearestPoint.key === -1) {
+            console.log("nearestPoint", nearestPoint);
+            nearestPoint = { lat, lng };
+        } else {
+            debugger;
+            nearestPoint = options[nearestPoint.key];
+        }
         let newStep = {
             id: this.id++, type: stepType,
-            positions: [{ lat, lng }, { lat, lng }],
+            positions: [nearestPoint, { lat, lng }],
+            marker: { position: null, percentage: 50 }
         }
         if (stepType !== StepType.GUIDELINE) {
             return {
                 ...newStep,
                 time: new Date(),
-                marker: { position: null, percentage: 50 }
             }
         } 
         return newStep;

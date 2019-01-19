@@ -92,16 +92,16 @@ class EditorFormContainer extends PureComponent {
     }
     handleTypeChange = (e) => {
         let type = e.target.value;
-        let marker;
-        if (type === "GUIDELINE") { marker = null }
+        let time;
+        if (type === "GUIDELINE") { time = null; }
         else {
-            marker = this.state.values.marker
-                ? this.state.values.marker : 50;
+            time = this.state.values.time 
+            ? this.state.values.time : new Date();
         }
         this.setState({
             values: {
                 ...this.state.values,
-                type, marker,
+                type, time
             }
         });
     }
