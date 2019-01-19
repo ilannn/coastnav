@@ -7,7 +7,6 @@ import { Slider } from '@material-ui/lab';
 import StepService from '../../services/StepService';
 import { StepType } from '../../models/steps';
 import _ from 'lodash';
-import geolib from 'geolib';
 
 class EditorFormContainer extends PureComponent {
     state = {

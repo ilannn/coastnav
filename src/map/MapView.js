@@ -16,8 +16,8 @@ import CogStep from './steps/navStep/CogStep';
 import { StepType } from '../models/steps';
 import CrntStep from './steps/navStep/CrntStep';
 import TCStep from './steps/navStep/TCStep';
+import { Card, Switch } from '@material-ui/core';
 
-import Switch from '@material-ui/core/Switch';
 
 const stepService = new StepService();
 const COOREDINATES_DEPTH = 7;
@@ -108,6 +108,17 @@ class MapView extends Component {
                         selectedTool={this.state.selectedTool}
                         onSelectTool={this.onSelectTool}
                         onClearAll={this.onClearAll}>
+
+                        <Card>
+                            {this.state.draw.snapping
+                                ? <i className="material-icons">lock</i>
+                                : <i className="material-icons">lock_open</i>}
+                            <Switch
+                                title={this.state.draw.snapping ? "Snapping On" : "Snapping Off"}
+                                checked={this.state.draw.snapping}
+                                onChange={this.onSnappingSwitch}>
+                            </Switch>
+                        </Card>
                     </Drawkit>
                 </Control>
 
@@ -118,20 +129,6 @@ class MapView extends Component {
                         onDelete={this.handleEditorDelete.bind(this)}
                     >
                     </Editor>
-                </Control>
-
-                <Control position="bottomleft">
-                    <div>
-                        {this.state.draw.snapping
-                            ? <i className="material-icons">lock</i>
-                            : <i className="material-icons">lock_open</i>}
-                        {this.state.draw.snapping
-                            ? "Snapping" : "Not Snapping"}
-                    </div>
-                    <Switch
-                        checked={this.state.draw.snapping}
-                        onChange={this.onSnappingSwitch}>
-                    </Switch>
                 </Control>
 
             </Map>
