@@ -37,6 +37,7 @@ export default class StepService {
         let nearestPoint = StepService.getNearestPosition(
             { lat, lng }, options
         );
+        debugger;
         if (isNaN(nearestPoint.distance) || nearestPoint.distance > 1500 || nearestPoint.key === -1) {
             console.log("nearestPoint", nearestPoint);
             nearestPoint = { lat, lng };
@@ -139,5 +140,9 @@ export default class StepService {
     static isNorth(angle) {
         angle = angle % 360;
         return (angle < 90 || angle > 270);
+    }
+
+    static getNearestPosition(from, options) {
+        return geolib.findNearest(from, options);
     }
 }

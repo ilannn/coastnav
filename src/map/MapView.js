@@ -61,29 +61,34 @@ class MapView extends Component {
                 ref={this.setLeafletMapRef}
                 center={center} zoom={10}
                 zoomControl={false}
-                maxZoom={13}
+                maxZoom={15}
                 minZoom={7}
                 onMouseMove={this.onDrawingMove.bind(this)}>
 
+                {/* World */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     opacity={0.5}
+                    minZoom={12}
                 />
 
+                {/* Hadera */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="israel/{z}/{x}/{y}.png"
+                    url="hadera/{z}/{x}/{y}.png"
                 />
 
+                {/* Haifa */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="haifa/{z}/{x}/{y}.png"
                 />
 
+                {/* Israel */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="hadera/{z}/{x}/{y}.png"
+                    url="israel/{z}/{x}/{y}.png"
                 />
 
                 <Control position="topright">
@@ -307,7 +312,8 @@ class MapView extends Component {
             let newStep = stepService.createNewStep(
                 Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
                 Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
-                this.state.selectedTool.type
+                this.state.selectedTool.type,
+                this.state.steps
             );
 
             // assing the new line the current tool's options
