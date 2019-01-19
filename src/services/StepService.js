@@ -140,7 +140,9 @@ export default class StepService {
         options = _.flattenDeep(_.map(options, option => _.flatten(option.positions)));
         // fliter out ignored options
         options = _.filter(options, option => _.findIndex(ignoreOptions, option) < 0)
-        debugger;
+        // If no options left - return given point
+        if (_.isEmpty(options)) return from;
+        // Otherwise - find nearest path
         let nearestPoint = geolib.findNearest(from, options);
         if (isNaN(nearestPoint.distance) || nearestPoint.distance > limit || nearestPoint.key === -1) {
             nearestPoint = from;

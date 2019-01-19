@@ -53,6 +53,13 @@ class Drawkit extends Component {
             <Card className="drawkitToolList">
                 {drawkitTools}
             </Card>
+            <Card>
+                <Button 
+                    title={"Clear All"}
+                    onClick={this.props.onClearAll}>
+                    <i className="material-icons">delete_sweep</i>
+                </Button>
+            </Card>
             {this.props.children}
         </section>)
     }
@@ -72,7 +79,7 @@ class Drawkit extends Component {
                         variant={this.props.selectedTool && this.props.selectedTool.type === tool.type ? 'contained' : 'text'}
                         onClick={() => { this.onSelectTool(tool) }}>
                         {tool.acronyms}
-                        
+
                     </Button>
                     {divider}
                 </span>

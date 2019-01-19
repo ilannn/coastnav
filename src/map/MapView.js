@@ -94,7 +94,8 @@ class MapView extends Component {
                 <Control position="topright">
                     <Drawkit
                         selectedTool={this.state.selectedTool}
-                        onSelectTool={this.onSelectTool.bind(this)}>
+                        onSelectTool={this.onSelectTool}
+                        onClearAll={this.onClearAll}>
                     </Drawkit>
                 </Control>
 
@@ -114,13 +115,24 @@ class MapView extends Component {
     setLeafletMapRef = map => (this.leafletMap = map && map.leafletElement);
 
     /* Drawkit */
-    onSelectTool(tool) {
+    onSelectTool = (tool) => {
         if (!this.state.selectedTool || this.state.selectedTool.type !== tool.type) {
             this.setState({ selectedTool: tool });
         }
         else {
             this.setState({ selectedTool: null });
         }
+    }
+
+    /**
+     * Erase all steps from map, unselect selected step & empty steps list.
+     */
+    onClearAll = () => {
+        this.eraseSteps();
+        this.unSelectStep();
+        this.setState({
+            steps: []
+        });
     }
 
     /* Mouse */
@@ -145,7 +157,7 @@ class MapView extends Component {
         this.drawSteps(this.state.steps);
     }
 
-    eraseSteps(steps) {
+    eraseSteps = (steps) => {
         if (!steps) return;
         if (!this.leafletMap) {
             console.error("Couldn't add lines to map. Missing map ref");
