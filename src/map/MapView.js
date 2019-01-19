@@ -48,6 +48,8 @@ class MapView extends Component {
         this.leafletMap.on('click', this.onMapClick.bind(this));
         this.setMousePosition();
         this.drawStateSteps();
+        console.log("DidMount")
+        this.setState({});
     }
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
@@ -65,7 +67,8 @@ class MapView extends Component {
                 center={center} zoom={10}
                 zoomControl={false}
                 maxZoom={15}
-                minZoom={7}
+                minZoom={9}
+                animate={true}
                 onMouseMove={this.onDrawingMove.bind(this)}>
 
                 {/* World */}
@@ -195,7 +198,7 @@ class MapView extends Component {
     eraseSteps = (steps) => {
         if (!steps) return;
         if (!this.leafletMap) {
-            console.error("Couldn't add lines to map. Missing map ref");
+            console.error("Couldn't erase lines to map. Missing map ref");
             return;
         }
         steps.forEach(navStep => {
