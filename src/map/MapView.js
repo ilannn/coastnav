@@ -17,6 +17,8 @@ import { StepType } from '../models/steps';
 import CrntStep from './steps/navStep/CrntStep';
 import TCStep from './steps/navStep/TCStep';
 
+import Switch from '@material-ui/core/Switch';
+
 const stepService = new StepService();
 const COOREDINATES_DEPTH = 7;
 const center = [32.52018, 34.66461];
@@ -32,6 +34,7 @@ class MapView extends Component {
         selectedTool: null,
         draw: {
             isDrawing: false,
+            snapping: true,
         },
     }
 
@@ -108,11 +111,35 @@ class MapView extends Component {
                     </Editor>
                 </Control>
 
+                <Control position="bottomleft">
+                    <div>
+                        {this.state.draw.snapping
+                            ? <i className="material-icons">lock</i>
+                            : <i className="material-icons">lock_open</i>}
+                        {this.state.draw.snapping
+                            ? "Snapping" : "Not Snapping"}
+                    </div>
+                    <Switch
+                        checked={this.state.draw.snapping}
+                        onChange={this.onSnappingSwitch}>
+                    </Switch>
+                </Control>
+
             </Map>
         </section>)
     }
 
     setLeafletMapRef = map => (this.leafletMap = map && map.leafletElement);
+
+    /* Snapping */
+    onSnappingSwitch = (e) => {
+        this.setState({
+            draw: {
+                ...this.state.draw,
+                snapping: !this.state.draw.snapping
+            },
+        });
+    }
 
     /* Drawkit */
     onSelectTool = (tool) => {
@@ -143,6 +170,8 @@ class MapView extends Component {
         else {
             L.control.mousePosition({
                 position: 'bottomright',
+                lngFormatter: StepService.formatCoordinate,
+                latFormatter: StepService.formatCoordinate,
             }).addTo(this.leafletMap);
         }
     }
@@ -280,6 +309,7 @@ class MapView extends Component {
             selectedStep: undefined,
             steps: steps,
             draw: {
+                ...this.state.draw,
                 isDrawing: false,
             },
         });
@@ -320,12 +350,22 @@ class MapView extends Component {
         }
         if (!this.state.draw.isDrawing) {
             // Create a new step, stating at click position
-            let newStep = stepService.createNewStep(
-                Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-                Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
-                this.state.selectedTool.type,
-                this.state.steps
-            );
+            let newStep;
+            if (this.state.draw.snapping) {
+                newStep = stepService.createNewSnappedStep(
+                    Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                    Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
+                    this.state.selectedTool.type,
+                    this.state.steps
+                );
+            }
+            else {
+                newStep = stepService.createNewStep(
+                    Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                    Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
+                    this.state.selectedTool.type,
+                );
+            }
 
             // assing the new line the current tool's options
             Object.assign(newStep, this.state.selectedTool.options);
@@ -334,24 +374,32 @@ class MapView extends Component {
 
             // Mark the new step as the selected step      
             this.setState({
-                draw: { isDrawing: true },
+                draw: {
+                    ...this.state.draw,
+                    isDrawing: true,
+                },
                 steps: updatedSteps,
                 selectedStep: newStep,
             });
         }
         else {
-            // When finished drawing - try finding a near point for ending
-            let currentPositions = this.state.selectedStep.positions;
-            let updatedStepEnding = StepService.getNearestPosition(
-                currentPositions[1],
-                this.state.steps.slice(0, this.state.steps.length - 1),
-                [currentPositions[0]]
-            );
-            this.handleStepChanges(this.state.selectedStep.id, {
-                positions: [currentPositions[0], updatedStepEnding]
-            });
+            if (this.state.draw.snapping) {
+                // When finished drawing - try finding a near point for ending
+                let currentPositions = this.state.selectedStep.positions;
+                let updatedStepEnding = StepService.getNearestPosition(
+                    currentPositions[1],
+                    this.state.steps.slice(0, this.state.steps.length - 1),
+                    [currentPositions[0]]
+                );
+                this.handleStepChanges(this.state.selectedStep.id, {
+                    positions: [currentPositions[0], updatedStepEnding]
+                });
+            }
             this.setState({
-                draw: { isDrawing: false },
+                draw: {
+                    ...this.state.draw,
+                    isDrawing: false,
+                },
             });
         }
     }

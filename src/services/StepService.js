@@ -32,13 +32,10 @@ export default class StepService {
         ]
     }
 
-    createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, options = []) => {
-        let nearestPoint = StepService.getNearestPosition(
-            { lat, lng }, options
-        );
+    createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE) => {
         let newStep = {
             id: this.id++, type: stepType,
-            positions: [nearestPoint, { lat, lng }],
+            positions: [{ lat, lng }, { lat, lng }],
             marker: { position: null, percentage: 50 }
         }
         if (stepType !== StepType.GUIDELINE) {
@@ -50,7 +47,20 @@ export default class StepService {
         return newStep;
     }
 
-    static getNearestPo
+    createNewSnappedStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, options = []) => {
+        let nearestPoint = StepService.getNearestPosition(
+            { lat, lng }, options
+        );
+        return this.createNewStep(nearestPoint.lat, nearestPoint.lng, stepType)
+    }
+
+    static formatCoordinate = (coord) => {
+        return geolib.decimal2sexagesimal(coord);
+    }
+    
+    static unformatCoordinate = (coord) => {
+        return geolib.sexagesimal2decimal(coord);
+    }
 
     static calcAngle = function (p1, p2, direction) {
         let lat1 = p1.lat / 180 * Math.PI;

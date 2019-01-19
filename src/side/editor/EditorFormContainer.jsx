@@ -47,7 +47,10 @@ class EditorFormContainer extends PureComponent {
     handleCoordinatesChange = (e) => {
         let positions =
             this.state.values.positions ? this.state.values.positions : [];
-        try { positions[e.target.id][e.target.name] = Number(unformatCoordinate(e.target.value)); }
+        try { 
+            positions[e.target.id][e.target.name] = 
+                Number(StepService.unformatCoordinate(e.target.value)); 
+        }
         catch { console.warn("User entered wrong coord format: ", e.target.value); }
         let angle = StepService.calcAngle(...positions);
         let length = Number(StepService.calcDistance(...positions).dist);
@@ -189,8 +192,10 @@ class EditorFormContainer extends PureComponent {
                         title={'Marker'}
                         value={this.state.values.marker}
                         handleChange={this.handleMarkerChange} />}
-                <Button type="submit" variant="contained" color="primary">Save</Button>
-                <Button onClick={this.props.onDelete} variant="contained">Delete</Button>
+                <div className="footerButtons">
+                    <Button type="submit" variant="contained" color="primary">Save</Button>
+                    <Button onClick={this.props.onDelete} variant="contained">Delete</Button>
+                </div>
             </form >
         );
     }
@@ -206,14 +211,6 @@ class EditorFormContainer extends PureComponent {
 
 export default EditorFormContainer;
 
-const formatCoordinate = (coord) => {
-    return geolib.decimal2sexagesimal(coord);
-}
-
-const unformatCoordinate = (coord) => {
-    return geolib.sexagesimal2decimal(coord);
-}
-
 const CoordinatesInput = (props) => {
     return (
         <div className="form-group">
@@ -224,7 +221,7 @@ const CoordinatesInput = (props) => {
                     id={props.id}
                     name={"lat"}
                     type="string"
-                    value={formatCoordinate(props.value.lat)}
+                    value={StepService.formatCoordinate(props.value.lat)}
                     onChange={props.handleChange}
                     placeholder="Lat"
                 />
@@ -233,7 +230,7 @@ const CoordinatesInput = (props) => {
                     id={props.id}
                     name={"lng"}
                     type="string"
-                    value={formatCoordinate(props.value.lng)}
+                    value={StepService.formatCoordinate(props.value.lng)}
                     onChange={props.handleChange}
                     placeholder="Lng"
                 />
