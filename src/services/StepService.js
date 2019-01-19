@@ -32,17 +32,10 @@ export default class StepService {
         ]
     }
 
-    createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, magnetOptions = []) => {
-        let options = _.flattenDeep(_.map(magnetOptions, option => _.flatten(option.positions)))
+    createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, options = []) => {
         let nearestPoint = StepService.getNearestPosition(
             { lat, lng }, options
         );
-        if (isNaN(nearestPoint.distance) || nearestPoint.distance > 1500 || nearestPoint.key === -1) {
-            console.log("nearestPoint", nearestPoint);
-            nearestPoint = { lat, lng };
-        } else {
-            nearestPoint = options[nearestPoint.key];
-        }
         let newStep = {
             id: this.id++, type: stepType,
             positions: [nearestPoint, { lat, lng }],
@@ -53,9 +46,11 @@ export default class StepService {
                 ...newStep,
                 time: new Date(),
             }
-        } 
+        }
         return newStep;
     }
+
+    static getNearestPo
 
     static calcAngle = function (p1, p2, direction) {
         let lat1 = p1.lat / 180 * Math.PI;
@@ -77,7 +72,7 @@ export default class StepService {
         let unit = "mi";
         let dist = geolib.getDistanceSimple(p1, p2);
         dist = geolib.convertUnit('mi', dist);
-        return { dist , unit };
+        return { dist, unit };
     }
 
     /**
@@ -140,7 +135,18 @@ export default class StepService {
         return (angle < 90 || angle > 270);
     }
 
-    static getNearestPosition(from, options) {
-        return geolib.findNearest(from, options);
+    static getNearestPosition(from, options, ignoreOptions = [], limit = 1500) {
+        // Flattern options, to insure flat options list
+        options = _.flattenDeep(_.map(options, option => _.flatten(option.positions)));
+        // fliter out ignored options
+        options = _.filter(options, option => _.findIndex(ignoreOptions, option) < 0)
+        debugger;
+        let nearestPoint = geolib.findNearest(from, options);
+        if (isNaN(nearestPoint.distance) || nearestPoint.distance > limit || nearestPoint.key === -1) {
+            nearestPoint = from;
+        } else {
+            nearestPoint = options[nearestPoint.key];
+        }
+        return nearestPoint;
     }
 }

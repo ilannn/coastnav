@@ -49,7 +49,7 @@ class MapView extends Component {
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
     }
-    componentDidUpdate(prevProps, prevState) {        
+    componentDidUpdate(prevProps, prevState) {
         //this.leafletMap.invalidateSize();
         this.eraseSteps(prevState.steps);
         this.drawStateSteps();
@@ -101,7 +101,7 @@ class MapView extends Component {
                 <Control position="topleft">
                     <Editor step={this.state.selectedStep}
                         onStepChange={this.state.editorOnChange}
-                        onSave={this.handleEditorSave.bind(this)}
+                        onSave={this.handleStepChanges.bind(this)}
                         onDelete={this.handleEditorDelete.bind(this)}
                     >
                     </Editor>
@@ -282,7 +282,6 @@ class MapView extends Component {
             let updatedSelectedStep = updatedSteps.find(step => {
                 return step.id === this.state.selectedStep.id;
             });
-
             updatedSelectedStep = Object.assign(updatedSelectedStep, {
                 positions: [
                     updatedSelectedStep.positions[0],
@@ -329,6 +328,16 @@ class MapView extends Component {
             });
         }
         else {
+            // When finished drawing - try finding a near point for ending
+            let currentPositions = this.state.selectedStep.positions;
+            let updatedStepEnding = StepService.getNearestPosition(
+                currentPositions[1],
+                this.state.steps.slice(0, this.state.steps.length - 1),
+                [currentPositions[0]]
+            );
+            this.handleStepChanges(this.state.selectedStep.id, {
+                positions: [currentPositions[0], updatedStepEnding]
+            });
             this.setState({
                 draw: { isDrawing: false },
             });
@@ -360,7 +369,7 @@ class MapView extends Component {
      * @param {number} updatedStepId 
      * @param {NavStepProps} changes 
      */
-    handleEditorSave(updatedStepId, changes) {
+    handleStepChanges(updatedStepId, changes) {
         let steps = this.state.steps;
         let oldStep = steps.find((step) => {
             return step.id === updatedStepId;
