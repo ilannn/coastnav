@@ -35,7 +35,13 @@ export default class StepService {
     }
 
     static formatCoordinate = (coord) => {
-        return geolib.decimal2sexagesimal(coord);
+        try {
+
+            return geolib.decimal2sexagesimal(coord);
+        }
+        catch {
+            console.error(coord);
+        }
     }
     
     static unformatCoordinate = (coord) => {

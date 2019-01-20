@@ -43,7 +43,7 @@ class MapView extends Component {
             angle: 30,
             type: ExtraType.DR,
         }],
-        selectedStep: undefined,
+        selectedItem: undefined,
         selectedTool: null,
         draw: {
             isDrawing: false,
@@ -61,7 +61,6 @@ class MapView extends Component {
         this.leafletMap.on('click', this.onMapClick.bind(this));
         this.setMousePosition();
         this.drawStateSteps();
-        console.log("DidMount")
         this.setState({});
     }
     componentWillUnmount() {
@@ -69,7 +68,7 @@ class MapView extends Component {
     }
     componentDidUpdate(prevProps, prevState) {
         //this.leafletMap.invalidateSize();
-        this.eraseSteps(prevState.steps);
+        this.eraseExtras(prevState.steps);
         this.drawStateSteps();
         this.drawStateExtras();
     }
@@ -137,9 +136,10 @@ class MapView extends Component {
                 </Control>
 
                 <Control position="topleft">
-                    <Editor step={this.state.selectedStep}
+                    <Editor
+                        item={this.state.selectedItem}
                         onStepChange={this.state.editorOnChange}
-                        onSave={this.handleStepChanges.bind(this)}
+                        onSave={this.handleSelectedItemChanges.bind(this)}
                         onDelete={this.handleEditorDelete.bind(this)}
                     >
                     </Editor>
@@ -172,13 +172,15 @@ class MapView extends Component {
     }
 
     /**
-     * Erase all steps from map, unselect selected step & empty steps list.
+     * Erase all items from map, unselect selected step & empty item lists.
      */
     onClearAll = () => {
+        this.eraseExtras();
         this.eraseSteps();
-        this.unSelectStep();
+        this.unSelectItem();
         this.setState({
-            steps: []
+            steps: [],
+            extras: [],
         });
     }
 
@@ -212,6 +214,12 @@ class MapView extends Component {
      */
     drawExtras(extras) {
         extras.forEach(navExtra => {
+            // Remove existing step's layers
+            if (this.leafletExtras[navExtra.id]) {
+                this.leafletExtras[navExtra.id].forEach(layer => {
+                    this.leafletMap.removeLayer(layer);
+                });
+            }
             // Create new instance
             this.leafletExtras[navExtra.id] = this._createNewExtra(navExtra);
             // Register event listeners
@@ -236,15 +244,15 @@ class MapView extends Component {
     }
 
     extraOnClickListener(extraLayer) {
-        extraLayer.on('click', this.stepOnClick.bind(this));
+        extraLayer.on('click', this.extraOnClick.bind(this));
     }
 
     extraOnClick(event) {
-        if (this.state.draw.isDrawing) {
-            return;
-        }
-        // Isolate click
-        event.originalEvent.view.L.DomEvent.stopPropagation(event);
+        this.itemOnClick(event, this.state.extras, this.leafletExtras);
+    }
+
+    eraseExtras = () => {
+        this.eraseItems(this.state.extras, this.leafletExtras);
     }
 
     /* Steps */
@@ -255,22 +263,6 @@ class MapView extends Component {
             return;
         }
         this.drawSteps(this.state.steps);
-    }
-
-    eraseSteps = (steps) => {
-        if (!steps) return;
-        if (!this.leafletMap) {
-            console.error("Couldn't erase lines to map. Missing map ref");
-            return;
-        }
-        steps.forEach(navStep => {
-            // Remove all steps layers from map
-            if (this.leafletSteps[navStep.id]) {
-                this.leafletSteps[navStep.id].forEach(layer => {
-                    this.leafletMap.removeLayer(layer);
-                });
-            }
-        });
     }
 
     /**
@@ -315,48 +307,66 @@ class MapView extends Component {
     }
 
     stepOnClick(event) {
+        this.itemOnClick(event, this.state.steps, this.leafletSteps);
+    }
+
+    eraseSteps = () => {
+        this.eraseItems(this.state.steps, this.leafletSteps);
+    }
+
+    /* General Item */
+    itemOnClick(event, collection, references) {
         if (this.state.draw.isDrawing) {
             return;
         }
         // Isolate click
         event.originalEvent.view.L.DomEvent.stopPropagation(event);
 
-        // Find selected step
-        let clickedStepId = +_.findKey(this.leafletSteps, (stepLayers) => {
-            return stepLayers.indexOf(event.target) >= 0;
+        // Find selected item
+        let clickedItemId = +_.findKey(references, (itemLayers) => {
+            return itemLayers.indexOf(event.target) >= 0;
         });
-        if (!clickedStepId) return;
+        if (!clickedItemId) return;
         // Select / Unselect
-        if (!this.state.selectedStep || clickedStepId !== this.state.selectedStep.id) {
-            this.selectStep(_.find(this.state.steps, {
-                id: clickedStepId
+        if (!this.state.selectedItem || clickedItemId !== this.state.selectedItem.id) {
+            this.selectItem(_.find(collection, {
+                id: clickedItemId
             }));
         }
         else {
-            this.unSelectStep();
+            this.unSelectItem();
         }
     }
 
-    selectStep(step) {
+    selectItem(item) {
         this.setState({
-            selectedStep: step,
+            selectedItem: item,
         });
     }
 
-    unSelectStep() {
+    unSelectItem() {
         this.setState({
-            selectedStep: undefined,
+            selectedItem: undefined,
         });
     }
 
-    handleStepClick(stepId) {
-        this.selectStep(this.state.steps.find(
-            (step) => {
-                return step.id === stepId;
-            })
-        );
+    eraseItems(collection, references) {
+        if (!collection) return;
+        if (!this.leafletMap) {
+            console.error("Couldn't erase items from map. Missing map ref");
+            return;
+        }
+        collection.forEach(navItem => {
+            // Remove all steps layers from map
+            if (references[navItem.id]) {
+                references[navItem.id].forEach(layer => {
+                    this.leafletMap.removeLayer(layer);
+                });
+            }
+        });
     }
 
+    /* User Interaction */
     escFunction(event) {
         if (event.keyCode === 27) {
             this.handleEscPress();
@@ -369,15 +379,15 @@ class MapView extends Component {
     handleEscPress() {
         let steps;
         if (this.state.draw.isDrawing) {
-            let selectedStep = this.state.selectedStep;
+            let selectedItem = this.state.selectedItem;
             steps = [...this.state.steps];
-            _.remove(steps, step => step.id === selectedStep.id);
+            _.remove(steps, step => step.id === selectedItem.id);
         }
         else {
             steps = this.state.steps;
         }
         this.setState({
-            selectedStep: undefined,
+            selectedItem: undefined,
             steps: steps,
             draw: {
                 ...this.state.draw,
@@ -392,12 +402,12 @@ class MapView extends Component {
         if (this.state.draw.isDrawing) {
             // Update current selected step
             let updatedSteps = this.state.steps;
-            let updatedSelectedStep = updatedSteps.find(step => {
-                return step.id === this.state.selectedStep.id;
+            let updatedselectedItem = updatedSteps.find(step => {
+                return step.id === this.state.selectedItem.id;
             });
-            updatedSelectedStep = Object.assign(updatedSelectedStep, {
+            updatedselectedItem = Object.assign(updatedselectedItem, {
                 positions: [
-                    updatedSelectedStep.positions[0],
+                    updatedselectedItem.positions[0],
                     {
                         lat: Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
                         lng: Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
@@ -407,7 +417,7 @@ class MapView extends Component {
 
             this.setState({
                 steps: updatedSteps,
-                selectedStep: updatedSelectedStep,
+                selectedItem: updatedselectedItem,
             });
         }
     }
@@ -450,19 +460,19 @@ class MapView extends Component {
                     isDrawing: true,
                 },
                 steps: updatedSteps,
-                selectedStep: newStep,
+                selectedItem: newStep,
             });
         }
         else {
             if (this.state.draw.snapping) {
                 // When finished drawing - try finding a near point for ending
-                let currentPositions = this.state.selectedStep.positions;
+                let currentPositions = this.state.selectedItem.positions;
                 let updatedStepEnding = StepService.getNearestPosition(
                     currentPositions[1],
                     this.state.steps.slice(0, this.state.steps.length - 1),
                     [currentPositions[0]]
                 );
-                this.handleStepChanges(this.state.selectedStep.id, {
+                this.handleSelectedItemChanges(this.state.selectedItem.id, {
                     positions: [currentPositions[0], updatedStepEnding]
                 });
             }
@@ -481,13 +491,13 @@ class MapView extends Component {
             return step.id !== stepId;
         });
         // unselect deleted step
-        let selectedStep = this.state.selectedStep.id !== stepId
-            ? this.state.selectedStep : null;
+        let selectedItem = this.state.selectedItem.id !== stepId
+            ? this.state.selectedItem : null;
 
         this.setState({
             /* Update selected view */
             steps: updatedSteps,
-            selectedStep: selectedStep,
+            selectedItem: selectedItem,
         });
     }
 
@@ -500,22 +510,27 @@ class MapView extends Component {
      * @param {number} updatedStepId 
      * @param {NavStepProps} changes 
      */
-    handleStepChanges(updatedStepId, changes) {
-        let steps = this.state.steps;
-        let oldStep = steps.find((step) => {
-            return step.id === updatedStepId;
+    handleSelectedItemChanges(updatedStepId, changes) {
+        debugger;
+        let updatedItem = this.state.selectedItem;
+        let collectionType = StepType[updatedItem.type.description] 
+            ? "steps" : "extras";
+        let collection = this.state[collectionType];
+        let oldItem = collection.find((item) => {
+            return item.id === updatedItem.id;
         });
-        if (oldStep) {
-            Object.assign(oldStep, changes);
+        if (oldItem) {
+            Object.assign(oldItem, changes);
         }
 
-        /* Update selected view & global steps list */
-        this.setState({
-            selectedStep: this.state.steps.find((step) => {
-                return step.id === updatedStepId;
+        /* Update selected item & global item list */
+        let updatedState = {
+            selectedItem: this.state[collectionType].find((item) => {
+                return item.id === updatedItem.id;
             }),
-            steps: steps,
-        });
+        };
+        updatedState[collectionType] = collection;
+        this.setState(updatedState);
     }
 
     handleEditorDelete(deletedStepId) {

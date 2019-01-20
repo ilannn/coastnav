@@ -9,12 +9,12 @@ class SideView extends Component {
 
     render() {
         return <section className="SideViewContainer">
-            <Nav isEdit={!!this.props.selectedStep}
+            <Nav isEdit={!!this.props.selectedItem}
                 tabs={[
                     {
                         label: "Editor",
                         onClick: this.props.onSelectStep,
-                        content: (<Editor step={this.props.selectedStep}
+                        content: (<Editor step={this.props.selectedItem}
                             onSave={this.props.editorOnSave}></Editor>)
                     },
                     {

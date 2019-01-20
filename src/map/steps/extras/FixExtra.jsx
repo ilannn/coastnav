@@ -1,5 +1,4 @@
 import L from 'leaflet';
-import StepService from '../../../services/StepService';
 import * as moment from 'moment';
 import * as navExtra from './navExtra';
 

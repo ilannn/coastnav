@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import './EditorFormContainer.css';
+import './StepEditorFormContainer.css';
 import { Input, Button, Select, InputLabel, MenuItem } from '@material-ui/core';
 import { MuiPickersUtilsProvider, TimePicker } from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
@@ -8,7 +8,7 @@ import StepService from '../../services/StepService';
 import { StepType } from '../../models/steps';
 import _ from 'lodash';
 
-class EditorFormContainer extends PureComponent {
+class StepEditorFormContainer extends PureComponent {
     state = {
         values: {
             positions: this.props.positions,
@@ -208,7 +208,7 @@ class EditorFormContainer extends PureComponent {
     }
 }
 
-export default EditorFormContainer;
+export default StepEditorFormContainer;
 
 const CoordinatesInput = (props) => {
     return (
