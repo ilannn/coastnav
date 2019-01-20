@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import "./Drawkit.css";
 import { Card, Divider, Button } from '@material-ui/core';
 import { StepType } from '../../models/steps';
+import { ExtraType } from '../../models/extras';
 
-const drawkitTools = [
+const drawkitStepTools = [
     {
         type: StepType.GUIDELINE,
         acronyms: "GL",
@@ -44,7 +45,38 @@ const drawkitTools = [
             color: "white",
         },
     },
-]
+];
+
+const drawkitExtrasTools = [
+    {
+        type: ExtraType.RNG,
+        acronyms: "RNG",
+        matIcon: "face",
+        options: {
+        },
+    },
+    {
+        type: ExtraType.DR,
+        acronyms: "DR",
+        matIcon: "face",
+        options: {
+        },
+    },
+    {
+        type: ExtraType.FIX,
+        acronyms: "FIX",
+        matIcon: "face",
+        options: {
+        },
+    },
+    {
+        type: ExtraType.R,
+        acronyms: "R",
+        matIcon: "face",
+        options: {
+        },
+    },
+];
 
 class Drawkit extends Component {
     render() {
@@ -65,12 +97,12 @@ class Drawkit extends Component {
     }
 
     getDrawkitTools() {
-        return drawkitTools.map((tool, index) => {
+        return drawkitStepTools.map((tool, index) => {
             let selectedClass =
                 this.props.selectedTool &&
                     this.props.selectedTool.type === tool.type
                     ? 'selected' : '';
-            let divider = index !== drawkitTools.length - 1 ? <Divider /> : null;
+            let divider = index !== drawkitStepTools.length - 1 ? <Divider /> : null;
             return (
                 <span key={index}>
                     <Button

@@ -17,6 +17,11 @@ import { StepType } from '../models/steps';
 import CrntStep from './steps/navStep/CrntStep';
 import TCStep from './steps/navStep/TCStep';
 import { Card, Switch } from '@material-ui/core';
+import { ExtraType } from '../models/extras';
+import RangeExtra from './steps/extras/RangeExtra';
+import DRExtra from './steps/extras/DRExtra';
+import FixExtra from './steps/extras/FixExtra';
+import RadiusExtra from './steps/extras/RadiusExtra';
 
 
 const stepService = new StepService();
@@ -27,9 +32,17 @@ class MapView extends Component {
 
     leafletMap = null;
     leafletSteps = {};
+    leafletExtras = {};
 
     state = {
         steps: stepService.getSteps(),
+        extras: [{
+            id: 1,
+            time: new Date(),
+            position: { lat: 32.43, lng: 34.43 },
+            angle: 30,
+            type: ExtraType.DR,
+        }],
         selectedStep: undefined,
         selectedTool: null,
         draw: {
@@ -58,6 +71,7 @@ class MapView extends Component {
         //this.leafletMap.invalidateSize();
         this.eraseSteps(prevState.steps);
         this.drawStateSteps();
+        this.drawStateExtras();
     }
 
     render() {
@@ -180,6 +194,57 @@ class MapView extends Component {
                 latFormatter: StepService.formatCoordinate,
             }).addTo(this.leafletMap);
         }
+    }
+
+    /* Extras */
+    drawStateExtras() {
+        if (!this.state.extras) return;
+        if (!this.leafletMap) {
+            console.error("Couldn't draw extras on map. Missing map ref");
+            return;
+        }
+        this.drawExtras(this.state.extras);
+    }
+
+    /**
+     * Draw each nav extra in given list.
+     * If already exists, remove it, create a new one, and add it.
+     */
+    drawExtras(extras) {
+        extras.forEach(navExtra => {
+            // Create new instance
+            this.leafletExtras[navExtra.id] = this._createNewExtra(navExtra);
+            // Register event listeners
+            this.leafletExtras[navExtra.id].map(
+                this.extraOnClickListener.bind(this)
+            );
+        });
+    }
+
+    _createNewExtra(navExtra) {
+        switch (navExtra.type) {
+            case ExtraType.RNG:
+                return RangeExtra.addTo(this.leafletMap, navExtra);
+            case ExtraType.DR:
+                return DRExtra.addTo(this.leafletMap, navExtra);
+            case ExtraType.FIX:
+                return FixExtra.addTo(this.leafletMap, navExtra);
+            case ExtraType.R:
+            default:
+                return RadiusExtra.addTo(this.leafletMap, navExtra);
+        }
+    }
+
+    extraOnClickListener(extraLayer) {
+        extraLayer.on('click', this.stepOnClick.bind(this));
+    }
+
+    extraOnClick(event) {
+        if (this.state.draw.isDrawing) {
+            return;
+        }
+        // Isolate click
+        event.originalEvent.view.L.DomEvent.stopPropagation(event);
     }
 
     /* Steps */

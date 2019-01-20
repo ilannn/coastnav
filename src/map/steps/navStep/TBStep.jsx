@@ -27,7 +27,7 @@ export default class TBStep {
         let time = options.time ? moment(options.time).format("HH:mm") : "Error";
         marker.bindTooltip(`${angle}° / ${time}`, {
             permanent: true,
-            offset: [0, 10 * +StepService.isNorth(angle)],
+            offset: [0, 5 * +StepService.isNorth(angle)],
         });
         return [step, marker];
     }
