@@ -3,7 +3,7 @@ import './StepEditorFormContainer.css';
 import { Input, Button, Select, InputLabel, MenuItem } from '@material-ui/core';
 import { MuiPickersUtilsProvider, TimePicker } from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
-import StepService from '../../services/StepService';
+import GeoService from '../../services/GeoService';
 import { ExtraType } from '../../models/extras';
 import _ from 'lodash';
 
@@ -13,7 +13,7 @@ class StepEditorFormContainer extends PureComponent {
             position: this.props.position,
             type: this.props.type.description,
             angle: this.props.angle ? this.props.angle : 0,
-            length: this.props.length ? this.props.length : 0,
+            length: this.props.length ? this.props.length : -1,
             time: this.props.time,
         },
     }
@@ -24,6 +24,7 @@ class StepEditorFormContainer extends PureComponent {
      */
     componentDidUpdate(prevProps) {
         if (this.props.id !== prevProps.id
+            || this.props.length !== prevProps.length
             || this.props.position !== prevProps.position) {
             let position = this.props.position;
             let angle = this.props.angle ? this.props.angle : 0;
@@ -42,7 +43,7 @@ class StepEditorFormContainer extends PureComponent {
     handleCoordinatesChange = (e) => {
         let position = this.state.values.position;
         try { 
-            position[e.target.name] = Number(StepService.unformatCoordinate(e.target.value)); 
+            position[e.target.name] = Number(GeoService.unformatCoordinate(e.target.value)); 
         }
         catch { console.warn("User entered wrong coord format: ", e.target.value); }
         this.setState({
@@ -153,7 +154,7 @@ const CoordinatesInput = (props) => {
                     id={props.id}
                     name={"lat"}
                     type="string"
-                    value={StepService.formatCoordinate(props.value.lat)}
+                    value={GeoService.formatCoordinate(props.value.lat)}
                     onChange={props.handleChange}
                     placeholder="Lat"
                 />
@@ -162,7 +163,7 @@ const CoordinatesInput = (props) => {
                     id={props.id}
                     name={"lng"}
                     type="string"
-                    value={StepService.formatCoordinate(props.value.lng)}
+                    value={GeoService.formatCoordinate(props.value.lng)}
                     onChange={props.handleChange}
                     placeholder="Lng"
                 />

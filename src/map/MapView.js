@@ -7,7 +7,7 @@ import L from 'leaflet';
 import 'leaflet-mouse-position';
 import 'leaflet-rotatedmarker';
 
-import StepService from '../services/StepService';
+import GeoService from '../services/GeoService';
 import Editor from '../side/editor/Editor';
 import Drawkit from './drawkit/Drawkit';
 import GuidelineStep from './steps/navStep/GuidelineStep';
@@ -24,7 +24,7 @@ import FixExtra from './steps/extras/FixExtra';
 import RadiusExtra from './steps/extras/RadiusExtra';
 
 
-const stepService = new StepService();
+const geoService = new GeoService();
 const COOREDINATES_DEPTH = 7;
 const center = [32.52018, 34.66461];
 
@@ -35,14 +35,8 @@ class MapView extends Component {
     leafletExtras = {};
 
     state = {
-        steps: stepService.getSteps(),
-        extras: [{
-            id: 1,
-            time: new Date(),
-            position: { lat: 32.43, lng: 34.43 },
-            angle: 30,
-            type: ExtraType.DR,
-        }],
+        steps: geoService.getSteps(),
+        extras: [],
         selectedItem: undefined,
         selectedTool: null,
         draw: {
@@ -192,8 +186,8 @@ class MapView extends Component {
         else {
             L.control.mousePosition({
                 position: 'bottomright',
-                lngFormatter: StepService.formatCoordinate,
-                latFormatter: StepService.formatCoordinate,
+                lngFormatter: GeoService.formatCoordinate,
+                latFormatter: GeoService.formatCoordinate,
             }).addTo(this.leafletMap);
         }
     }
@@ -400,26 +394,72 @@ class MapView extends Component {
         event.originalEvent.preventDefault();
         event.originalEvent.stopPropagation();
         if (this.state.draw.isDrawing) {
-            // Update current selected step
-            let updatedSteps = this.state.steps;
-            let updatedselectedItem = updatedSteps.find(step => {
-                return step.id === this.state.selectedItem.id;
-            });
-            updatedselectedItem = Object.assign(updatedselectedItem, {
-                positions: [
-                    updatedselectedItem.positions[0],
-                    {
-                        lat: Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-                        lng: Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
-                    }
-                ]
-            });
+            // Check with tool type is used (step or extras)
+            StepType[this.state.selectedTool.description]
+                // Handle the event accordinglly
+                ? this.handleStepDrawing(event)
+                : this.hendleExtrasDrawing(event);
+        }
+    }
 
-            this.setState({
-                steps: updatedSteps,
-                selectedItem: updatedselectedItem,
+    handleStepDrawing(event) {
+        // Update current selected step
+        let updatedSteps = this.state.steps;
+        let updatedSelectedStep = updatedSteps.find(step => {
+            return step.id === this.state.selectedItem.id;
+        });
+        updatedSelectedStep = Object.assign(updatedSelectedStep, {
+            positions: [
+                updatedSelectedStep.positions[0],
+                {
+                    lat: Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                    lng: Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+                }
+            ]
+        });
+
+        this.setState({
+            steps: updatedSteps,
+            selectedItem: updatedSelectedStep,
+        });
+    }
+
+    hendleExtrasDrawing(event) {
+        // Update current selected step
+        let updatedExtras = this.state.extras;
+        let updatedSelectedItem = updatedExtras.find(item => {
+            return item.id === this.state.selectedItem.id;
+        });
+        // If drawing radius -> update it's radius
+        if (updatedSelectedItem.type === ExtraType.R) {
+            let radius = GeoService.calcRadius(
+                updatedSelectedItem.position,
+                event.latlng,
+                this.leafletMap
+            );
+            let length = GeoService.calcDistance(
+                updatedSelectedItem.position,
+                event.latlng
+            ).dist;
+            updatedSelectedItem = Object.assign(updatedSelectedItem,
+                {
+                    radius, length,
+                });
+        }
+        // Otherwise => update current position
+        else {
+            updatedSelectedItem = Object.assign(updatedSelectedItem, {
+                position: {
+                    lat: Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                    lng: Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+                },
             });
         }
+
+        this.setState({
+            extras: updatedExtras,
+            selectedItem: updatedSelectedItem,
+        });
     }
 
     onMapClick(event) {
@@ -430,52 +470,19 @@ class MapView extends Component {
             return;
         }
         if (!this.state.draw.isDrawing) {
-            // Create a new step, stating at click position
-            let newStep;
-            if (this.state.draw.snapping) {
-                newStep = stepService.createNewSnappedStep(
-                    Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-                    Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
-                    this.state.selectedTool.type,
-                    this.state.steps
-                );
-            }
-            else {
-                newStep = stepService.createNewStep(
-                    Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-                    Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
-                    this.state.selectedTool.type,
-                );
-            }
-
-            // assing the new line the current tool's options
-            Object.assign(newStep, this.state.selectedTool.options);
-
-            let updatedSteps = [...this.state.steps, newStep];
-
-            // Mark the new step as the selected step      
-            this.setState({
-                draw: {
-                    ...this.state.draw,
-                    isDrawing: true,
-                },
-                steps: updatedSteps,
-                selectedItem: newStep,
-            });
+            // Check with tool type is used (step or extras)
+            StepType[this.state.selectedTool.description]
+                // Handle the event accordinglly
+                ? this.handleStepStartDraw(event)
+                : this.handleExtrasDraw(event);
         }
         else {
-            if (this.state.draw.snapping) {
-                // When finished drawing - try finding a near point for ending
-                let currentPositions = this.state.selectedItem.positions;
-                let updatedStepEnding = StepService.getNearestPosition(
-                    currentPositions[1],
-                    this.state.steps.slice(0, this.state.steps.length - 1),
-                    [currentPositions[0]]
-                );
-                this.handleSelectedItemChanges(this.state.selectedItem.id, {
-                    positions: [currentPositions[0], updatedStepEnding]
-                });
-            }
+            // Check with tool type is used (step or extras)
+            StepType[this.state.selectedTool.description]
+                // Handle the event accordinglly
+                ? this.handleStepStopDraw(event)
+                : this.handleExtrasStopDraw(event);
+
             this.setState({
                 draw: {
                     ...this.state.draw,
@@ -483,6 +490,84 @@ class MapView extends Component {
                 },
             });
         }
+    }
+
+    handleStepStartDraw(event) {
+        // Create a new step, stating at click position
+        let newStep;
+        if (this.state.draw.snapping) {
+            newStep = geoService.createNewSnappedStep(
+                Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
+                this.state.selectedTool.type,
+                this.state.steps
+            );
+        }
+        else {
+            newStep = geoService.createNewStep(
+                Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
+                this.state.selectedTool.type,
+            );
+        }
+
+        // assing the new line the current tool's options
+        Object.assign(newStep, this.state.selectedTool.options);
+
+        let updatedSteps = [...this.state.steps, newStep];
+
+        // Mark the new step as the selected step      
+        this.setState({
+            draw: {
+                ...this.state.draw,
+                isDrawing: true,
+            },
+            steps: updatedSteps,
+            selectedItem: newStep,
+        });
+    }
+
+    handleExtrasDraw(event) {
+        // Create a new extra instance, stating at click position
+        let newExtra = geoService.createNewExtra(
+            Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+            Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
+            this.state.selectedTool.type,
+        );
+
+        // assing the new line the current tool's options
+        Object.assign(newExtra, this.state.selectedTool.options);
+
+        let updatedExtras = [...this.state.extras, newExtra];
+
+        // Mark the new step as the selected step      
+        this.setState({
+            draw: {
+                ...this.state.draw,
+                isDrawing: true,
+            },
+            extras: updatedExtras,
+            selectedItem: newExtra,
+        });
+    }
+
+    handleStepStopDraw(event) {
+        if (this.state.draw.snapping) {
+            // When finished drawing - try finding a near point for ending
+            let currentPositions = this.state.selectedItem.positions;
+            let updatedStepEnding = GeoService.getNearestPosition(
+                currentPositions[1],
+                this.state.steps.slice(0, this.state.steps.length - 1),
+                [currentPositions[0]]
+            );
+            this.handleSelectedItemChanges(this.state.selectedItem.id, {
+                positions: [currentPositions[0], updatedStepEnding]
+            });
+        }
+    }
+
+    handleExtrasStopDraw(event) {
+        return;
     }
 
     handleRemoveStep(stepId) {
@@ -513,7 +598,7 @@ class MapView extends Component {
     handleSelectedItemChanges(updatedStepId, changes) {
         debugger;
         let updatedItem = this.state.selectedItem;
-        let collectionType = StepType[updatedItem.type.description] 
+        let collectionType = StepType[updatedItem.type.description]
             ? "steps" : "extras";
         let collection = this.state[collectionType];
         let oldItem = collection.find((item) => {

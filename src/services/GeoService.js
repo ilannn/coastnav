@@ -2,8 +2,9 @@ import { StepType } from '../models/steps';
 import geolib from 'geolib';
 import { LatLng } from 'leaflet';
 import _ from 'lodash';
+import { ExtraType } from '../models/extras';
 
-export default class StepService {
+export default class GeoService {
     constructor() {
         this.id = 1;
     }
@@ -28,10 +29,31 @@ export default class StepService {
     }
 
     createNewSnappedStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, options = []) => {
-        let nearestPoint = StepService.getNearestPosition(
+        let nearestPoint = GeoService.getNearestPosition(
             { lat, lng }, options
         );
         return this.createNewStep(nearestPoint.lat, nearestPoint.lng, stepType)
+    }
+
+    createNewExtra = (lat = 0, lng = 0, itemType = ExtraType.RNG) => {
+        let newItem = {
+            id: this.id++, type: itemType,
+            position: { lat, lng },
+            time: new Date(),
+        }
+        if (itemType === ExtraType.RNG || itemType === ExtraType.R) {
+            return {
+                ...newItem,
+                length: 1,
+            }
+        }
+        return newItem;
+    }
+
+    static calcRadius = (from, to, map) => {
+        from = map.latLngToLayerPoint(from);
+        to = map.latLngToLayerPoint(to);
+        return from.distanceTo(to);
     }
 
     static formatCoordinate = (coord) => {
@@ -96,7 +118,7 @@ export default class StepService {
             Object.assign(updatedStep, {
                 positions: [
                     oldStep.positions[0],
-                    StepService.calcNewEnding(oldStepPolyline, newStep)
+                    GeoService.calcNewEnding(oldStepPolyline, newStep)
                 ]
             });
         }
@@ -119,7 +141,7 @@ export default class StepService {
     }
 
     static calcNewMarkerPosition(from, to, percentage) {
-        let angle = StepService.calcAngle(from, to);
+        let angle = GeoService.calcAngle(from, to);
         let length = geolib.getDistanceSimple(from, to);
         length = length * (percentage / 100);
         let p2 = geolib.computeDestinationPoint(from, length, angle);

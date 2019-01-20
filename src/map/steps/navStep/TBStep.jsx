@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import StepService from '../../../services/StepService';
+import GeoService from '../../../services/GeoService';
 import * as navStep from './navStep';
 import * as moment from 'moment';
 
@@ -19,15 +19,15 @@ export default class TBStep {
             ? options.marker.position : step.getCenter();
         let marker = L.marker(position, {
             ...tbMarkerProps,
-            rotationAngle: StepService.calcAngle.apply(null, options.positions)
+            rotationAngle: GeoService.calcAngle.apply(null, options.positions)
         }).addTo(map);
-        let angle = StepService.calcAngle(
+        let angle = GeoService.calcAngle(
             ...Object.values(step.getLatLngs())
         );
         let time = options.time ? moment(options.time).format("HH:mm") : "Error";
         marker.bindTooltip(`${angle}° / ${time}`, {
             permanent: true,
-            offset: [0, 5 * +StepService.isNorth(angle)],
+            offset: [0, 5 * +GeoService.isNorth(angle)],
         });
         return [step, marker];
     }

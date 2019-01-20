@@ -4,7 +4,7 @@ import { Input, Button, Select, InputLabel, MenuItem } from '@material-ui/core';
 import { MuiPickersUtilsProvider, TimePicker } from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
 import { Slider } from '@material-ui/lab';
-import StepService from '../../services/StepService';
+import GeoService from '../../services/GeoService';
 import { StepType } from '../../models/steps';
 import _ from 'lodash';
 
@@ -13,8 +13,8 @@ class StepEditorFormContainer extends PureComponent {
         values: {
             positions: this.props.positions,
             type: this.props.type.description,
-            angle: StepService.calcAngle.apply(null, this.props.positions),
-            length: Number(StepService.calcDistance.apply(null, this.props.positions).dist),
+            angle: GeoService.calcAngle.apply(null, this.props.positions),
+            length: Number(GeoService.calcDistance.apply(null, this.props.positions).dist),
             marker: this.props.marker ? this.props.marker.percentage : 50,
             time: this.props.time,
         },
@@ -29,8 +29,8 @@ class StepEditorFormContainer extends PureComponent {
             || !_.isEqual(this.props.marker, prevProps.marker)
             || this.props.positions !== prevProps.positions) {
             let positions = this.props.positions;
-            let angle = StepService.calcAngle.apply(null, positions);
-            let length = Number(StepService.calcDistance.apply(null, positions).dist);
+            let angle = GeoService.calcAngle.apply(null, positions);
+            let length = Number(GeoService.calcDistance.apply(null, positions).dist);
             let type = this.props.type.description;
             let marker = this.props.marker ? this.props.marker.percentage : null;
             let time = this.props.time;
@@ -48,11 +48,11 @@ class StepEditorFormContainer extends PureComponent {
             this.state.values.positions ? this.state.values.positions : [];
         try { 
             positions[e.target.id][e.target.name] = 
-                Number(StepService.unformatCoordinate(e.target.value)); 
+                Number(GeoService.unformatCoordinate(e.target.value)); 
         }
         catch { console.warn("User entered wrong coord format: ", e.target.value); }
-        let angle = StepService.calcAngle(...positions);
-        let length = Number(StepService.calcDistance(...positions).dist);
+        let angle = GeoService.calcAngle(...positions);
+        let length = Number(GeoService.calcDistance(...positions).dist);
         this.setState({
             values: {
                 ...this.state.values,
@@ -64,7 +64,7 @@ class StepEditorFormContainer extends PureComponent {
         let angle = Number(e.target.value);
         let positions = [
             this.state.values.positions[0],
-            StepService.calcNewEnding(
+            GeoService.calcNewEnding(
                 this.state.values.positions[0],
                 this.state.values.length,
                 angle
@@ -81,7 +81,7 @@ class StepEditorFormContainer extends PureComponent {
         let length = Number(e.target.value);
         let positions = [
             this.state.values.positions[0],
-            StepService.calcNewEnding(
+            GeoService.calcNewEnding(
                 this.state.values.positions[0],
                 length,
                 this.state.values.angle
@@ -141,7 +141,7 @@ class StepEditorFormContainer extends PureComponent {
             percentage = this.state.values.marker ?
                 this.state.values.marker : 50;
         }
-        let position = StepService.calcNewMarkerPosition(
+        let position = GeoService.calcNewMarkerPosition(
             positions[0],
             positions[1],
             percentage
@@ -220,7 +220,7 @@ const CoordinatesInput = (props) => {
                     id={props.id}
                     name={"lat"}
                     type="string"
-                    value={StepService.formatCoordinate(props.value.lat)}
+                    value={GeoService.formatCoordinate(props.value.lat)}
                     onChange={props.handleChange}
                     placeholder="Lat"
                 />
@@ -229,7 +229,7 @@ const CoordinatesInput = (props) => {
                     id={props.id}
                     name={"lng"}
                     type="string"
-                    value={StepService.formatCoordinate(props.value.lng)}
+                    value={GeoService.formatCoordinate(props.value.lng)}
                     onChange={props.handleChange}
                     placeholder="Lng"
                 />

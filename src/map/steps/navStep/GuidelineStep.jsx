@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import StepService from '../../../services/StepService';
+import GeoService from '../../../services/GeoService';
 import * as navStep from './navStep';
 
 const guidelineProps = {
@@ -13,11 +13,11 @@ export default class GuidelineStep {
     static addTo(map, options) {
         let step = L.polyline(options.positions, { ...guidelineProps }).addTo(map);
         let { dist, unit } = {
-            ...StepService.calcDistance(
+            ...GeoService.calcDistance(
                 ...Object.values(step.getLatLngs())
             )
         };
-        let angle = StepService.calcAngle(
+        let angle = GeoService.calcAngle(
             ...Object.values(step.getLatLngs())
         );
         let markerPosition = options.marker && options.marker.position

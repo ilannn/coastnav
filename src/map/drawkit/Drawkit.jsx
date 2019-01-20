@@ -80,10 +80,15 @@ const drawkitExtrasTools = [
 
 class Drawkit extends Component {
     render() {
-        let drawkitTools = this.getDrawkitTools();
+        let stepTools = this.getDrawkitTools(drawkitStepTools);
+        let extrasTools = this.getDrawkitTools(drawkitExtrasTools);
+        
         return (<section>
             <Card className="drawkitToolList">
-                {drawkitTools}
+                {stepTools}
+            </Card>
+            <Card className="drawkitToolList">
+                {extrasTools}
             </Card>
             <Card className="drawkitClearAll">
                 <Button 
@@ -96,8 +101,8 @@ class Drawkit extends Component {
         </section>)
     }
 
-    getDrawkitTools() {
-        return drawkitStepTools.map((tool, index) => {
+    getDrawkitTools(tools) {
+        return tools.map((tool, index) => {
             let selectedClass =
                 this.props.selectedTool &&
                     this.props.selectedTool.type === tool.type

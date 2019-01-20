@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import StepService from '../../../services/StepService';
+import GeoService from '../../../services/GeoService';
 import * as moment from 'moment';
 import * as navExtra from './navExtra';
 
@@ -19,7 +19,7 @@ export default class DRExtra {
         let time = options.time ? moment(options.time).format("HH:mm") : "Error";
         marker.bindTooltip(`${time}`, {
             permanent: true,
-            offset: [0, 10 * +StepService.isNorth(options.angle)],
+            offset: [0, 10 * +GeoService.isNorth(options.angle)],
         });
         return [marker];
     }

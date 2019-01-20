@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import StepService from '../../../services/StepService';
+import GeoService from '../../../services/GeoService';
 import * as navStep from './navStep';
 
 const crntStepProps = {
@@ -18,19 +18,19 @@ export default class CrntStep {
             ? options.marker.position : step.getCenter();
         let marker = L.marker(markerPosition, {
             ...crntMarkerProps,
-            rotationAngle: StepService.calcAngle.apply(null, options.positions)
+            rotationAngle: GeoService.calcAngle.apply(null, options.positions)
         }).addTo(map);
         let { dist, unit } = {
-            ...StepService.calcDistance(
+            ...GeoService.calcDistance(
                 ...Object.values(step.getLatLngs())
             )
         };
-        let angle = StepService.calcAngle(
+        let angle = GeoService.calcAngle(
             ...Object.values(step.getLatLngs())
         );
         marker.bindTooltip(`${angle}° / ${dist} ${unit}`, {
             permanent: true,
-            offset: [0, 15 * +StepService.isNorth(angle)],
+            offset: [0, 15 * +GeoService.isNorth(angle)],
         });
         return [step, marker];
     }
