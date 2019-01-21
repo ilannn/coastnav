@@ -13,7 +13,7 @@ class StepEditorFormContainer extends PureComponent {
             position: this.props.position,
             type: this.props.type.description,
             angle: this.props.angle ? this.props.angle : 0,
-            length: this.props.length ? this.props.length : -1,
+            length: this.props.length,
             time: this.props.time,
         },
     }
@@ -28,7 +28,7 @@ class StepEditorFormContainer extends PureComponent {
             || this.props.position !== prevProps.position) {
             let position = this.props.position;
             let angle = this.props.angle ? this.props.angle : 0;
-            let length = this.props.length ? this.props.length : -1;
+            let length = this.props.length;
             let type = this.props.type.description;
             let time = this.props.time;
             this.setState({
@@ -74,8 +74,13 @@ class StepEditorFormContainer extends PureComponent {
     handleTypeChange = (e) => {
         let type = e.target.value;
         let length;
-        length = (type === "RNG" || type === "R") 
-            ? this.state.values.length : null;
+        if (type === "RNG" || type === "R")  {
+            length = this.state.values.length
+                ? this.state.values.length
+                : -1;
+        } else {
+            length = null;
+        }
         this.setState({
             values: {
                 ...this.state.values,
@@ -116,15 +121,11 @@ class StepEditorFormContainer extends PureComponent {
                     title={'Time'}
                     value={this.state.values.time}
                     handleChange={this.handleTimeChange} />
-                {/* {this.state.values.length &&
-                    <LengthInput
-                        title={'Length'}
-                        value={this.state.values.length}
-                        handleChange={this.handleLengthChange} />} */}
-                <LengthInput
-                    title={'Length'}
-                    value={this.state.values.length}
-                    handleChange={this.handleLengthChange} />
+                {(this.state.values.length || this.state.values.length === 0) 
+                    && <LengthInput
+                            title={'Length'}
+                            value={this.state.values.length}
+                            handleChange={this.handleLengthChange} />}
                 
                 <div className="footerButtons">
                     <Button type="submit" variant="contained" color="primary">Save</Button>

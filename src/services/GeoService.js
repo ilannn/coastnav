@@ -50,15 +50,12 @@ export default class GeoService {
         return newItem;
     }
 
-    static calcRadius = (from, to, map) => {
-        from = map.latLngToLayerPoint(from);
-        to = map.latLngToLayerPoint(to);
-        return from.distanceTo(to);
+    static toMeters = (distance) => {
+        return (distance * 1609.344);
     }
 
     static formatCoordinate = (coord) => {
         try {
-
             return geolib.decimal2sexagesimal(coord);
         }
         catch {

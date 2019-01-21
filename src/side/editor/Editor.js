@@ -45,7 +45,7 @@ class Editor extends Component {
     }
 
     onSave = (changes) => {
-        this.props.onSave(this.props.item.id, changes);
+        this.props.onSave(changes);
     }
 
     onDelete = () => {

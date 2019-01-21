@@ -1,14 +1,14 @@
 import L from 'leaflet';
 import * as moment from 'moment';
+import GeoService from '../../../services/GeoService';
 
 export default class RadiusExtra {
     static addTo(map, options) {
         let time = options.time ? moment(options.time).format("HH:mm") : "Error";
-        //let radius = options.radius ? options.radius : 'Error';
-        let length = options.length ? options.length : 1;
-        let radius = options.radius ? options.radius : 50;
+        let length = options.length ? options.length : 0;
+        let radius = GeoService.toMeters(length);
         
-        let circle = L.circleMarker(
+        let circle = L.circle(
             options.position, 
             {
                 radius: radius,
