@@ -207,7 +207,6 @@ class MapView extends Component {
      */
     drawExtras(extras) {
         this.eraseExtras();
-        debugger;
         extras.forEach(navExtra => {
             // Create new instance
             this.leafletExtras[navExtra.id] = this._createNewExtra(navExtra);
