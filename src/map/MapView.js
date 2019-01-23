@@ -26,7 +26,8 @@ import RadiusExtra from './steps/extras/RadiusExtra';
 
 const geoService = new GeoService();
 const COOREDINATES_DEPTH = 7;
-const center = [32.52018, 34.66461];
+const initialCenter = [32.8201719, 34.6261597];
+const initialZoom = 11;
 
 class MapView extends Component {
 
@@ -70,7 +71,7 @@ class MapView extends Component {
         return (<section className="MapViewContainer">
             <Map id="map" key="mymap"
                 ref={this.setLeafletMapRef}
-                center={center} zoom={10}
+                center={initialCenter} zoom={initialZoom}
                 zoomControl={false}
                 maxZoom={15}
                 minZoom={9}
