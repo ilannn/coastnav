@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>tiles2</title>
+<title>haifa3</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <style type="text/css">
 html { overflow: hidden; }
@@ -32,10 +32,10 @@ body { background: #f4f4f4;}
 <script type="text/javascript">
 var map;
 var mapBounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(32.658996, 34.818063),
-    new google.maps.LatLng(33.089637, 35.386438));
-var mapMinZoom = 9;
-var mapMaxZoom = 13;
+    new google.maps.LatLng(32.660724, 34.820012),
+    new google.maps.LatLng(33.086508, 35.383127));
+var mapMinZoom = 7;
+var mapMaxZoom = 15;
 var maptiler = new google.maps.ImageMapType({
     getTileUrl: function(coord, zoom) { 
         var proj = map.getProjection();
@@ -64,8 +64,8 @@ function init() {
     var opts = {
         tilt:0,
         streetViewControl: false,
-        center: new google.maps.LatLng(32.874316, 35.102251),
-        zoom: 9
+        center: new google.maps.LatLng(32.873616, 35.101570),
+        zoom: 7
     };
     map = new google.maps.Map(document.getElementById("map"), opts);
     map.setMapTypeId('satellite');

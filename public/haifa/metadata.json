@@ -1,13 +1,13 @@
 {
-  "name": "tiles2",
+  "name": "haifa3",
   "version": "1.1.0",
   "description": "",
   "attribution": "Rendered with <a href=\"https://www.maptiler.com/\">MapTiler Desktop</a>",
   "type": "overlay",
   "format": "png",
-  "minzoom": "9",
-  "maxzoom": "13",
+  "minzoom": "7",
+  "maxzoom": "15",
   "scale": "1.000000",
-  "bounds": [34.81806349, 32.65899558, 35.38643808, 33.08963708],
+  "bounds": [34.82001193, 32.66072434, 35.38312731, 33.08650794],
   "profile": "mercator"
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>kishon</title>
+<title>kison3</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <style type="text/css">
 html { overflow: hidden; }
@@ -32,9 +32,9 @@ body { background: #f4f4f4;}
 <script type="text/javascript">
 var map;
 var mapBounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(32.801031, 34.938187),
-    new google.maps.LatLng(32.952515, 35.141093));
-var mapMinZoom = 10;
+    new google.maps.LatLng(32.801179, 34.938490),
+    new google.maps.LatLng(32.951965, 35.139714));
+var mapMinZoom = 8;
 var mapMaxZoom = 15;
 var maptiler = new google.maps.ImageMapType({
     getTileUrl: function(coord, zoom) { 
@@ -64,8 +64,8 @@ function init() {
     var opts = {
         tilt:0,
         streetViewControl: false,
-        center: new google.maps.LatLng(32.876773, 35.039640),
-        zoom: 10
+        center: new google.maps.LatLng(32.876572, 35.039102),
+        zoom: 8
     };
     map = new google.maps.Map(document.getElementById("map"), opts);
     map.setMapTypeId('satellite');

@@ -25,7 +25,7 @@ import RadiusExtra from './steps/extras/RadiusExtra';
 
 
 const geoService = new GeoService();
-const COOREDINATES_DEPTH = 7;
+const COOREDINATES_DEPTH = 10;
 const initialCenter = [32.8201719, 34.6261597];
 const initialZoom = 11;
 
@@ -89,7 +89,7 @@ class MapView extends Component {
                 {/* Full */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="full2/{z}/{x}/{y}.png"
+                    url="full/{z}/{x}/{y}.png"
                 />
 
 
@@ -109,7 +109,8 @@ class MapView extends Component {
                 {/* Kishon */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="kishon3/{z}/{x}/{y}.png"
+                    url="kishon/{z}/{x}/{y}.png"
+                    minZoom={15}
                 />
 
                 <Control position="topright">
@@ -304,14 +305,14 @@ class MapView extends Component {
     itemOnClick(event, collection, references) {
         // Isolate click
         event.originalEvent.view.L.DomEvent.stopPropagation(event);
-        if (this.state.draw.isDrawing 
-        || (!this.state.draw.isDrawing && this.state.selectedTool)) {
+        if (this.state.draw.isDrawing
+            || (!this.state.draw.isDrawing && this.state.selectedTool)) {
             this.onMapClick(event);
             return;
         }
-        debugger;
+
         // Find selected item
-        let clickedItemId = +_.findKey(references, (itemLayers) => {
+        const clickedItemId = +_.findKey(references, (itemLayers) => {
             return itemLayers.indexOf(event.target) >= 0;
         });
         if (!clickedItemId) return;
@@ -360,23 +361,47 @@ class MapView extends Component {
      * Cancel drawing & unselect step when ESC pressed.
      */
     handleEscPress() {
-        let steps;
+        // Check with tool type is used (step or extras)
+        if (this.state.selectedTool) {
+            StepType[this.state.selectedTool.type.description]
+                // Handle the esc press accordinglly
+                ? this.handleStepEsc()
+                : this.handleExtrasEsc();
+        }
+
+        this.setState({
+            selectedItem: undefined,
+            draw: {
+                ...this.state.draw,
+                isDrawing: false,
+            },
+        });
+    }
+
+    handleStepEsc() {
+        let steps = [];
         if (this.state.draw.isDrawing) {
-            let selectedItem = this.state.selectedItem;
+            const selectedItem = this.state.selectedItem;
             steps = [...this.state.steps];
             _.remove(steps, step => step.id === selectedItem.id);
         }
         else {
             steps = this.state.steps;
         }
-        this.setState({
-            selectedItem: undefined,
-            steps: steps,
-            draw: {
-                ...this.state.draw,
-                isDrawing: false,
-            },
-        });
+        this.setState({ steps });
+    }
+
+    handleExtrasEsc() {
+        let extras = [];
+        if (this.state.draw.isDrawing) {
+            const selectedItem = this.state.selectedItem;
+            extras = [...this.state.extras];
+            _.remove(extras, extra => extra.id === selectedItem.id);
+        }
+        else {
+            extras = this.state.extras;
+        }
+        this.setState({ extras });
     }
 
     onDrawingMove(event) {
@@ -468,7 +493,6 @@ class MapView extends Component {
                 ? this.handleStepStopDraw(event)
                 : this.handleExtrasStopDraw(event);
 
-            debugger;
             this.setState({
                 draw: {
                     ...this.state.draw,
@@ -486,6 +510,7 @@ class MapView extends Component {
                 Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
                 Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
                 this.state.selectedTool.type,
+                this.leafletMap.getZoom(),
                 this.state.steps
             );
         }

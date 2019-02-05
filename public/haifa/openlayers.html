@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>tiles2</title>
+<title>haifa3</title>
 <meta http-equiv="imagetoolbar" content="no"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,13 +19,13 @@ body { width:100%; height:100%; background: #ffffff; }
 <div id="map"></div>
 <input id="slider" type="range" min="0" max="1" step="0.1" value="1" oninput="layer.setOpacity(this.value)">
 <script type="text/javascript">
-var mapExtent = ol.proj.transformExtent([34.818063, 32.658996, 35.386438, 33.089637], 'EPSG:4326', 'EPSG:3857');
-var mapMinZoom = 9;
-var mapMaxZoom = 13;
+var mapExtent = ol.proj.transformExtent([34.820012, 32.660724, 35.383127, 33.086508], 'EPSG:4326', 'EPSG:3857');
+var mapMinZoom = 7;
+var mapMaxZoom = 15;
 var layer = new ol.layer.Tile({
   extent: mapExtent,
   source: new ol.source.XYZ({
-    attributions: [new ol.Attribution({html: 'tiles2; Rendered with <a href="https://www.maptiler.com/">MapTiler Desktop</a>'})],
+    attributions: [new ol.Attribution({html: 'haifa3; Rendered with <a href="https://www.maptiler.com/">MapTiler Desktop</a>'})],
     url: "{z}/{x}/{y}.png",
     tilePixelRatio: 1.000000,
     minZoom: mapMinZoom,
@@ -43,7 +43,7 @@ var map = new ol.Map({
     layer
   ],
   view: new ol.View({
-    center: ol.proj.fromLonLat([35.102251, 32.874316]),
+    center: ol.proj.fromLonLat([35.101570, 32.873616]),
     zoom: 10
   })
 });

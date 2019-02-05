@@ -28,9 +28,9 @@ export default class GeoService {
         return newStep;
     }
 
-    createNewSnappedStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, options = []) => {
+    createNewSnappedStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, zoomLevel, options = []) => {
         let nearestPoint = GeoService.getNearestPosition(
-            { lat, lng }, options
+            { lat, lng }, options, zoomLevel
         );
         return this.createNewStep(nearestPoint.lat, nearestPoint.lng, stepType)
     }
@@ -62,7 +62,7 @@ export default class GeoService {
             console.error(coord);
         }
     }
-    
+
     static unformatCoordinate = (coord) => {
         return geolib.sexagesimal2decimal(coord);
     }
@@ -150,7 +150,7 @@ export default class GeoService {
         return (angle < 90 || angle > 270);
     }
 
-    static getNearestPosition(from, options, ignoreOptions = [], limit = 1500) {
+    static getNearestPosition(from, options, ignoreOptions = [], zoomLevel = 10, limit = 200) {
         // Flattern options, to insure flat options list
         options = _.flattenDeep(_.map(options, option => _.flatten(option.positions)));
         // fliter out ignored options
@@ -159,7 +159,7 @@ export default class GeoService {
         if (_.isEmpty(options)) return from;
         // Otherwise - find nearest path
         let nearestPoint = geolib.findNearest(from, options);
-        if (isNaN(nearestPoint.distance) || nearestPoint.distance > limit || nearestPoint.key === -1) {
+        if (isNaN(nearestPoint.distance) || (nearestPoint.distance / zoomLevel) > limit || nearestPoint.key === -1) {
             nearestPoint = from;
         } else {
             nearestPoint = options[nearestPoint.key];
