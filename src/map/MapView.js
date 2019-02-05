@@ -79,35 +79,37 @@ class MapView extends Component {
                 onMouseMove={this.onDrawingMove.bind(this)}>
 
                 {/* World */}
-                <TileLayer
+                {/* <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     opacity={0.5}
                     minZoom={12}
-                />
+                /> */}
 
-                {/* Kishon */}
+                {/* Full */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="hadera/{z}/{x}/{y}.png"
+                    url="full2/{z}/{x}/{y}.png"
                 />
 
-                {/* Hadera */}
-                <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="kishon/{z}/{x}/{y}.png"
-                />
 
                 {/* Haifa */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="haifa/{z}/{x}/{y}.png"
+                    minZoom={12}
                 />
 
-                {/* Israel */}
+                {/* Hadera */}
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    url="israel/{z}/{x}/{y}.png"
+                    url="hadera/{z}/{x}/{y}.png"
+                />
+
+                {/* Kishon */}
+                <TileLayer
+                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="kishon3/{z}/{x}/{y}.png"
                 />
 
                 <Control position="topright">
@@ -302,7 +304,8 @@ class MapView extends Component {
     itemOnClick(event, collection, references) {
         // Isolate click
         event.originalEvent.view.L.DomEvent.stopPropagation(event);
-        if (this.state.draw.isDrawing) {
+        if (this.state.draw.isDrawing 
+        || (!this.state.draw.isDrawing && this.state.selectedTool)) {
             this.onMapClick(event);
             return;
         }
