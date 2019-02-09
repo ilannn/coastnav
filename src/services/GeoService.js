@@ -150,7 +150,7 @@ export default class GeoService {
         return (angle < 90 || angle > 270);
     }
 
-    static getNearestPosition(from, options, ignoreOptions = [], zoomLevel = 10, limit = 200) {
+    static getNearestPosition(from, options, ignoreOptions = [], zoomLevel = 10, limit = 100) {
         // Flattern options, to insure flat options list
         options = _.flattenDeep(_.map(options, option => _.flatten(option.positions)));
         // fliter out ignored options

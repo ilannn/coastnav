@@ -10,14 +10,20 @@ import _ from 'lodash';
 
 class StepEditorFormContainer extends PureComponent {
     state = {
-        values: {
-            positions: this.props.positions,
-            type: this.props.type.description,
-            angle: GeoService.calcAngle.apply(null, this.props.positions),
-            length: Number(GeoService.calcDistance.apply(null, this.props.positions).dist),
-            marker: this.props.marker ? this.props.marker.percentage : 50,
-            time: this.props.time,
-        },
+        values: this.getValuesFromProps(this.props),
+    }
+
+    getValuesFromProps(props) {
+        return {
+            positions: props.positions,
+            type: props.type.description,
+            angle: GeoService.calcAngle.apply(null, props.positions),
+            length: Number(GeoService.calcDistance.apply(null, props.positions).dist),
+            marker: props.marker ? props.marker.percentage : 50,
+            time: props.time,
+            isAddon: !!props.addon,
+            addonData: props.addon,
+        }
     }
 
     /**
@@ -27,18 +33,11 @@ class StepEditorFormContainer extends PureComponent {
     componentDidUpdate(prevProps) {
         if (this.props.id !== prevProps.id
             || !_.isEqual(this.props.marker, prevProps.marker)
+            || !_.isEqual(this.props.addon, prevProps.addon)
             || this.props.positions !== prevProps.positions) {
-            let positions = this.props.positions;
-            let angle = GeoService.calcAngle.apply(null, positions);
-            let length = Number(GeoService.calcDistance.apply(null, positions).dist);
-            let type = this.props.type.description;
-            let marker = this.props.marker ? this.props.marker.percentage : null;
-            let time = this.props.time;
             this.setState({
                 ...this.state,
-                values: {
-                    positions, angle, length, type, marker, time
-                }
+                values: this.getValuesFromProps(this.props),
             });
         }
     }

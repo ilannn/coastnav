@@ -111,6 +111,7 @@ class MapView extends Component {
                 <TileLayer
                     attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="hadera/{z}/{x}/{y}.png"
+                    minZoom={12}
                 />
 
                 <Control position="topright">
