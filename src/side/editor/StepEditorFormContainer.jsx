@@ -7,6 +7,11 @@ import { Slider } from '@material-ui/lab';
 import GeoService from '../../services/GeoService';
 import { StepType } from '../../models/steps';
 import _ from 'lodash';
+import {
+    MIN_FIELD_STEP_TYPES,
+    DEAFULT_MARKER_POSITION,
+    DEAFULT_ADDON_DATA
+} from '../../services/GeoService';
 
 class StepEditorFormContainer extends PureComponent {
     state = {
@@ -19,10 +24,10 @@ class StepEditorFormContainer extends PureComponent {
             type: props.type.description,
             angle: GeoService.calcAngle.apply(null, props.positions),
             length: Number(GeoService.calcDistance.apply(null, props.positions).dist),
-            marker: props.marker ? props.marker.percentage : 50,
+            marker: props.marker ? props.marker.percentage : DEAFULT_MARKER_POSITION,
             time: props.time,
             isAddon: !!props.addon,
-            addonData: props.addon,
+            addonData: { ...DEAFULT_ADDON_DATA, ...props.addon},
         }
     }
 
@@ -45,13 +50,13 @@ class StepEditorFormContainer extends PureComponent {
     handleCoordinatesChange = (e) => {
         let positions =
             this.state.values.positions ? this.state.values.positions : [];
-        try { 
-            positions[e.target.id][e.target.name] = 
-                Number(GeoService.unformatCoordinate(e.target.value)); 
+        try {
+            positions[e.target.id][e.target.name] =
+                Number(GeoService.unformatCoordinate(e.target.value));
         }
         catch { console.warn("User entered wrong coord format: ", e.target.value); }
-        let angle = GeoService.calcAngle(...positions);
-        let length = Number(GeoService.calcDistance(...positions).dist);
+        const angle = GeoService.calcAngle(...positions);
+        const length = Number(GeoService.calcDistance(...positions).dist);
         this.setState({
             values: {
                 ...this.state.values,
@@ -60,8 +65,8 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleAngleChange = (e) => {
-        let angle = Number(e.target.value);
-        let positions = [
+        const angle = Number(e.target.value);
+        const positions = [
             this.state.values.positions[0],
             GeoService.calcNewEnding(
                 this.state.values.positions[0],
@@ -77,8 +82,8 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleLengthChange = (e) => {
-        let length = Number(e.target.value);
-        let positions = [
+        const length = Number(e.target.value);
+        const positions = [
             this.state.values.positions[0],
             GeoService.calcNewEnding(
                 this.state.values.positions[0],
@@ -94,13 +99,9 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleTypeChange = (e) => {
-        let type = e.target.value;
-        let time;
-        if (type === "GUIDELINE") { time = null; }
-        else {
-            time = this.state.values.time
-                ? this.state.values.time : new Date();
-        }
+        const type = e.target.value;
+        let time = MIN_FIELD_STEP_TYPES.includes(type) ? null
+            : this.state.values.time ? this.state.values.time : new Date();
         this.setState({
             values: {
                 ...this.state.values,
@@ -117,13 +118,25 @@ class StepEditorFormContainer extends PureComponent {
             }
         });
     }
-
     handleTimeChange = (m) => {
         let time = m.toDate();
         this.setState({
             values: {
                 ...this.state.values,
                 time
+            }
+        });
+    }
+    handleAddonMarkerChange = (e, value) => {
+        const position = Number(value);
+        const addonData = {
+            ...this.state.values.addonData,
+            position
+        };
+        this.setState({
+            values: {
+                ...this.state.values,
+                addonData,
             }
         });
     }
@@ -190,6 +203,12 @@ class StepEditorFormContainer extends PureComponent {
                         title={'Marker'}
                         value={this.state.values.marker}
                         handleChange={this.handleMarkerChange} />}
+                {/* TODO: Toggle Addon */}
+                {this.state.values.addonData &&
+                    <AddonInput
+                        value={this.state.values.addonData}
+                        handleChange={this.handleMarkerChange} />}
+
                 <div className="footerButtons">
                     <Button type="submit" variant="contained" color="primary">Save</Button>
                     <Button onClick={this.props.onDelete} variant="contained">Delete</Button>
@@ -282,7 +301,7 @@ const TypeInput = (props) => {
                 <MenuItem value={"GUIDELINE"}>Guide Line</MenuItem>
                 <MenuItem value={"TB"}>TB</MenuItem>
                 <MenuItem value={"COG"}>COG</MenuItem>
-                <MenuItem value={"CRNT"}>CRNT</MenuItem>
+                <MenuItem value={"CRNT"}>Current</MenuItem>
                 <MenuItem value={"TC"}>TC</MenuItem>
             </Select>
         </div>
@@ -312,6 +331,29 @@ const TimeInput = (props) => {
                     className="form-input"
                     ampm={false}
                     value={props.value}
+                    onChange={props.handleChange}
+                />
+            </MuiPickersUtilsProvider>
+        </div>
+    )
+}
+
+const AddonInput = (props) => {
+    return (
+        <div className="form-group">
+            <InputLabel htmlFor={props.name}>{'Position'}</InputLabel>
+            <Slider
+                className="form-input"
+                type="number"
+                value={props.value.position}
+                onChange={props.handleChange}
+            />
+            <InputLabel htmlFor={props.name}>{'Time'}</InputLabel>
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+                <TimePicker
+                    className="form-input"
+                    ampm={false}
+                    value={props.value.time}
                     onChange={props.handleChange}
                 />
             </MuiPickersUtilsProvider>

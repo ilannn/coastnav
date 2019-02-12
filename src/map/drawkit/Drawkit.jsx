@@ -49,20 +49,6 @@ const drawkitStepTools = [
 
 const drawkitExtrasTools = [
     {
-        type: ExtraType.RNG,
-        acronyms: "RNG",
-        matIcon: "face",
-        options: {
-        },
-    },
-    {
-        type: ExtraType.DR,
-        acronyms: "DR",
-        matIcon: "face",
-        options: {
-        },
-    },
-    {
         type: ExtraType.FIX,
         acronyms: "FIX",
         matIcon: "face",
