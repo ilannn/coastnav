@@ -27,7 +27,7 @@ class StepEditorFormContainer extends PureComponent {
             marker: props.marker ? props.marker.percentage : DEAFULT_MARKER_POSITION,
             time: props.time,
             isAddon: !!props.addon,
-            addonData: { ...DEAFULT_ADDON_DATA, ...props.addon},
+            addonData: { ...DEAFULT_ADDON_DATA, ...props.addon },
         }
     }
 
@@ -119,7 +119,7 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleTimeChange = (m) => {
-        let time = m.toDate();
+        const time = m.toDate();
         this.setState({
             values: {
                 ...this.state.values,
@@ -132,6 +132,32 @@ class StepEditorFormContainer extends PureComponent {
         const addonData = {
             ...this.state.values.addonData,
             position
+        };
+        this.setState({
+            values: {
+                ...this.state.values,
+                addonData,
+            }
+        });
+    }
+    handleAddonTimeChange = (m) => {
+        const time = m.toDate();
+        const addonData = {
+            ...this.state.values.addonData,
+            time
+        };
+        this.setState({
+            values: {
+                ...this.state.values,
+                addonData,
+            }
+        });
+    }
+    handleAddonTypeChange = (e) => {
+        const type = e.target.value;
+        const addonData = {
+            ...this.state.values.addonData,
+            type
         };
         this.setState({
             values: {
@@ -207,7 +233,9 @@ class StepEditorFormContainer extends PureComponent {
                 {this.state.values.addonData &&
                     <AddonInput
                         value={this.state.values.addonData}
-                        handleChange={this.handleMarkerChange} />}
+                        handlePositionChange={this.handleAddonMarkerChange}
+                        handleTimeChange={this.handleAddonTimeChange}
+                        handleTypeChange={this.handleAddonTypeChange} />}
 
                 <div className="footerButtons">
                     <Button type="submit" variant="contained" color="primary">Save</Button>
@@ -346,7 +374,7 @@ const AddonInput = (props) => {
                 className="form-input"
                 type="number"
                 value={props.value.position}
-                onChange={props.handleChange}
+                onChange={props.handlePositionChange}
             />
             <InputLabel htmlFor={props.name}>{'Time'}</InputLabel>
             <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -354,9 +382,21 @@ const AddonInput = (props) => {
                     className="form-input"
                     ampm={false}
                     value={props.value.time}
-                    onChange={props.handleChange}
+                    onChange={props.handleTimeChange}
                 />
             </MuiPickersUtilsProvider>
+            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+            <Select
+                value={props.value.type}
+                onChange={props.handleTypeChange}
+                inputProps={{
+                    name: 'type',
+                    id: 'type',
+                }}
+            >
+                <MenuItem value={"RNG"}>Range</MenuItem>
+                <MenuItem value={"DR"}>D.R</MenuItem>
+            </Select>
         </div>
     )
 }
