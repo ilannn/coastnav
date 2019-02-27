@@ -29,14 +29,15 @@ export default class GeoService {
             positions: [{ lat, lng }, { lat, lng }],
             marker: { position: null, percentage: 50 }
         }
-        if (!MIN_FIELD_STEP_TYPES.includes(stepType)) {
-            return {
-                ...newStep,
-                time: new Date(),
-                addon: true,
-            }
+        
+        if (MIN_FIELD_STEP_TYPES.includes(stepType)) return newStep;
+
+        return {
+            ...newStep,
+            time: new Date(),
+            isAddon: false,
+            addonData: { ...DEAFULT_ADDON_DATA },
         }
-        return newStep;
     }
 
     createNewSnappedStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, zoomLevel, options = []) => {

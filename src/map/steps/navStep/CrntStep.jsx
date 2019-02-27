@@ -32,6 +32,10 @@ export default class CrntStep {
             permanent: true,
             offset: [0, 15 * +GeoService.isNorth(angle)],
         });
+
+        const addon = navStep.getAddon(map, options);
+        if (addon) return [step, marker, addon];
+        
         return [step, marker];
     }
 }
