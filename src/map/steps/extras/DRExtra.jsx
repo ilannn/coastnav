@@ -21,6 +21,6 @@ export default class DRExtra {
             permanent: true,
             offset: [0, 10 * +GeoService.isNorth(options.angle)],
         });
-        return [marker];
+        return marker;
     }
 }

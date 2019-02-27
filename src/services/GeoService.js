@@ -3,10 +3,21 @@ import geolib from 'geolib';
 import { LatLng } from 'leaflet';
 import _ from 'lodash';
 import { ExtraType } from '../models/extras';
+import { AddonType } from '../models/addons';
+
+export const MIN_FIELD_STEP_TYPES = ['GUIDELINE'];
+export const DEAFULT_MARKER_POSITION = 50;
+export const DEAFULT_ADDON_DATA = {
+    percentage: 70,
+    position: null,
+    time: new Date(),
+    type: AddonType.RNG,
+    length: 0,
+}
 
 export default class GeoService {
     constructor() {
-        this.id = 1;
+        this.id = 0;
     }
 
     getSteps = (limit) => {
@@ -15,21 +26,23 @@ export default class GeoService {
 
     createNewStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE) => {
         let newStep = {
-            id: this.id++, type: stepType,
+            id: ++this.id, type: stepType,
             positions: [{ lat, lng }, { lat, lng }],
             marker: { position: null, percentage: 50 }
         }
-        if (stepType !== StepType.GUIDELINE) {
-            return {
-                ...newStep,
-                time: new Date(),
-            }
+        
+        if (MIN_FIELD_STEP_TYPES.includes(stepType)) return newStep;
+
+        return {
+            ...newStep,
+            time: new Date(),
+            isAddon: false,
+            addonData: { ...DEAFULT_ADDON_DATA },
         }
-        return newStep;
     }
 
     createNewSnappedStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, zoomLevel, options = []) => {
-        let nearestPoint = GeoService.getNearestPosition(
+        const nearestPoint = GeoService.getNearestPosition(
             { lat, lng }, options, zoomLevel
         );
         return this.createNewStep(nearestPoint.lat, nearestPoint.lng, stepType)

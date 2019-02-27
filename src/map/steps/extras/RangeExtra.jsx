@@ -9,10 +9,10 @@ const rangeExtraProps = {
 
 export default class RangeExtra {
     static addTo(map, options) {
-        let time = options.time ? moment(options.time).format("HH:mm") : "Error";
-        let length = options.length ? options.length : 0;
+        const time = options.time ? moment(options.time).format("HH:mm") : "Error";
+        const length = options.length ? options.length : 0;
 
-        let marker = L.marker(
+        const marker = L.marker(
             options.position,
             {
                 ...rangeExtraProps,
@@ -25,6 +25,6 @@ export default class RangeExtra {
             offset: [0, 10 * +GeoService.isNorth(options.angle)],
         });
 
-        return [marker];
+        return marker;
     }
 }

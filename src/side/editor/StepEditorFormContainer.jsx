@@ -1,12 +1,18 @@
 import React, { PureComponent } from 'react';
 import './StepEditorFormContainer.css';
-import { Input, Button, Select, InputLabel, MenuItem } from '@material-ui/core';
+import { Input, Button, Select, InputLabel, MenuItem, Divider, Switch } from '@material-ui/core';
 import { MuiPickersUtilsProvider, TimePicker } from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
 import { Slider } from '@material-ui/lab';
 import GeoService from '../../services/GeoService';
 import { StepType } from '../../models/steps';
 import _ from 'lodash';
+import {
+    MIN_FIELD_STEP_TYPES,
+    DEAFULT_MARKER_POSITION,
+    DEAFULT_ADDON_DATA
+} from '../../services/GeoService';
+import { AddonType } from '../../models/addons';
 
 class StepEditorFormContainer extends PureComponent {
     state = {
@@ -19,11 +25,17 @@ class StepEditorFormContainer extends PureComponent {
             type: props.type.description,
             angle: GeoService.calcAngle.apply(null, props.positions),
             length: Number(GeoService.calcDistance.apply(null, props.positions).dist),
-            marker: props.marker ? props.marker.percentage : 50,
+            marker: props.marker ? props.marker.percentage : DEAFULT_MARKER_POSITION,
             time: props.time,
-            isAddon: !!props.addon,
-            addonData: props.addon,
+            isAddon: props.isAddon,
+            addonData: this.getAddonValues(props),
         }
+    }
+
+    getAddonValues(props) {
+        let type = props.addonData.type ? props.addonData.type : DEAFULT_ADDON_DATA.type;
+        type = type.description;
+        return { ...DEAFULT_ADDON_DATA, ...props.addonData, type };
     }
 
     /**
@@ -33,7 +45,7 @@ class StepEditorFormContainer extends PureComponent {
     componentDidUpdate(prevProps) {
         if (this.props.id !== prevProps.id
             || !_.isEqual(this.props.marker, prevProps.marker)
-            || !_.isEqual(this.props.addon, prevProps.addon)
+            || !_.isEqual(this.props.addonData, prevProps.addonData)
             || this.props.positions !== prevProps.positions) {
             this.setState({
                 ...this.state,
@@ -45,13 +57,13 @@ class StepEditorFormContainer extends PureComponent {
     handleCoordinatesChange = (e) => {
         let positions =
             this.state.values.positions ? this.state.values.positions : [];
-        try { 
-            positions[e.target.id][e.target.name] = 
-                Number(GeoService.unformatCoordinate(e.target.value)); 
+        try {
+            positions[e.target.id][e.target.name] =
+                Number(GeoService.unformatCoordinate(e.target.value));
         }
         catch { console.warn("User entered wrong coord format: ", e.target.value); }
-        let angle = GeoService.calcAngle(...positions);
-        let length = Number(GeoService.calcDistance(...positions).dist);
+        const angle = GeoService.calcAngle(...positions);
+        const length = Number(GeoService.calcDistance(...positions).dist);
         this.setState({
             values: {
                 ...this.state.values,
@@ -60,8 +72,8 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleAngleChange = (e) => {
-        let angle = Number(e.target.value);
-        let positions = [
+        const angle = Number(e.target.value);
+        const positions = [
             this.state.values.positions[0],
             GeoService.calcNewEnding(
                 this.state.values.positions[0],
@@ -77,8 +89,8 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleLengthChange = (e) => {
-        let length = Number(e.target.value);
-        let positions = [
+        const length = Number(e.target.value);
+        const positions = [
             this.state.values.positions[0],
             GeoService.calcNewEnding(
                 this.state.values.positions[0],
@@ -94,13 +106,9 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleTypeChange = (e) => {
-        let type = e.target.value;
-        let time;
-        if (type === "GUIDELINE") { time = null; }
-        else {
-            time = this.state.values.time
-                ? this.state.values.time : new Date();
-        }
+        const type = e.target.value;
+        let time = MIN_FIELD_STEP_TYPES.includes(type) ? null
+            : this.state.values.time ? this.state.values.time : new Date();
         this.setState({
             values: {
                 ...this.state.values,
@@ -109,7 +117,7 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleMarkerChange = (e, value) => {
-        let marker = Number(value);
+        const marker = Number(value);
         this.setState({
             values: {
                 ...this.state.values,
@@ -117,15 +125,74 @@ class StepEditorFormContainer extends PureComponent {
             }
         });
     }
-
     handleTimeChange = (m) => {
-        let time = m.toDate();
+        const time = m.toDate();
         this.setState({
             values: {
                 ...this.state.values,
                 time
             }
         });
+    }
+    handleAddonMarkerChange = (e, value) => {
+        const percentage = Number(value);
+        const addonData = {
+            ...this.state.values.addonData,
+            percentage
+        };
+        this.setState({
+            values: {
+                ...this.state.values,
+                addonData,
+            }
+        });
+    }
+    handleAddonTimeChange = (m) => {
+        const time = m.toDate();
+        const addonData = {
+            ...this.state.values.addonData,
+            time
+        };
+        this.setState({
+            values: {
+                ...this.state.values,
+                addonData,
+            }
+        });
+    }
+    handleAddonTypeChange = (e) => {
+        const type = e.target.value;
+        const addonData = {
+            ...this.state.values.addonData,
+            type
+        };
+        this.setState({
+            values: {
+                ...this.state.values,
+                addonData,
+            }
+        });
+    }
+    handleAddonLangthChange = (e) => {
+        const length = Number(e.target.value);
+        const addonData = {
+            ...this.state.values.addonData,
+            length
+        };
+        this.setState({
+            values: {
+                ...this.state.values,
+                addonData,
+            }
+        });
+    }
+    handleAddonSwitch = (e) => {
+        this.setState({
+            values: {
+                ...this.state.values,
+                isAddon: !this.state.values.isAddon,
+            }
+        })
     }
 
     /**
@@ -140,7 +207,7 @@ class StepEditorFormContainer extends PureComponent {
             percentage = this.state.values.marker ?
                 this.state.values.marker : 50;
         }
-        let position = GeoService.calcNewMarkerPosition(
+        const position = GeoService.calcNewMarkerPosition(
             positions[0],
             positions[1],
             percentage
@@ -190,6 +257,22 @@ class StepEditorFormContainer extends PureComponent {
                         title={'Marker'}
                         value={this.state.values.marker}
                         handleChange={this.handleMarkerChange} />}
+                <Divider  />
+                
+                <AddonSwitchInput 
+                    title = {'Addon'}
+                    value={this.state.values.isAddon}
+                    handleChange={this.handleAddonSwitch} />
+
+                {this.state.values.isAddon &&
+                    <AddonInput
+                        value={this.state.values.addonData}
+                        handlePositionChange={this.handleAddonMarkerChange}
+                        handleTimeChange={this.handleAddonTimeChange}
+                        handleTypeChange={this.handleAddonTypeChange}
+                        handleLengthChange={this.handleAddonLangthChange} />}
+
+                <Divider />
                 <div className="footerButtons">
                     <Button type="submit" variant="contained" color="primary">Save</Button>
                     <Button onClick={this.props.onDelete} variant="contained">Delete</Button>
@@ -203,7 +286,17 @@ class StepEditorFormContainer extends PureComponent {
         let values = { ...this.state.values };
         values.type = StepType[values.type];
         values.marker = this.getUpdatedMarker(values.positions, values.marker);
+        if (values.addonData) values.addonData = this.handleAddonSubmit(values);
+
         this.props.onSave(values);
+    }
+
+    handleAddonSubmit = (values) => {
+        const type = AddonType[values.addonData.type];
+        return {
+            ...values.addonData, type,
+            ...this.getUpdatedMarker(values.positions, values.addonData.percentage)
+        };
     }
 }
 
@@ -282,7 +375,7 @@ const TypeInput = (props) => {
                 <MenuItem value={"GUIDELINE"}>Guide Line</MenuItem>
                 <MenuItem value={"TB"}>TB</MenuItem>
                 <MenuItem value={"COG"}>COG</MenuItem>
-                <MenuItem value={"CRNT"}>CRNT</MenuItem>
+                <MenuItem value={"CRNT"}>Current</MenuItem>
                 <MenuItem value={"TC"}>TC</MenuItem>
             </Select>
         </div>
@@ -315,6 +408,65 @@ const TimeInput = (props) => {
                     onChange={props.handleChange}
                 />
             </MuiPickersUtilsProvider>
+        </div>
+    )
+}
+
+const AddonSwitchInput = (props) => {
+    return (
+        <div className="form-group">
+            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+            <Switch
+                className="form-input"
+                title={props.value ? "Remove Addon" : "Add Addon"}
+                checked={props.value}
+                onChange={props.handleChange}>
+            </Switch>
+        </div>
+    )
+}
+
+const AddonInput = (props) => {
+    return (
+        <div className="form-group">
+            <InputLabel htmlFor={props.name}>{'Position'}</InputLabel>
+            <Slider
+                className="form-input"
+                type="number"
+                value={props.value.percentage}
+                onChange={props.handlePositionChange}
+            />
+            <InputLabel htmlFor={props.name}>{'Time'}</InputLabel>
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+                <TimePicker
+                    className="form-input"
+                    ampm={false}
+                    value={props.value.time}
+                    onChange={props.handleTimeChange}
+                />
+            </MuiPickersUtilsProvider>
+            <InputLabel htmlFor={props.name}>{'Type'}</InputLabel>
+            <Select
+                value={props.value.type}
+                onChange={props.handleTypeChange}
+                inputProps={{
+                    name: 'type',
+                    id: 'type',
+                }}
+            >
+                <MenuItem value={"RNG"}>Range</MenuItem>
+                <MenuItem value={"DR"}>D.R</MenuItem>
+            </Select>
+            { props.value.type === 'RNG' && 
+                <InputLabel htmlFor={props.name}>{'Length'}</InputLabel> }
+            {props.value.type === 'RNG' && 
+                <Input
+                    className="form-input"
+                    type="number"
+                    value={props.value.length}
+                    onChange={props.handleLengthChange}
+                    placeholder="Range length"
+                /> }
         </div>
     )
 }

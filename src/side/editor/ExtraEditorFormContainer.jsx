@@ -5,14 +5,12 @@ import { MuiPickersUtilsProvider, TimePicker } from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
 import GeoService from '../../services/GeoService';
 import { ExtraType } from '../../models/extras';
-import _ from 'lodash';
 
 class StepEditorFormContainer extends PureComponent {
     state = {
         values: {
             position: this.props.position,
             type: this.props.type.description,
-            angle: this.props.angle ? this.props.angle : 0,
             length: this.props.length,
             time: this.props.time,
         },
@@ -27,14 +25,13 @@ class StepEditorFormContainer extends PureComponent {
             || this.props.length !== prevProps.length
             || this.props.position !== prevProps.position) {
             let position = this.props.position;
-            let angle = this.props.angle ? this.props.angle : 0;
             let length = this.props.length;
             let type = this.props.type.description;
             let time = this.props.time;
             this.setState({
                 ...this.state,
                 values: {
-                    position, angle, length, type, time
+                    position, length, type, time
                 }
             });
         }
@@ -50,15 +47,6 @@ class StepEditorFormContainer extends PureComponent {
             values: {
                 ...this.state.values,
                 position,
-            }
-        });
-    }
-    handleAngleChange = (e) => {
-        let angle = Number(e.target.value);
-        this.setState({
-            values: {
-                ...this.state.values,
-                angle
             }
         });
     }
@@ -112,11 +100,6 @@ class StepEditorFormContainer extends PureComponent {
                     title={'Type'}
                     value={this.state.values.type}
                     handleChange={this.handleTypeChange} />
-                <AngleInput
-                    title={'Degree'}
-                    value={this.state.values.angle}
-                    handleChange={this.handleAngleChange}
-                />
                 <TimeInput
                     title={'Time'}
                     value={this.state.values.time}
@@ -169,21 +152,6 @@ const CoordinatesInput = (props) => {
                     placeholder="Lng"
                 />
             </span>
-        </div>
-    )
-}
-
-const AngleInput = (props) => {
-    return (
-        <div className="form-group">
-            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
-            <Input
-                className="form-input"
-                type="number"
-                value={props.value}
-                onChange={props.handleChange}
-                placeholder="°"
-            />
         </div>
     )
 }

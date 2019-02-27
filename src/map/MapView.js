@@ -224,10 +224,6 @@ class MapView extends Component {
 
     _createNewExtra(navExtra) {
         switch (navExtra.type) {
-            case ExtraType.RNG:
-                return RangeExtra.addTo(this.leafletMap, navExtra);
-            case ExtraType.DR:
-                return DRExtra.addTo(this.leafletMap, navExtra);
             case ExtraType.FIX:
                 return FixExtra.addTo(this.leafletMap, navExtra);
             case ExtraType.R:
@@ -566,11 +562,11 @@ class MapView extends Component {
     handleStepStopDraw(event) {
         if (this.state.draw.snapping) {
             // When finished drawing - try finding a near point for ending
-            let currentPositions = this.state.selectedItem.positions;
-            let updatedStepEnding = GeoService.getNearestPosition(
+            const currentPositions = this.state.selectedItem.positions;
+            const updatedStepEnding = GeoService.getNearestPosition(
                 currentPositions[1],
                 this.state.steps.slice(0, this.state.steps.length - 1),
-                [currentPositions[0]]
+                [currentPositions[0]] // blacklist snapping to starting point
             );
             this.handleSelectedItemChanges({
                 positions: [currentPositions[0], updatedStepEnding]
@@ -611,22 +607,18 @@ class MapView extends Component {
      * @param {NavStepProps} changes 
      */
     handleSelectedItemChanges(changes) {
-        let updatedItem = this.state.selectedItem;
-        let collectionType = StepType[updatedItem.type.description]
+        const updatedItem = this.state.selectedItem;
+        const collectionType = StepType[updatedItem.type.description]
             ? "steps" : "extras";
         let collection = this.state[collectionType];
-        let oldItem = collection.find((item) => {
-            return item.id === updatedItem.id;
-        });
-        if (oldItem) {
-            Object.assign(oldItem, changes);
+        let changedItem = _.find(collection, { id: updatedItem.id });
+        if (changedItem) {
+            // Update item in collection
+            Object.assign(changedItem, changes);
         }
 
-        /* Update selected item & global item list */
         let updatedState = {
-            selectedItem: this.state[collectionType].find((item) => {
-                return item.id === updatedItem.id;
-            }),
+            selectedItem: changedItem,
         };
         updatedState[collectionType] = collection;
         this.setState(updatedState);

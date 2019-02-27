@@ -1,5 +1,7 @@
 import L from 'leaflet';
-
+import { AddonType } from '../../../models/addons';
+import RangeExtra from '../extras/RangeExtra';
+import DRExtra from '../extras/DRExtra';
 
 /* Markers Icons */
 
@@ -26,3 +28,13 @@ export const tripleArrowIcon = L.icon({
     iconSize: [40, 40], // size of the icon
     iconAnchor: [20, 20], // point of the icon which will correspond to marker's location
 });
+
+export const getAddon = (map, options) => {
+    if (!options.isAddon) return;
+    switch (options.addonData.type.description) {
+        case AddonType.RNG.description:
+            return RangeExtra.addTo(map, { ...options.addonData, angle: options.angle });
+        case AddonType.DR.description:
+            return DRExtra.addTo(map, { ...options.addonData, angle: options.angle });
+    }
+}
