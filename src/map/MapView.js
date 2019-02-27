@@ -562,11 +562,11 @@ class MapView extends Component {
     handleStepStopDraw(event) {
         if (this.state.draw.snapping) {
             // When finished drawing - try finding a near point for ending
-            let currentPositions = this.state.selectedItem.positions;
-            let updatedStepEnding = GeoService.getNearestPosition(
+            const currentPositions = this.state.selectedItem.positions;
+            const updatedStepEnding = GeoService.getNearestPosition(
                 currentPositions[1],
                 this.state.steps.slice(0, this.state.steps.length - 1),
-                [currentPositions[0]]
+                [currentPositions[0]] // blacklist snapping to starting point
             );
             this.handleSelectedItemChanges({
                 positions: [currentPositions[0], updatedStepEnding]

@@ -42,7 +42,7 @@ export default class GeoService {
     }
 
     createNewSnappedStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, zoomLevel, options = []) => {
-        let nearestPoint = GeoService.getNearestPosition(
+        const nearestPoint = GeoService.getNearestPosition(
             { lat, lng }, options, zoomLevel
         );
         return this.createNewStep(nearestPoint.lat, nearestPoint.lng, stepType)
