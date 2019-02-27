@@ -173,8 +173,20 @@ class StepEditorFormContainer extends PureComponent {
             }
         });
     }
+    handleAddonLangthChange = (e) => {
+        const length = Number(e.target.value);
+        const addonData = {
+            ...this.state.values.addonData,
+            length
+        };
+        this.setState({
+            values: {
+                ...this.state.values,
+                addonData,
+            }
+        });
+    }
     handleAddonSwitch = (e) => {
-        console.log("handleAddonSwitch", e);
         this.setState({
             values: {
                 ...this.state.values,
@@ -257,7 +269,8 @@ class StepEditorFormContainer extends PureComponent {
                         value={this.state.values.addonData}
                         handlePositionChange={this.handleAddonMarkerChange}
                         handleTimeChange={this.handleAddonTimeChange}
-                        handleTypeChange={this.handleAddonTypeChange} />}
+                        handleTypeChange={this.handleAddonTypeChange}
+                        handleLengthChange={this.handleAddonLangthChange} />}
 
                 <Divider />
                 <div className="footerButtons">
@@ -444,6 +457,16 @@ const AddonInput = (props) => {
                 <MenuItem value={"RNG"}>Range</MenuItem>
                 <MenuItem value={"DR"}>D.R</MenuItem>
             </Select>
+            { props.value.type === 'RNG' && 
+                <InputLabel htmlFor={props.name}>{'Length'}</InputLabel> }
+            {props.value.type === 'RNG' && 
+                <Input
+                    className="form-input"
+                    type="number"
+                    value={props.value.length}
+                    onChange={props.handleLengthChange}
+                    placeholder="Range length"
+                /> }
         </div>
     )
 }

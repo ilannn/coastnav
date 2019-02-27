@@ -12,6 +12,7 @@ export const DEAFULT_ADDON_DATA = {
     position: null,
     time: new Date(),
     type: AddonType.RNG,
+    length: 0,
 }
 
 export default class GeoService {
