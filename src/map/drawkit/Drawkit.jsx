@@ -76,7 +76,7 @@ class Drawkit extends Component {
             <Card className="drawkitToolList">
                 {extrasTools}
             </Card>
-            <Card className="drawkitClearAll">
+            <Card className="drawkitToolList drawkitClearAll">
                 <Button 
                     title={"Clear All"}
                     onClick={this.props.onClearAll}>

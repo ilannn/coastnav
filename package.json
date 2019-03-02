@@ -18,12 +18,13 @@
     "moment": "^2.23.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
+    "react-bootstrap": "^1.0.0-beta.5",
     "react-cursor-position": "^3.0.3",
     "react-dom": "^16.6.3",
     "react-leaflet": "^2.1.2",
     "react-leaflet-control": "^2.0.0",
     "react-leaflet-sidebarv2": "^0.6.0",
-    "react-scripts": "^2.1.3",
+    "react-scripts": "^2.1.5",
     "yup": "^0.26.6"
   },
   "scripts": {

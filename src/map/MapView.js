@@ -112,6 +112,7 @@ class MapView extends Component {
                 />
 
                 <Control position="topright">
+                    <img src={'/icon.png'} alt={''} width="100px"/>
                     <Drawkit
                         selectedTool={this.state.selectedTool}
                         onSelectTool={this.onSelectTool}

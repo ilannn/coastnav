@@ -1,6 +1,8 @@
 
 .EditorContainer {
-    
+    overflow-y: scroll;
+    font-size: small;
+    max-height: 100vh;
 }
 
 .EditorCard {

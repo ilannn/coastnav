@@ -11,3 +11,11 @@ MapView {
 SideView {
   grid-column-start: 2;
 }
+
+.initialModalBody {
+  text-align: center;
+}
+
+.initialModalTitle {
+  text-align: center;
+}
