@@ -155,7 +155,7 @@ export default class GeoService {
         let length = geolib.getDistanceSimple(from, to);
         length = length * (percentage / 100);
         let p2 = geolib.computeDestinationPoint(from, length, angle);
-        return new LatLng(p2.latitude.toFixed(8), p2.longitude.toFixed(8));
+        return new LatLng(p2.latitude.toFixed(15), p2.longitude.toFixed(15));
     }
 
     static isNorth(angle) {

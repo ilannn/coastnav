@@ -20,14 +20,18 @@ export default class GuidelineStep {
         let angle = GeoService.calcAngle(
             ...Object.values(step.getLatLngs())
         );
-        let markerPosition = options.marker && options.marker.position
+        const markerPosition = options.marker && options.marker.position
             ? options.marker.position : step.getCenter();
-        let marker = L.marker(markerPosition, {
+        const marker = L.marker(markerPosition, {
             ...guidelineMarkerProps,
         }).addTo(map);
         marker.bindTooltip(`${angle}° / ${dist} ${unit}`, {
             permanent: true,
         });
+        
+        const addon = navStep.getAddon(map, options);
+        if (addon) return [step, marker, addon];
+
         return [step, marker];
     }
 }

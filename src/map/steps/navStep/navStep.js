@@ -35,6 +35,7 @@ export const getAddon = (map, options) => {
         case AddonType.RNG.description:
             return RangeExtra.addTo(map, { ...options.addonData, angle: options.angle });
         case AddonType.DR.description:
+        default:
             return DRExtra.addTo(map, { ...options.addonData, angle: options.angle });
     }
 }

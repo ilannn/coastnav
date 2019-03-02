@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import GeoService, { DEAFULT_ADDON_DATA } from '../../../services/GeoService';
+import GeoService from '../../../services/GeoService';
 import * as navStep from './navStep';
 import * as moment from 'moment';
 

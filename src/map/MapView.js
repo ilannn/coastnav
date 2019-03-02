@@ -18,8 +18,6 @@ import CrntStep from './steps/navStep/CrntStep';
 import TCStep from './steps/navStep/TCStep';
 import { Card, Switch } from '@material-ui/core';
 import { ExtraType } from '../models/extras';
-import RangeExtra from './steps/extras/RangeExtra';
-import DRExtra from './steps/extras/DRExtra';
 import FixExtra from './steps/extras/FixExtra';
 import RadiusExtra from './steps/extras/RadiusExtra';
 
@@ -56,7 +54,6 @@ class MapView extends Component {
         this.leafletMap.on('click', this.onMapClick.bind(this));
         this.setMousePosition();
         this.drawStateSteps();
-        this.setState({});
     }
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);

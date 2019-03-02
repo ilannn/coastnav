@@ -71,6 +71,16 @@ class StepEditorFormContainer extends PureComponent {
             }
         });
     }
+    handleCoordinatesSwitch = (e) => {
+        const positions = this.state.values.positions.reverse();
+        const angle = GeoService.calcAngle(...positions);
+        this.setState({
+            values: {
+                ...this.state.values,
+                positions, angle
+            }
+        });
+    }
     handleAngleChange = (e) => {
         const angle = Number(e.target.value);
         const positions = [
@@ -226,7 +236,11 @@ class StepEditorFormContainer extends PureComponent {
                     id={'0'}
                     value={this.state.values.positions[0]}
                     handleChange={this.handleCoordinatesChange}
-                />
+                >
+                    <Button onClick={this.handleCoordinatesSwitch}>
+                        <i className="material-icons" style={{transform: 'rotate(90deg)', display: 'block'}}>compare_arrows</i>
+                    </Button>
+                </CoordinatesInput>
                 <CoordinatesInput
                     title={'To'}
                     id={'1'}
@@ -257,10 +271,10 @@ class StepEditorFormContainer extends PureComponent {
                         title={'Marker'}
                         value={this.state.values.marker}
                         handleChange={this.handleMarkerChange} />}
-                <Divider  />
-                
-                <AddonSwitchInput 
-                    title = {'Addon'}
+                <Divider />
+
+                <AddonSwitchInput
+                    title={'Addon'}
                     value={this.state.values.isAddon}
                     handleChange={this.handleAddonSwitch} />
 
@@ -305,7 +319,10 @@ export default StepEditorFormContainer;
 const CoordinatesInput = (props) => {
     return (
         <div className="form-group">
-            <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+            <span>
+                <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+                {props.children}
+            </span>
             <span>
                 <Input
                     className="form-input"
@@ -457,16 +474,16 @@ const AddonInput = (props) => {
                 <MenuItem value={"RNG"}>Range</MenuItem>
                 <MenuItem value={"DR"}>D.R</MenuItem>
             </Select>
-            { props.value.type === 'RNG' && 
-                <InputLabel htmlFor={props.name}>{'Length'}</InputLabel> }
-            {props.value.type === 'RNG' && 
+            {props.value.type === 'RNG' &&
+                <InputLabel htmlFor={props.name}>{'Length'}</InputLabel>}
+            {props.value.type === 'RNG' &&
                 <Input
                     className="form-input"
                     type="number"
                     value={props.value.length}
                     onChange={props.handleLengthChange}
                     placeholder="Range length"
-                /> }
+                />}
         </div>
     )
 }
