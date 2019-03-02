@@ -320,7 +320,8 @@ const CoordinatesInput = (props) => {
     return (
         <div className="form-group">
             <span>
-                <InputLabel htmlFor={props.name}>{props.title}</InputLabel>
+                <InputLabel style={{'display':'block'}} 
+                    htmlFor={props.name}>{props.title}</InputLabel>
                 {props.children}
             </span>
             <span>

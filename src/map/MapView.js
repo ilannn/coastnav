@@ -23,7 +23,7 @@ import RadiusExtra from './steps/extras/RadiusExtra';
 
 
 const geoService = new GeoService();
-const COOREDINATES_DEPTH = 10;
+const COOREDINATES_DEPTH = 15;
 const initialCenter = [32.8201719, 34.6261597];
 const initialZoom = 11;
 

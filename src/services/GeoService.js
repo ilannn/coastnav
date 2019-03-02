@@ -81,12 +81,12 @@ export default class GeoService {
     }
 
     static calcAngle = function (p1, p2, direction) {
-        let lat1 = p1.lat / 180 * Math.PI;
-        let lat2 = p2.lat / 180 * Math.PI;
-        let lng1 = p1.lng / 180 * Math.PI;
-        let lng2 = p2.lng / 180 * Math.PI;
-        let y = Math.sin(lng2 - lng1) * Math.cos(lat2);
-        let x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
+        const lat1 = p1.lat / 180 * Math.PI;
+        const lat2 = p2.lat / 180 * Math.PI;
+        const lng1 = p1.lng / 180 * Math.PI;
+        const lng2 = p2.lng / 180 * Math.PI;
+        const y = Math.sin(lng2 - lng1) * Math.cos(lat2);
+        const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
         let brng;
         if (direction === "inbound") {
             brng = (Math.atan2(y, x) * 180 / Math.PI + 180).toFixed(0);
@@ -97,9 +97,9 @@ export default class GeoService {
     }
 
     static calcDistance = function (p1, p2) {
-        let unit = "mi";
+        const unit = "mi";
         let dist = geolib.getDistanceSimple(p1, p2);
-        dist = geolib.convertUnit('mi', dist);
+        dist = geolib.convertUnit('mi', dist).toFixed(3);
         return { dist, unit };
     }
 
@@ -147,7 +147,7 @@ export default class GeoService {
     static calcNewEnding(from, length, angle) {
         length = length * 1609.344; // convert to meters
         let p2 = geolib.computeDestinationPoint(from, length, angle);
-        return new LatLng(p2.latitude.toFixed(5), p2.longitude.toFixed(5));
+        return new LatLng(p2.latitude.toFixed(10), p2.longitude.toFixed(10));
     }
 
     static calcNewMarkerPosition(from, to, percentage) {
