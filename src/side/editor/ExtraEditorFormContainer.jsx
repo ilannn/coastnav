@@ -183,8 +183,6 @@ const TypeInput = (props) => {
                     id: 'type',
                 }}
             >
-                <MenuItem value={"RNG"}>Range</MenuItem>
-                <MenuItem value={"DR"}>DR</MenuItem>
                 <MenuItem value={"FIX"}>Fix</MenuItem>
                 <MenuItem value={"R"}>Radius</MenuItem>
             </Select>
