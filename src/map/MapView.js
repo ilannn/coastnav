@@ -441,8 +441,8 @@ class MapView extends Component {
         });
         // If drawing radius -> update it's radius
         if (updatedSelectedItem.type === ExtraType.R) {
-            let radius = event.latlng.distanceTo(updatedSelectedItem.position);
-            let length = GeoService.calcDistance(
+            const radius = event.latlng.distanceTo(updatedSelectedItem.position);
+            const length = GeoService.calcDistance(
                 updatedSelectedItem.position,
                 event.latlng
             ).dist;
@@ -453,11 +453,17 @@ class MapView extends Component {
         }
         // Otherwise => update current position
         else {
+            let position = {
+                lat: Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                lng: Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
+            };
+            if (this.state.draw.snapping) {
+                position = GeoService.getNearestPosition(
+                    position, this.state.steps,
+                );
+            }
             updatedSelectedItem = Object.assign(updatedSelectedItem, {
-                position: {
-                    lat: Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-                    lng: Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH))
-                },
+                position,
             });
         }
 
@@ -501,7 +507,7 @@ class MapView extends Component {
         // Create a new step, stating at click position
         let newStep;
         if (this.state.draw.snapping) {
-            newStep = geoService.createNewSnappedStep(
+            newStep = geoService.createNewSnappedItem(
                 Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
                 Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
                 this.state.selectedTool.type,
@@ -535,12 +541,24 @@ class MapView extends Component {
 
     handleExtrasDraw(event) {
         // Create a new extra instance, stating at click position
-        let newExtra = geoService.createNewExtra(
-            Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
-            Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
-            this.state.selectedTool.type,
-        );
-
+        let newExtra;
+        if (this.state.draw.snapping) {
+            newExtra = geoService.createNewSnappedItem(
+                Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
+                this.state.selectedTool.type,
+                this.leafletMap.getZoom(),
+                this.state.steps
+            );
+        }
+        else {
+            newExtra = geoService.createNewExtra(
+                Number((event.latlng.lat).toFixed(COOREDINATES_DEPTH)),
+                Number((event.latlng.lng).toFixed(COOREDINATES_DEPTH)),
+                this.state.selectedTool.type,
+            );
+        }
+        
         // assing the new line the current tool's options
         Object.assign(newExtra, this.state.selectedTool.options);
 

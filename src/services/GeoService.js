@@ -41,11 +41,13 @@ export default class GeoService {
         }
     }
 
-    createNewSnappedStep = (lat = 0, lng = 0, stepType = StepType.GUIDELINE, zoomLevel, options = []) => {
+    createNewSnappedItem = (lat = 0, lng = 0, itemType, zoomLevel, options = []) => {
         const nearestPoint = GeoService.getNearestPosition(
             { lat, lng }, options, zoomLevel
         );
-        return this.createNewStep(nearestPoint.lat, nearestPoint.lng, stepType)
+        return StepType[itemType.description]
+            ? this.createNewStep(nearestPoint.lat, nearestPoint.lng, itemType)
+            : this.createNewExtra(nearestPoint.lat, nearestPoint.lng, itemType);
     }
 
     createNewExtra = (lat = 0, lng = 0, itemType = ExtraType.RNG) => {
