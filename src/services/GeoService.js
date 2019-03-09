@@ -151,10 +151,11 @@ export default class GeoService {
     }
 
     static calcNewMarkerPosition(from, to, percentage) {
-        let angle = GeoService.calcAngle(from, to);
-        let length = geolib.getDistanceSimple(from, to);
-        length = length * (percentage / 100);
-        let p2 = geolib.computeDestinationPoint(from, length, angle);
+        if (percentage === 0 ) return from;
+        if (percentage === 100 ) return to;
+        const angle = GeoService.calcAngle(from, to);
+        const length = geolib.getDistanceSimple(from, to) * (percentage / 100);
+        const p2 = geolib.computeDestinationPoint(from, length, angle);
         return new LatLng(p2.latitude.toFixed(15), p2.longitude.toFixed(15));
     }
 

@@ -24,7 +24,7 @@ class StepEditorFormContainer extends PureComponent {
             positions: props.positions,
             type: props.type.description,
             angle: GeoService.calcAngle.apply(null, props.positions),
-            length: Number(GeoService.calcDistance.apply(null, props.positions).dist),
+            length: this.getStepLength(props.positions),
             marker: props.marker ? props.marker.percentage : DEAFULT_MARKER_POSITION,
             time: props.time,
             isAddon: props.isAddon,
@@ -33,9 +33,24 @@ class StepEditorFormContainer extends PureComponent {
     }
 
     getAddonValues(props) {
-        let type = props.addonData.type ? props.addonData.type : DEAFULT_ADDON_DATA.type;
+        let type = props.addonData.type
+            ? props.addonData.type
+            : DEAFULT_ADDON_DATA.type;
         type = type.description;
-        return { ...DEAFULT_ADDON_DATA, ...props.addonData, type };
+        const addonValues = { ...DEAFULT_ADDON_DATA, ...props.addonData, type };
+        const length = this.getAddonLength(addonValues.percentage, props.positions);
+        return { ...addonValues, length };
+    }
+
+    getStepLength(positions) {
+        return this.state && this.state.values && this.state.values.length
+            ? this.state.values.length
+            : Number(GeoService.calcDistance.apply(null, positions).dist);
+    }
+
+    getAddonLength(percentage, stepPositions) {
+        const length = this.getStepLength(stepPositions) * (percentage / 100);
+        return Number(length.toFixed(3));
     }
 
     /**
@@ -146,9 +161,11 @@ class StepEditorFormContainer extends PureComponent {
     }
     handleAddonMarkerChange = (e, value) => {
         const percentage = Number(value);
+        // Update addon's length accourding to new markers position
+        let length = this.getAddonLength(percentage);
         const addonData = {
             ...this.state.values.addonData,
-            percentage
+            percentage, length
         };
         this.setState({
             values: {
@@ -184,10 +201,17 @@ class StepEditorFormContainer extends PureComponent {
         });
     }
     handleAddonLangthChange = (e) => {
-        const length = Number(e.target.value);
+        let length = Number(e.target.value);
+        // Make sure addon's length in boundries of it's hosting step
+        if (length > this.state.values.length) length = this.state.values.length;
+        if (length < 0) length = 0;
+        // Update marker position accourding to new given length
+        const percentage = this.state.values.length
+            ? (length / this.state.values.length) * 100
+            : 0;
         const addonData = {
             ...this.state.values.addonData,
-            length
+            length, percentage
         };
         this.setState({
             values: {
@@ -213,7 +237,7 @@ class StepEditorFormContainer extends PureComponent {
         if (!positions) {
             positions = this.state.values.positions;
         }
-        if (!percentage) {
+        if (!percentage && percentage !== 0) {
             percentage = this.state.values.marker ?
                 this.state.values.marker : 50;
         }
@@ -238,7 +262,7 @@ class StepEditorFormContainer extends PureComponent {
                     handleChange={this.handleCoordinatesChange}
                 >
                     <Button onClick={this.handleCoordinatesSwitch}>
-                        <i className="material-icons" style={{transform: 'rotate(90deg)', display: 'block'}}>compare_arrows</i>
+                        <i className="material-icons" style={{ transform: 'rotate(90deg)', display: 'block' }}>compare_arrows</i>
                     </Button>
                 </CoordinatesInput>
                 <CoordinatesInput
@@ -307,6 +331,8 @@ class StepEditorFormContainer extends PureComponent {
 
     handleAddonSubmit = (values) => {
         const type = AddonType[values.addonData.type];
+        console.log(values.positions, values.addonData.percentage);
+        console.log('getUpdatedMarker', this.getUpdatedMarker(values.positions, values.addonData.percentage));
         return {
             ...values.addonData, type,
             ...this.getUpdatedMarker(values.positions, values.addonData.percentage)
@@ -320,7 +346,7 @@ const CoordinatesInput = (props) => {
     return (
         <div className="form-group">
             <span>
-                <InputLabel style={{'display':'block'}} 
+                <InputLabel style={{ 'display': 'block' }}
                     htmlFor={props.name}>{props.title}</InputLabel>
                 {props.children}
             </span>
@@ -447,22 +473,7 @@ const AddonSwitchInput = (props) => {
 const AddonInput = (props) => {
     return (
         <div className="form-group">
-            <InputLabel htmlFor={props.name}>{'Position'}</InputLabel>
-            <Slider
-                className="form-input"
-                type="number"
-                value={props.value.percentage}
-                onChange={props.handlePositionChange}
-            />
-            <InputLabel htmlFor={props.name}>{'Time'}</InputLabel>
-            <MuiPickersUtilsProvider utils={MomentUtils}>
-                <TimePicker
-                    className="form-input"
-                    ampm={false}
-                    value={props.value.time}
-                    onChange={props.handleTimeChange}
-                />
-            </MuiPickersUtilsProvider>
+            {/* Type */}
             <InputLabel htmlFor={props.name}>{'Type'}</InputLabel>
             <Select
                 value={props.value.type}
@@ -475,8 +486,30 @@ const AddonInput = (props) => {
                 <MenuItem value={"RNG"}>Range</MenuItem>
                 <MenuItem value={"DR"}>D.R</MenuItem>
             </Select>
+
+            {/* Time */}
+            <InputLabel htmlFor={props.name}>{'Time'}</InputLabel>
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+                <TimePicker
+                    className="form-input"
+                    ampm={false}
+                    value={props.value.time}
+                    onChange={props.handleTimeChange}
+                />
+            </MuiPickersUtilsProvider>
+
+            {/* Position */}
+
+            <InputLabel htmlFor={props.name}>{'Position'}</InputLabel>
+            <Slider
+                className="form-input"
+                type="number"
+                value={props.value.percentage}
+                onChange={props.handlePositionChange}
+            />
+
             {props.value.type === 'RNG' &&
-                <InputLabel htmlFor={props.name}>{'Length'}</InputLabel>}
+                <InputLabel htmlFor={props.name}>{' Range Length'}</InputLabel>}
             {props.value.type === 'RNG' &&
                 <Input
                     className="form-input"

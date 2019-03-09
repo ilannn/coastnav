@@ -13,10 +13,10 @@ const cogMarkerProps = {
 
 export default class CogStep {
     static addTo(map, options) {
-        let step = L.polyline(options.positions, { ...cogStepProps }).addTo(map);
-        let markerPosition = options.marker && options.marker.position
+        const step = L.polyline(options.positions, { ...cogStepProps }).addTo(map);
+        const markerPosition = options.marker && options.marker.position
             ? options.marker.position : step.getCenter();
-        let marker = L.marker(markerPosition, {
+        const marker = L.marker(markerPosition, {
             ...cogMarkerProps,
             rotationAngle: GeoService.calcAngle.apply(null, options.positions)
         }).addTo(map);
@@ -25,7 +25,7 @@ export default class CogStep {
                 ...Object.values(step.getLatLngs())
             )
         };
-        let angle = GeoService.calcAngle(
+        const angle = GeoService.calcAngle(
             ...Object.values(step.getLatLngs())
         );
         marker.bindTooltip(`${angle}° / ${dist} ${unit}`, {

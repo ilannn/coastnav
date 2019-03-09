@@ -10,7 +10,7 @@ const rangeExtraProps = {
 export default class RangeExtra {
     static addTo(map, options) {
         const time = options.time ? moment(options.time).format("HH:mm") : "Error";
-        const length = options.length ? options.length : 0;
+        const length = options.length || options.length === 0 ? options.length : 0;
 
         const marker = L.marker(
             options.position,
