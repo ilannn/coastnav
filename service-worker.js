@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/ilannn/github.io/coastnav/precache-manifest.6677029c29517cbf515ec6c5934a7f0b.js"
+  "/github.io/coastnav/precache-manifest.d463b921f871fb9dccd9397ce610fe36.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/ilannn/github.io/coastnav/index.html", {
+workbox.routing.registerNavigationRoute("/github.io/coastnav/index.html", {
   
   blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
 });

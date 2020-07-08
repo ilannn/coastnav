@@ -1,13 +1,13 @@
 {
-  "main.css": "/ilannn/github.io/coastnav/static/css/main.7f0f73de.chunk.css",
-  "main.js": "/ilannn/github.io/coastnav/static/js/main.4ef999be.chunk.js",
-  "main.js.map": "/ilannn/github.io/coastnav/static/js/main.4ef999be.chunk.js.map",
-  "runtime~main.js": "/ilannn/github.io/coastnav/static/js/runtime~main.5d2b694a.js",
-  "runtime~main.js.map": "/ilannn/github.io/coastnav/static/js/runtime~main.5d2b694a.js.map",
-  "static/js/2.a5cd4246.chunk.js": "/ilannn/github.io/coastnav/static/js/2.a5cd4246.chunk.js",
-  "static/js/2.a5cd4246.chunk.js.map": "/ilannn/github.io/coastnav/static/js/2.a5cd4246.chunk.js.map",
-  "index.html": "/ilannn/github.io/coastnav/index.html",
-  "precache-manifest.6677029c29517cbf515ec6c5934a7f0b.js": "/ilannn/github.io/coastnav/precache-manifest.6677029c29517cbf515ec6c5934a7f0b.js",
-  "service-worker.js": "/ilannn/github.io/coastnav/service-worker.js",
-  "static/css/main.7f0f73de.chunk.css.map": "/ilannn/github.io/coastnav/static/css/main.7f0f73de.chunk.css.map"
+  "main.css": "/github.io/coastnav/static/css/main.7f0f73de.chunk.css",
+  "main.js": "/github.io/coastnav/static/js/main.cc812b3e.chunk.js",
+  "main.js.map": "/github.io/coastnav/static/js/main.cc812b3e.chunk.js.map",
+  "runtime~main.js": "/github.io/coastnav/static/js/runtime~main.7d83279f.js",
+  "runtime~main.js.map": "/github.io/coastnav/static/js/runtime~main.7d83279f.js.map",
+  "static/js/2.a5cd4246.chunk.js": "/github.io/coastnav/static/js/2.a5cd4246.chunk.js",
+  "static/js/2.a5cd4246.chunk.js.map": "/github.io/coastnav/static/js/2.a5cd4246.chunk.js.map",
+  "index.html": "/github.io/coastnav/index.html",
+  "precache-manifest.d463b921f871fb9dccd9397ce610fe36.js": "/github.io/coastnav/precache-manifest.d463b921f871fb9dccd9397ce610fe36.js",
+  "service-worker.js": "/github.io/coastnav/service-worker.js",
+  "static/css/main.7f0f73de.chunk.css.map": "/github.io/coastnav/static/css/main.7f0f73de.chunk.css.map"
 }
