@@ -24,7 +24,7 @@ class StepEditorFormContainer extends PureComponent {
             positions: props.positions,
             type: props.type.description,
             angle: GeoService.calcAngle.apply(null, props.positions),
-            length: Number(GeoService.calcDistance.apply(null, props.positions).dist),
+            length: this.getStepLength(props.positions),
             marker: props.marker ? props.marker.percentage : DEAFULT_MARKER_POSITION,
             time: props.time,
             isAddon: props.isAddon,
