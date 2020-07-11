@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>kison3</title>
+    <title>kison</title>
     <meta http-equiv="imagetoolbar" content="no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,8 +19,8 @@
   <div id="map"></div>
   <input id="slider" type="range" min="0" max="1" step="0.1" value="1" oninput="layer.setOpacity(this.value)">
   <script type="text/javascript">
-    var mapExtent = [34.93848990, 32.80117929, 35.13971427, 32.95196526];
-    var mapMinZoom = 8;
+    var mapExtent = [34.92602756, 32.80110132, 35.16012826, 32.95264004];
+    var mapMinZoom = 7;
     var mapMaxZoom = 15;
     var bounds = new L.LatLngBounds(
       new L.LatLng(mapExtent[1], mapExtent[0]),
@@ -32,7 +32,7 @@
       minZoom: mapMinZoom,
       maxZoom: mapMaxZoom,
       opacity: 1.0,
-      attribution: 'Rendered with <a href="http://www.maptiler.com/">MapTiler Desktop</a>',
+      attribution: 'Rendered with <a href="https://www.maptiler.com/desktop/">MapTiler Desktop</a>',
       tms: false
     };
     layer = L.tileLayer('{z}/{x}/{y}.png', options).addTo(map);

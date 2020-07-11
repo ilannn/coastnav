@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>kison3</title>
+<title>kison</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <style type="text/css">
 html { overflow: hidden; }
@@ -32,9 +32,9 @@ body { background: #f4f4f4;}
 <script type="text/javascript">
 var map;
 var mapBounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(32.801179, 34.938490),
-    new google.maps.LatLng(32.951965, 35.139714));
-var mapMinZoom = 8;
+    new google.maps.LatLng(32.801101, 34.926028),
+    new google.maps.LatLng(32.952640, 35.160128));
+var mapMinZoom = 7;
 var mapMaxZoom = 15;
 var maptiler = new google.maps.ImageMapType({
     getTileUrl: function(coord, zoom) { 
@@ -55,7 +55,7 @@ var maptiler = new google.maps.ImageMapType({
     },
     tileSize: new google.maps.Size(256, 256),
     isPng: true,
-    name: "Rendered with MapTiler Desktop",
+    name: "Rendered with MapTiler Desktop <https://www.maptiler.com/desktop/>",
     alt: "Rendered with MapTiler Desktop",
 
     opacity: 1.0
@@ -64,8 +64,8 @@ function init() {
     var opts = {
         tilt:0,
         streetViewControl: false,
-        center: new google.maps.LatLng(32.876572, 35.039102),
-        zoom: 8
+        center: new google.maps.LatLng(32.876871, 35.043078),
+        zoom: 7
     };
     map = new google.maps.Map(document.getElementById("map"), opts);
     map.setMapTypeId('satellite');
@@ -74,7 +74,7 @@ function init() {
 </script>
 </head>
 <body onload="init()">
-<div id="footer">Rendered with <a href="https://www.maptiler.com/">MapTiler Desktop</a></div>
+<div id="footer">Rendered with <a href="https://www.maptiler.com/desktop/">MapTiler Desktop</a></div>
 <div id="map"></div>
 </body>
 </html>

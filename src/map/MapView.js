@@ -85,29 +85,31 @@ class MapView extends Component {
 
                 {/* Full */}
                 <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="full/{z}/{x}/{y}.png"
                 />
 
 
                 {/* Haifa */}
                 <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="haifa/{z}/{x}/{y}.png"
                     minZoom={12}
                 />
 
                 {/* Kishon */}
                 <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="kishon/{z}/{x}/{y}.png"
                     minZoom={15}
                 />
 
                 {/* Hadera */}
                 <TileLayer
-                    attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="hadera/{z}/{x}/{y}.png"
+                    minZoom={12}
+                />
+
+                {/* Hetzelia */}
+                <TileLayer
+                    url="hetzelia/{z}/{x}/{y}.png"
                     minZoom={12}
                 />
 
