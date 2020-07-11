@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>haifa3</title>
+<title>haifa</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <style type="text/css">
 html { overflow: hidden; }
@@ -32,8 +32,8 @@ body { background: #f4f4f4;}
 <script type="text/javascript">
 var map;
 var mapBounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(32.660724, 34.820012),
-    new google.maps.LatLng(33.086508, 35.383127));
+    new google.maps.LatLng(32.661563, 34.819453),
+    new google.maps.LatLng(33.085063, 35.384086));
 var mapMinZoom = 7;
 var mapMaxZoom = 15;
 var maptiler = new google.maps.ImageMapType({
@@ -55,7 +55,7 @@ var maptiler = new google.maps.ImageMapType({
     },
     tileSize: new google.maps.Size(256, 256),
     isPng: true,
-    name: "Rendered with MapTiler Desktop",
+    name: "Rendered with MapTiler Desktop <https://www.maptiler.com/desktop/>",
     alt: "Rendered with MapTiler Desktop",
 
     opacity: 1.0
@@ -64,7 +64,7 @@ function init() {
     var opts = {
         tilt:0,
         streetViewControl: false,
-        center: new google.maps.LatLng(32.873616, 35.101570),
+        center: new google.maps.LatLng(32.873313, 35.101770),
         zoom: 7
     };
     map = new google.maps.Map(document.getElementById("map"), opts);
@@ -74,7 +74,7 @@ function init() {
 </script>
 </head>
 <body onload="init()">
-<div id="footer">Rendered with <a href="https://www.maptiler.com/">MapTiler Desktop</a></div>
+<div id="footer">Rendered with <a href="https://www.maptiler.com/desktop/">MapTiler Desktop</a></div>
 <div id="map"></div>
 </body>
 </html>

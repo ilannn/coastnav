@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>full2</title>
+<title>full</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <style type="text/css">
 html { overflow: hidden; }
@@ -32,10 +32,10 @@ body { background: #f4f4f4;}
 <script type="text/javascript">
 var map;
 var mapBounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(31.415920, 32.844473),
-    new google.maps.LatLng(33.222851, 35.237178));
+    new google.maps.LatLng(31.405003, 32.825721),
+    new google.maps.LatLng(33.223845, 35.238836));
 var mapMinZoom = 7;
-var mapMaxZoom = 15;
+var mapMaxZoom = 13;
 var maptiler = new google.maps.ImageMapType({
     getTileUrl: function(coord, zoom) { 
         var proj = map.getProjection();
@@ -55,7 +55,7 @@ var maptiler = new google.maps.ImageMapType({
     },
     tileSize: new google.maps.Size(256, 256),
     isPng: true,
-    name: "Rendered with MapTiler Desktop",
+    name: "Rendered with MapTiler Desktop <https://www.maptiler.com/desktop/>",
     alt: "Rendered with MapTiler Desktop",
 
     opacity: 1.0
@@ -64,7 +64,7 @@ function init() {
     var opts = {
         tilt:0,
         streetViewControl: false,
-        center: new google.maps.LatLng(32.319385, 34.040825),
+        center: new google.maps.LatLng(32.314424, 34.032278),
         zoom: 7
     };
     map = new google.maps.Map(document.getElementById("map"), opts);
@@ -74,7 +74,7 @@ function init() {
 </script>
 </head>
 <body onload="init()">
-<div id="footer">Rendered with <a href="https://www.maptiler.com/">MapTiler Desktop</a></div>
+<div id="footer">Rendered with <a href="https://www.maptiler.com/desktop/">MapTiler Desktop</a></div>
 <div id="map"></div>
 </body>
 </html>

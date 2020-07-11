@@ -2,12 +2,12 @@
   "name": "hadera",
   "version": "1.1.0",
   "description": "",
-  "attribution": "Rendered with <a href=\"https://www.maptiler.com/\">MapTiler Desktop</a>",
+  "attribution": "Rendered with <a href=\"https://www.maptiler.com/desktop/\">MapTiler Desktop</a>",
   "type": "overlay",
   "format": "png",
-  "minzoom": "11",
-  "maxzoom": "15",
+  "minzoom": "10",
+  "maxzoom": "16",
   "scale": "1.000000",
-  "bounds": [34.81261505, 32.37655770, 34.97449802, 32.49832715],
+  "bounds": [34.81291117, 32.37689209, 34.97319306, 32.49811093],
   "profile": "mercator"
 }
