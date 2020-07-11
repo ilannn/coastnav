@@ -19,9 +19,9 @@
   <div id="map"></div>
   <input id="slider" type="range" min="0" max="1" step="0.1" value="1" oninput="layer.setOpacity(this.value)">
   <script type="text/javascript">
-    var mapExtent = [34.81261505, 32.37655770, 34.97449802, 32.49832715];
-    var mapMinZoom = 11;
-    var mapMaxZoom = 15;
+    var mapExtent = [34.81291117, 32.37689209, 34.97319306, 32.49811093];
+    var mapMinZoom = 10;
+    var mapMaxZoom = 16;
     var bounds = new L.LatLngBounds(
       new L.LatLng(mapExtent[1], mapExtent[0]),
       new L.LatLng(mapExtent[3], mapExtent[2]));
@@ -32,7 +32,7 @@
       minZoom: mapMinZoom,
       maxZoom: mapMaxZoom,
       opacity: 1.0,
-      attribution: 'Rendered with <a href="http://www.maptiler.com/">MapTiler Desktop</a>',
+      attribution: 'Rendered with <a href="https://www.maptiler.com/desktop/">MapTiler Desktop</a>',
       tms: false
     };
     layer = L.tileLayer('{z}/{x}/{y}.png', options).addTo(map);

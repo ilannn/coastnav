@@ -1,0 +1,13 @@
+{
+  "name": "hertzelia",
+  "version": "1.1.0",
+  "description": "",
+  "attribution": "Rendered with <a href=\"https://www.maptiler.com/desktop/\">MapTiler Desktop</a>",
+  "type": "overlay",
+  "format": "png",
+  "minzoom": "11",
+  "maxzoom": "17",
+  "scale": "1.000000",
+  "bounds": [34.78991277, 32.13786698, 34.82945799, 32.16780929],
+  "profile": "mercator"
+}
